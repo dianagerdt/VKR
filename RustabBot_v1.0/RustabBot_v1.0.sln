@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31624.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RustabBot_v1.0", "RustabBot_v1.0.csproj", "{84691F81-A694-4B36-AE9C-7CCC8ED24366}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "View", "View.csproj", "{84691F81-A694-4B36-AE9C-7CCC8ED24366}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
