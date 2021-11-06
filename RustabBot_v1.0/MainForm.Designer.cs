@@ -32,7 +32,10 @@ namespace RustabBot_v1._0
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.TabPageCalc = new System.Windows.Forms.TabPage();
             this.TransientStabilityAnalysisGroupBox = new System.Windows.Forms.GroupBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.SaveResultsButton = new System.Windows.Forms.Button();
+            this.ProgressBar = new System.Windows.Forms.ProgressBar();
+            this.StopCalcButton = new System.Windows.Forms.Button();
+            this.StartCalcButton = new System.Windows.Forms.Button();
             this.ProtocolListBox = new System.Windows.Forms.ListBox();
             this.InfluentFactorsGroupBox = new System.Windows.Forms.GroupBox();
             this.InfluentFactorsDataGridView = new System.Windows.Forms.DataGridView();
@@ -71,9 +74,6 @@ namespace RustabBot_v1._0
             this.TabControl = new System.Windows.Forms.TabControl();
             this.TabPageInfo = new System.Windows.Forms.TabPage();
             this.label1 = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.button3 = new System.Windows.Forms.Button();
             this.TabPageCalc.SuspendLayout();
             this.TransientStabilityAnalysisGroupBox.SuspendLayout();
             this.InfluentFactorsGroupBox.SuspendLayout();
@@ -98,10 +98,10 @@ namespace RustabBot_v1._0
             // 
             // TransientStabilityAnalysisGroupBox
             // 
-            this.TransientStabilityAnalysisGroupBox.Controls.Add(this.button3);
-            this.TransientStabilityAnalysisGroupBox.Controls.Add(this.progressBar1);
-            this.TransientStabilityAnalysisGroupBox.Controls.Add(this.button2);
-            this.TransientStabilityAnalysisGroupBox.Controls.Add(this.button1);
+            this.TransientStabilityAnalysisGroupBox.Controls.Add(this.SaveResultsButton);
+            this.TransientStabilityAnalysisGroupBox.Controls.Add(this.ProgressBar);
+            this.TransientStabilityAnalysisGroupBox.Controls.Add(this.StopCalcButton);
+            this.TransientStabilityAnalysisGroupBox.Controls.Add(this.StartCalcButton);
             this.TransientStabilityAnalysisGroupBox.Controls.Add(this.ProtocolListBox);
             this.TransientStabilityAnalysisGroupBox.Location = new System.Drawing.Point(6, 306);
             this.TransientStabilityAnalysisGroupBox.Name = "TransientStabilityAnalysisGroupBox";
@@ -110,14 +110,39 @@ namespace RustabBot_v1._0
             this.TransientStabilityAnalysisGroupBox.TabStop = false;
             this.TransientStabilityAnalysisGroupBox.Text = "Расчёты";
             // 
-            // button1
+            // SaveResultsButton
             // 
-            this.button1.Location = new System.Drawing.Point(112, 30);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(171, 30);
-            this.button1.TabIndex = 12;
-            this.button1.Text = "Начать расчёт";
-            this.button1.UseVisualStyleBackColor = true;
+            this.SaveResultsButton.Location = new System.Drawing.Point(453, 265);
+            this.SaveResultsButton.Name = "SaveResultsButton";
+            this.SaveResultsButton.Size = new System.Drawing.Size(119, 30);
+            this.SaveResultsButton.TabIndex = 12;
+            this.SaveResultsButton.Text = "Сохранить";
+            this.SaveResultsButton.UseVisualStyleBackColor = true;
+            // 
+            // ProgressBar
+            // 
+            this.ProgressBar.Location = new System.Drawing.Point(6, 229);
+            this.ProgressBar.Name = "ProgressBar";
+            this.ProgressBar.Size = new System.Drawing.Size(566, 27);
+            this.ProgressBar.TabIndex = 14;
+            // 
+            // StopCalcButton
+            // 
+            this.StopCalcButton.Location = new System.Drawing.Point(312, 30);
+            this.StopCalcButton.Name = "StopCalcButton";
+            this.StopCalcButton.Size = new System.Drawing.Size(171, 30);
+            this.StopCalcButton.TabIndex = 13;
+            this.StopCalcButton.Text = "Остановить расчёт";
+            this.StopCalcButton.UseVisualStyleBackColor = true;
+            // 
+            // StartCalcButton
+            // 
+            this.StartCalcButton.Location = new System.Drawing.Point(112, 30);
+            this.StartCalcButton.Name = "StartCalcButton";
+            this.StartCalcButton.Size = new System.Drawing.Size(171, 30);
+            this.StartCalcButton.TabIndex = 12;
+            this.StartCalcButton.Text = "Начать расчёт";
+            this.StartCalcButton.UseVisualStyleBackColor = true;
             // 
             // ProtocolListBox
             // 
@@ -275,7 +300,7 @@ namespace RustabBot_v1._0
             this.TabPageFiles.Location = new System.Drawing.Point(4, 25);
             this.TabPageFiles.Name = "TabPageFiles";
             this.TabPageFiles.Padding = new System.Windows.Forms.Padding(3);
-            this.TabPageFiles.Size = new System.Drawing.Size(595, 601);
+            this.TabPageFiles.Size = new System.Drawing.Size(595, 618);
             this.TabPageFiles.TabIndex = 0;
             this.TabPageFiles.Text = "Файлы";
             this.TabPageFiles.UseVisualStyleBackColor = true;
@@ -312,6 +337,7 @@ namespace RustabBot_v1._0
             this.TrajectorySettingsButton.TabIndex = 14;
             this.TrajectorySettingsButton.Text = "Настройка траектории";
             this.TrajectorySettingsButton.UseVisualStyleBackColor = true;
+            this.TrajectorySettingsButton.Click += new System.EventHandler(this.TrajectorySettingsButton_Click);
             // 
             // LoadTrajectoryTextBox
             // 
@@ -479,7 +505,7 @@ namespace RustabBot_v1._0
             this.TabPageInfo.Location = new System.Drawing.Point(4, 25);
             this.TabPageInfo.Name = "TabPageInfo";
             this.TabPageInfo.Padding = new System.Windows.Forms.Padding(3);
-            this.TabPageInfo.Size = new System.Drawing.Size(595, 601);
+            this.TabPageInfo.Size = new System.Drawing.Size(595, 618);
             this.TabPageInfo.TabIndex = 2;
             this.TabPageInfo.Text = "О программе";
             this.TabPageInfo.UseVisualStyleBackColor = true;
@@ -492,31 +518,6 @@ namespace RustabBot_v1._0
             this.label1.Size = new System.Drawing.Size(99, 17);
             this.label1.TabIndex = 7;
             this.label1.Text = "продам гараж";
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(312, 30);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(171, 30);
-            this.button2.TabIndex = 13;
-            this.button2.Text = "Остановить расчёт";
-            this.button2.UseVisualStyleBackColor = true;
-            // 
-            // progressBar1
-            // 
-            this.progressBar1.Location = new System.Drawing.Point(6, 229);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(566, 27);
-            this.progressBar1.TabIndex = 14;
-            // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(453, 265);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(119, 30);
-            this.button3.TabIndex = 12;
-            this.button3.Text = "Сохранить";
-            this.button3.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
@@ -585,11 +586,11 @@ namespace RustabBot_v1._0
         private System.Windows.Forms.DataGridView InfluentFactorsDataGridView;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.GroupBox TransientStabilityAnalysisGroupBox;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button StartCalcButton;
         private System.Windows.Forms.ListBox ProtocolListBox;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Button StopCalcButton;
+        private System.Windows.Forms.Button SaveResultsButton;
+        private System.Windows.Forms.ProgressBar ProgressBar;
     }
 }
 

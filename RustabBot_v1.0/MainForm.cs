@@ -44,5 +44,10 @@ namespace RustabBot_v1._0
             TrajectorySettingsButton.Visible = false;
         }
 
+        private void TrajectorySettingsButton_Click(object sender, EventArgs e)
+        {
+            var trajectorySettings = new TrajectorySettingsForm();
+            trajectorySettings.Show();
+        }
     }
 }
