@@ -49,5 +49,11 @@ namespace RustabBot_v1._0
             var trajectorySettings = new TrajectorySettingsForm();
             trajectorySettings.Show();
         }
+
+        private void DBConnectionButton_Click(object sender, EventArgs e)
+        {
+            var dbconnection = new DBConnectionForm();
+            dbconnection.Show();
+        }
     }
 }

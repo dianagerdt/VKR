@@ -313,6 +313,7 @@ namespace RustabBot_v1._0
             this.DBConnectionButton.TabIndex = 13;
             this.DBConnectionButton.Text = "Подключение к БД";
             this.DBConnectionButton.UseVisualStyleBackColor = true;
+            this.DBConnectionButton.Click += new System.EventHandler(this.DBConnectionButton_Click);
             // 
             // TrajectoryGroupBox
             // 

@@ -79,6 +79,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DBConnectionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DBConnectionForm.Designer.cs">
+      <DependentUpon>DBConnectionForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -98,6 +104,9 @@
     <Compile Include="TrajectorySettingsForm.Designer.cs">
       <DependentUpon>TrajectorySettingsForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="DBConnectionForm.resx">
+      <DependentUpon>DBConnectionForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
