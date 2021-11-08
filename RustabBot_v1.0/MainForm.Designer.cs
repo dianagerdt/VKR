@@ -51,6 +51,7 @@ namespace RustabBot_v1._0
             this.FactorTypeComboBox = new System.Windows.Forms.ComboBox();
             this.FactorTypeLabel = new System.Windows.Forms.Label();
             this.TabPageFiles = new System.Windows.Forms.TabPage();
+            this.LoadScnListBox = new System.Windows.Forms.ListBox();
             this.DBConnectionButton = new System.Windows.Forms.Button();
             this.TrajectoryGroupBox = new System.Windows.Forms.GroupBox();
             this.TrajectorySettingsButton = new System.Windows.Forms.Button();
@@ -68,6 +69,7 @@ namespace RustabBot_v1._0
             this.LoadRstTextBox = new System.Windows.Forms.TextBox();
             this.LabelRstPath = new System.Windows.Forms.Label();
             this.LoadRstButton = new System.Windows.Forms.Button();
+            this.LoadScnTextBox = new System.Windows.Forms.TextBox();
             this.LabelScnPath = new System.Windows.Forms.Label();
             this.LoadScnButton = new System.Windows.Forms.Button();
             this.TabControl = new System.Windows.Forms.TabControl();
@@ -78,8 +80,6 @@ namespace RustabBot_v1._0
             this.DfwOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.Ut2OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.ScnOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.LoadScnListBox = new System.Windows.Forms.ListBox();
-            this.LoadScnTextBox = new System.Windows.Forms.TextBox();
             this.TabPageCalc.SuspendLayout();
             this.TransientStabilityAnalysisGroupBox.SuspendLayout();
             this.InfluentFactorsGroupBox.SuspendLayout();
@@ -312,9 +312,19 @@ namespace RustabBot_v1._0
             this.TabPageFiles.Text = "Файлы";
             this.TabPageFiles.UseVisualStyleBackColor = true;
             // 
+            // LoadScnListBox
+            // 
+            this.LoadScnListBox.FormattingEnabled = true;
+            this.LoadScnListBox.HorizontalScrollbar = true;
+            this.LoadScnListBox.ItemHeight = 16;
+            this.LoadScnListBox.Location = new System.Drawing.Point(18, 389);
+            this.LoadScnListBox.Name = "LoadScnListBox";
+            this.LoadScnListBox.Size = new System.Drawing.Size(437, 180);
+            this.LoadScnListBox.TabIndex = 14;
+            // 
             // DBConnectionButton
             // 
-            this.DBConnectionButton.Location = new System.Drawing.Point(18, 576);
+            this.DBConnectionButton.Location = new System.Drawing.Point(18, 577);
             this.DBConnectionButton.Name = "DBConnectionButton";
             this.DBConnectionButton.Size = new System.Drawing.Size(200, 30);
             this.DBConnectionButton.TabIndex = 13;
@@ -475,14 +485,22 @@ namespace RustabBot_v1._0
             this.LoadRstButton.UseVisualStyleBackColor = true;
             this.LoadRstButton.Click += new System.EventHandler(this.LoadRstButton_Click);
             // 
+            // LoadScnTextBox
+            // 
+            this.LoadScnTextBox.Location = new System.Drawing.Point(18, 45);
+            this.LoadScnTextBox.Name = "LoadScnTextBox";
+            this.LoadScnTextBox.Size = new System.Drawing.Size(437, 22);
+            this.LoadScnTextBox.TabIndex = 2;
+            this.LoadScnTextBox.Visible = false;
+            // 
             // LabelScnPath
             // 
             this.LabelScnPath.AutoSize = true;
             this.LabelScnPath.Location = new System.Drawing.Point(15, 359);
             this.LabelScnPath.Name = "LabelScnPath";
-            this.LabelScnPath.Size = new System.Drawing.Size(251, 17);
+            this.LabelScnPath.Size = new System.Drawing.Size(285, 17);
             this.LabelScnPath.TabIndex = 1;
-            this.LabelScnPath.Text = "Путь к каталогу со сценариями (scn)";
+            this.LabelScnPath.Text = "Cценарии нормативных возмущений (scn)";
             // 
             // LoadScnButton
             // 
@@ -544,25 +562,6 @@ namespace RustabBot_v1._0
             // ScnOpenFileDialog
             // 
             this.ScnOpenFileDialog.FileName = "ScnOpenFileDialog";
-            // 
-            // LoadScnListBox
-            // 
-            this.LoadScnListBox.AllowDrop = true;
-            this.LoadScnListBox.FormattingEnabled = true;
-            this.LoadScnListBox.ItemHeight = 16;
-            this.LoadScnListBox.Location = new System.Drawing.Point(18, 389);
-            this.LoadScnListBox.MultiColumn = true;
-            this.LoadScnListBox.Name = "LoadScnListBox";
-            this.LoadScnListBox.Size = new System.Drawing.Size(437, 180);
-            this.LoadScnListBox.TabIndex = 14;
-            // 
-            // LoadScnTextBox
-            // 
-            this.LoadScnTextBox.Location = new System.Drawing.Point(18, 45);
-            this.LoadScnTextBox.Name = "LoadScnTextBox";
-            this.LoadScnTextBox.Size = new System.Drawing.Size(437, 22);
-            this.LoadScnTextBox.TabIndex = 2;
-            this.LoadScnTextBox.Visible = false;
             // 
             // MainForm
             // 
@@ -640,8 +639,8 @@ namespace RustabBot_v1._0
         private System.Windows.Forms.OpenFileDialog DfwOpenFileDialog;
         private System.Windows.Forms.OpenFileDialog Ut2OpenFileDialog;
         private System.Windows.Forms.OpenFileDialog ScnOpenFileDialog;
-        public System.Windows.Forms.ListBox LoadScnListBox;
         private System.Windows.Forms.TextBox LoadScnTextBox;
+        private System.Windows.Forms.ListBox LoadScnListBox;
     }
 }
 
