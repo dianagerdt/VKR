@@ -7,6 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Model;
+using Microsoft.WindowsAPICodePack.Dialogs;
+
 
 namespace RustabBot_v1._0
 {
@@ -54,6 +57,77 @@ namespace RustabBot_v1._0
         {
             var dbconnection = new DBConnectionForm();
             dbconnection.Show();
+        }
+
+        // Открытие диалогового окна, выбор файла и запись его пути в Текстбокс
+        public void LoadInitialFile(string openFileDialogFilter, OpenFileDialog openFileDialog, TextBox textbox, RastrSupplier rastrSupplier)
+        {
+            openFileDialog.Filter = openFileDialogFilter;
+            openFileDialog.RestoreDirectory = true;
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    textbox.Text = openFileDialog.FileName;
+                    rastrSupplier.LoadFile(openFileDialog.FileName, "");
+                }
+                catch (Exception exeption)
+                {
+                    textbox.Text = "";
+                    MessageBox.Show("Ошибка! Вы загрузили файл неверного формата.\nПопробуйте ещё раз.\n" + exeption.Message);
+                }
+            }
+        }
+
+        // Загрузка самого файла rst
+        private void LoadRstButton_Click(object sender, EventArgs e)
+        {
+            RastrSupplier rastrSupplier = new RastrSupplier();
+            string RstFilter = "Файл динамики (*.rst)|*.rst";
+            LoadInitialFile(RstFilter, RstOpenFileDialog, LoadRstTextBox, rastrSupplier);
+        }
+
+        private void LoadSchButton_Click(object sender, EventArgs e)
+        {
+            RastrSupplier rastrSupplier = new RastrSupplier();
+            string SchFilter = "Файл сечения (*.sch)|*.sch";
+            LoadInitialFile(SchFilter, SchOpenFileDialog, LoadSchTextBox, rastrSupplier);
+        }
+
+        private void LoadDfwButton_Click(object sender, EventArgs e)
+        {
+            RastrSupplier rastrSupplier = new RastrSupplier();
+            string DfwFilter = "Файл автоматики (*.dfw)|*.dfw";
+            LoadInitialFile(DfwFilter, DfwOpenFileDialog, LoadDfwTextBox, rastrSupplier);
+        }
+
+        private void LoadTrajectoryButton_Click(object sender, EventArgs e)
+        {
+            RastrSupplier rastrSupplier = new RastrSupplier();
+            string Ut2Filter = "Файл траектории (*.ut2)|*.ut2";
+            LoadInitialFile(Ut2Filter, Ut2OpenFileDialog, LoadTrajectoryTextBox, rastrSupplier);
+        }
+
+        private void LoadScnButton_Click(object sender, EventArgs e)
+        {
+            LoadScnListBox.Text = "";
+            RastrSupplier rastrSupplier = new RastrSupplier();
+            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+            dialog.IsFolderPicker = false; //прикол
+            dialog.Multiselect = true;
+            dialog.Filters.Add(new CommonFileDialogFilter("Файлы сценария", "*.scn"));
+
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                LoadScnListBox.Items.AddRange(dialog.FileNames.ToArray());
+                foreach(string fileName in dialog.FileNames)
+                {
+                    rastrSupplier.LoadFile(fileName, "");
+                }
+                MessageBox.Show("Файлы сценариев успешно загружены в рабочую область.");
+            }
+
         }
     }
 }

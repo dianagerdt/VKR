@@ -68,12 +68,18 @@ namespace RustabBot_v1._0
             this.LoadRstTextBox = new System.Windows.Forms.TextBox();
             this.LabelRstPath = new System.Windows.Forms.Label();
             this.LoadRstButton = new System.Windows.Forms.Button();
-            this.LoadScnTextBox = new System.Windows.Forms.TextBox();
             this.LabelScnPath = new System.Windows.Forms.Label();
             this.LoadScnButton = new System.Windows.Forms.Button();
             this.TabControl = new System.Windows.Forms.TabControl();
             this.TabPageInfo = new System.Windows.Forms.TabPage();
             this.label1 = new System.Windows.Forms.Label();
+            this.RstOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.SchOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.DfwOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.Ut2OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.ScnOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.LoadScnListBox = new System.Windows.Forms.ListBox();
+            this.LoadScnTextBox = new System.Windows.Forms.TextBox();
             this.TabPageCalc.SuspendLayout();
             this.TransientStabilityAnalysisGroupBox.SuspendLayout();
             this.InfluentFactorsGroupBox.SuspendLayout();
@@ -283,6 +289,7 @@ namespace RustabBot_v1._0
             // 
             // TabPageFiles
             // 
+            this.TabPageFiles.Controls.Add(this.LoadScnListBox);
             this.TabPageFiles.Controls.Add(this.DBConnectionButton);
             this.TabPageFiles.Controls.Add(this.TrajectoryGroupBox);
             this.TabPageFiles.Controls.Add(this.LoadDfwTextBox);
@@ -307,7 +314,7 @@ namespace RustabBot_v1._0
             // 
             // DBConnectionButton
             // 
-            this.DBConnectionButton.Location = new System.Drawing.Point(27, 426);
+            this.DBConnectionButton.Location = new System.Drawing.Point(18, 576);
             this.DBConnectionButton.Name = "DBConnectionButton";
             this.DBConnectionButton.Size = new System.Drawing.Size(200, 30);
             this.DBConnectionButton.TabIndex = 13;
@@ -323,7 +330,7 @@ namespace RustabBot_v1._0
             this.TrajectoryGroupBox.Controls.Add(this.LoadTrajectoryButton);
             this.TrajectoryGroupBox.Controls.Add(this.ByHandRadioButton);
             this.TrajectoryGroupBox.Controls.Add(this.TrajectorySettingsLabel);
-            this.TrajectoryGroupBox.Location = new System.Drawing.Point(18, 299);
+            this.TrajectoryGroupBox.Location = new System.Drawing.Point(18, 233);
             this.TrajectoryGroupBox.Name = "TrajectoryGroupBox";
             this.TrajectoryGroupBox.Size = new System.Drawing.Size(554, 111);
             this.TrajectoryGroupBox.TabIndex = 12;
@@ -367,6 +374,7 @@ namespace RustabBot_v1._0
             this.LoadTrajectoryButton.TabIndex = 13;
             this.LoadTrajectoryButton.Text = "Загрузить";
             this.LoadTrajectoryButton.UseVisualStyleBackColor = true;
+            this.LoadTrajectoryButton.Click += new System.EventHandler(this.LoadTrajectoryButton_Click);
             // 
             // ByHandRadioButton
             // 
@@ -391,7 +399,7 @@ namespace RustabBot_v1._0
             // 
             // LoadDfwTextBox
             // 
-            this.LoadDfwTextBox.Location = new System.Drawing.Point(18, 256);
+            this.LoadDfwTextBox.Location = new System.Drawing.Point(18, 190);
             this.LoadDfwTextBox.Name = "LoadDfwTextBox";
             this.LoadDfwTextBox.Size = new System.Drawing.Size(437, 22);
             this.LoadDfwTextBox.TabIndex = 11;
@@ -399,7 +407,7 @@ namespace RustabBot_v1._0
             // LabelDfwPath
             // 
             this.LabelDfwPath.AutoSize = true;
-            this.LabelDfwPath.Location = new System.Drawing.Point(15, 226);
+            this.LabelDfwPath.Location = new System.Drawing.Point(15, 160);
             this.LabelDfwPath.Name = "LabelDfwPath";
             this.LabelDfwPath.Size = new System.Drawing.Size(161, 17);
             this.LabelDfwPath.TabIndex = 10;
@@ -407,16 +415,17 @@ namespace RustabBot_v1._0
             // 
             // LoadDfwButton
             // 
-            this.LoadDfwButton.Location = new System.Drawing.Point(471, 252);
+            this.LoadDfwButton.Location = new System.Drawing.Point(471, 186);
             this.LoadDfwButton.Name = "LoadDfwButton";
             this.LoadDfwButton.Size = new System.Drawing.Size(91, 30);
             this.LoadDfwButton.TabIndex = 9;
             this.LoadDfwButton.Text = "Загрузить";
             this.LoadDfwButton.UseVisualStyleBackColor = true;
+            this.LoadDfwButton.Click += new System.EventHandler(this.LoadDfwButton_Click);
             // 
             // LoadSchTextBox
             // 
-            this.LoadSchTextBox.Location = new System.Drawing.Point(18, 184);
+            this.LoadSchTextBox.Location = new System.Drawing.Point(18, 118);
             this.LoadSchTextBox.Name = "LoadSchTextBox";
             this.LoadSchTextBox.Size = new System.Drawing.Size(437, 22);
             this.LoadSchTextBox.TabIndex = 8;
@@ -424,7 +433,7 @@ namespace RustabBot_v1._0
             // LabelSchPath
             // 
             this.LabelSchPath.AutoSize = true;
-            this.LabelSchPath.Location = new System.Drawing.Point(15, 154);
+            this.LabelSchPath.Location = new System.Drawing.Point(15, 88);
             this.LabelSchPath.Name = "LabelSchPath";
             this.LabelSchPath.Size = new System.Drawing.Size(140, 17);
             this.LabelSchPath.TabIndex = 7;
@@ -432,16 +441,17 @@ namespace RustabBot_v1._0
             // 
             // LoadSchButton
             // 
-            this.LoadSchButton.Location = new System.Drawing.Point(471, 180);
+            this.LoadSchButton.Location = new System.Drawing.Point(471, 114);
             this.LoadSchButton.Name = "LoadSchButton";
             this.LoadSchButton.Size = new System.Drawing.Size(91, 30);
             this.LoadSchButton.TabIndex = 6;
             this.LoadSchButton.Text = "Загрузить";
             this.LoadSchButton.UseVisualStyleBackColor = true;
+            this.LoadSchButton.Click += new System.EventHandler(this.LoadSchButton_Click);
             // 
             // LoadRstTextBox
             // 
-            this.LoadRstTextBox.Location = new System.Drawing.Point(18, 112);
+            this.LoadRstTextBox.Location = new System.Drawing.Point(18, 46);
             this.LoadRstTextBox.Name = "LoadRstTextBox";
             this.LoadRstTextBox.Size = new System.Drawing.Size(437, 22);
             this.LoadRstTextBox.TabIndex = 5;
@@ -449,7 +459,7 @@ namespace RustabBot_v1._0
             // LabelRstPath
             // 
             this.LabelRstPath.AutoSize = true;
-            this.LabelRstPath.Location = new System.Drawing.Point(15, 82);
+            this.LabelRstPath.Location = new System.Drawing.Point(15, 16);
             this.LabelRstPath.Name = "LabelRstPath";
             this.LabelRstPath.Size = new System.Drawing.Size(143, 17);
             this.LabelRstPath.TabIndex = 4;
@@ -457,24 +467,18 @@ namespace RustabBot_v1._0
             // 
             // LoadRstButton
             // 
-            this.LoadRstButton.Location = new System.Drawing.Point(471, 108);
+            this.LoadRstButton.Location = new System.Drawing.Point(471, 42);
             this.LoadRstButton.Name = "LoadRstButton";
             this.LoadRstButton.Size = new System.Drawing.Size(91, 30);
             this.LoadRstButton.TabIndex = 3;
             this.LoadRstButton.Text = "Загрузить";
             this.LoadRstButton.UseVisualStyleBackColor = true;
-            // 
-            // LoadScnTextBox
-            // 
-            this.LoadScnTextBox.Location = new System.Drawing.Point(18, 45);
-            this.LoadScnTextBox.Name = "LoadScnTextBox";
-            this.LoadScnTextBox.Size = new System.Drawing.Size(437, 22);
-            this.LoadScnTextBox.TabIndex = 2;
+            this.LoadRstButton.Click += new System.EventHandler(this.LoadRstButton_Click);
             // 
             // LabelScnPath
             // 
             this.LabelScnPath.AutoSize = true;
-            this.LabelScnPath.Location = new System.Drawing.Point(15, 15);
+            this.LabelScnPath.Location = new System.Drawing.Point(15, 359);
             this.LabelScnPath.Name = "LabelScnPath";
             this.LabelScnPath.Size = new System.Drawing.Size(251, 17);
             this.LabelScnPath.TabIndex = 1;
@@ -482,12 +486,13 @@ namespace RustabBot_v1._0
             // 
             // LoadScnButton
             // 
-            this.LoadScnButton.Location = new System.Drawing.Point(471, 41);
+            this.LoadScnButton.Location = new System.Drawing.Point(471, 389);
             this.LoadScnButton.Name = "LoadScnButton";
             this.LoadScnButton.Size = new System.Drawing.Size(91, 30);
             this.LoadScnButton.TabIndex = 0;
             this.LoadScnButton.Text = "Загрузить";
             this.LoadScnButton.UseVisualStyleBackColor = true;
+            this.LoadScnButton.Click += new System.EventHandler(this.LoadScnButton_Click);
             // 
             // TabControl
             // 
@@ -519,6 +524,45 @@ namespace RustabBot_v1._0
             this.label1.Size = new System.Drawing.Size(99, 17);
             this.label1.TabIndex = 7;
             this.label1.Text = "продам гараж";
+            // 
+            // RstOpenFileDialog
+            // 
+            this.RstOpenFileDialog.FileName = "RstOpenFileDialog";
+            // 
+            // SchOpenFileDialog
+            // 
+            this.SchOpenFileDialog.FileName = "SchOpenFileDialog";
+            // 
+            // DfwOpenFileDialog
+            // 
+            this.DfwOpenFileDialog.FileName = "DfwOpenFileDialog";
+            // 
+            // Ut2OpenFileDialog
+            // 
+            this.Ut2OpenFileDialog.FileName = "Ut2OpenFileDialog";
+            // 
+            // ScnOpenFileDialog
+            // 
+            this.ScnOpenFileDialog.FileName = "ScnOpenFileDialog";
+            // 
+            // LoadScnListBox
+            // 
+            this.LoadScnListBox.AllowDrop = true;
+            this.LoadScnListBox.FormattingEnabled = true;
+            this.LoadScnListBox.ItemHeight = 16;
+            this.LoadScnListBox.Location = new System.Drawing.Point(18, 389);
+            this.LoadScnListBox.MultiColumn = true;
+            this.LoadScnListBox.Name = "LoadScnListBox";
+            this.LoadScnListBox.Size = new System.Drawing.Size(437, 180);
+            this.LoadScnListBox.TabIndex = 14;
+            // 
+            // LoadScnTextBox
+            // 
+            this.LoadScnTextBox.Location = new System.Drawing.Point(18, 45);
+            this.LoadScnTextBox.Name = "LoadScnTextBox";
+            this.LoadScnTextBox.Size = new System.Drawing.Size(437, 22);
+            this.LoadScnTextBox.TabIndex = 2;
+            this.LoadScnTextBox.Visible = false;
             // 
             // MainForm
             // 
@@ -552,7 +596,6 @@ namespace RustabBot_v1._0
         private System.Windows.Forms.TabPage TabPageFiles;
         private System.Windows.Forms.TabControl TabControl;
         private System.Windows.Forms.TabPage TabPageInfo;
-        private System.Windows.Forms.TextBox LoadScnTextBox;
         private System.Windows.Forms.Label LabelScnPath;
         private System.Windows.Forms.Button LoadScnButton;
         private System.Windows.Forms.TextBox LoadRstTextBox;
@@ -592,6 +635,13 @@ namespace RustabBot_v1._0
         private System.Windows.Forms.Button StopCalcButton;
         private System.Windows.Forms.Button SaveResultsButton;
         private System.Windows.Forms.ProgressBar ProgressBar;
+        private System.Windows.Forms.OpenFileDialog RstOpenFileDialog;
+        private System.Windows.Forms.OpenFileDialog SchOpenFileDialog;
+        private System.Windows.Forms.OpenFileDialog DfwOpenFileDialog;
+        private System.Windows.Forms.OpenFileDialog Ut2OpenFileDialog;
+        private System.Windows.Forms.OpenFileDialog ScnOpenFileDialog;
+        public System.Windows.Forms.ListBox LoadScnListBox;
+        private System.Windows.Forms.TextBox LoadScnTextBox;
     }
 }
 

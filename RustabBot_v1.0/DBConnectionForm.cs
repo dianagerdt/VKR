@@ -24,5 +24,6 @@ namespace RustabBot_v1._0
         {
             this.Close();
         }
+
     }
 }

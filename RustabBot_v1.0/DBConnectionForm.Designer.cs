@@ -30,104 +30,105 @@ namespace RustabBot_v1._0
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DBConnectionForm));
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
+            this.LoginLabel = new System.Windows.Forms.Label();
+            this.PasswordLabel = new System.Windows.Forms.Label();
+            this.LoginTextBox = new System.Windows.Forms.TextBox();
+            this.PasswordTextBox = new System.Windows.Forms.TextBox();
+            this.OKDBButton = new System.Windows.Forms.Button();
+            this.StatusLabel = new System.Windows.Forms.Label();
+            this.ConnectionLabel = new System.Windows.Forms.Label();
+            this.NoConnectionLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // label1
+            // LoginLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(20, 20);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(47, 17);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Логин";
+            this.LoginLabel.AutoSize = true;
+            this.LoginLabel.Location = new System.Drawing.Point(20, 20);
+            this.LoginLabel.Name = "LoginLabel";
+            this.LoginLabel.Size = new System.Drawing.Size(47, 17);
+            this.LoginLabel.TabIndex = 0;
+            this.LoginLabel.Text = "Логин";
             // 
-            // label2
+            // PasswordLabel
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(19, 53);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(57, 17);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Пароль";
+            this.PasswordLabel.AutoSize = true;
+            this.PasswordLabel.Location = new System.Drawing.Point(19, 53);
+            this.PasswordLabel.Name = "PasswordLabel";
+            this.PasswordLabel.Size = new System.Drawing.Size(57, 17);
+            this.PasswordLabel.TabIndex = 1;
+            this.PasswordLabel.Text = "Пароль";
             // 
-            // textBox1
+            // LoginTextBox
             // 
-            this.textBox1.Location = new System.Drawing.Point(92, 20);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(267, 22);
-            this.textBox1.TabIndex = 2;
+            this.LoginTextBox.Location = new System.Drawing.Point(92, 20);
+            this.LoginTextBox.Name = "LoginTextBox";
+            this.LoginTextBox.Size = new System.Drawing.Size(267, 22);
+            this.LoginTextBox.TabIndex = 2;
             // 
-            // textBox2
+            // PasswordTextBox
             // 
-            this.textBox2.Location = new System.Drawing.Point(92, 53);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(267, 22);
-            this.textBox2.TabIndex = 3;
-            this.textBox2.UseSystemPasswordChar = true;
+            this.PasswordTextBox.Location = new System.Drawing.Point(92, 53);
+            this.PasswordTextBox.Name = "PasswordTextBox";
+            this.PasswordTextBox.PasswordChar = '*';
+            this.PasswordTextBox.Size = new System.Drawing.Size(267, 22);
+            this.PasswordTextBox.TabIndex = 3;
+            this.PasswordTextBox.UseSystemPasswordChar = true;
             // 
-            // button1
+            // OKDBButton
             // 
-            this.button1.Location = new System.Drawing.Point(265, 98);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(94, 27);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "ОК";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.OKDBButton.Location = new System.Drawing.Point(265, 98);
+            this.OKDBButton.Name = "OKDBButton";
+            this.OKDBButton.Size = new System.Drawing.Size(94, 27);
+            this.OKDBButton.TabIndex = 4;
+            this.OKDBButton.Text = "ОК";
+            this.OKDBButton.UseVisualStyleBackColor = true;
+            this.OKDBButton.Click += new System.EventHandler(this.button1_Click);
             // 
-            // label3
+            // StatusLabel
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(20, 103);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(61, 17);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "Статус: ";
+            this.StatusLabel.AutoSize = true;
+            this.StatusLabel.Location = new System.Drawing.Point(20, 103);
+            this.StatusLabel.Name = "StatusLabel";
+            this.StatusLabel.Size = new System.Drawing.Size(61, 17);
+            this.StatusLabel.TabIndex = 5;
+            this.StatusLabel.Text = "Статус: ";
             // 
-            // label4
+            // ConnectionLabel
             // 
-            this.label4.AutoSize = true;
-            this.label4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            this.label4.Location = new System.Drawing.Point(84, 103);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(91, 17);
-            this.label4.TabIndex = 6;
-            this.label4.Text = "Подключено";
+            this.ConnectionLabel.AutoSize = true;
+            this.ConnectionLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.ConnectionLabel.Location = new System.Drawing.Point(84, 103);
+            this.ConnectionLabel.Name = "ConnectionLabel";
+            this.ConnectionLabel.Size = new System.Drawing.Size(91, 17);
+            this.ConnectionLabel.TabIndex = 6;
+            this.ConnectionLabel.Text = "Подключено";
             // 
-            // label5
+            // NoConnectionLabel
             // 
-            this.label5.AutoSize = true;
-            this.label5.ForeColor = System.Drawing.Color.Red;
-            this.label5.Location = new System.Drawing.Point(84, 103);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(172, 17);
-            this.label5.TabIndex = 7;
-            this.label5.Text = "Соединение отсутствует";
+            this.NoConnectionLabel.AutoSize = true;
+            this.NoConnectionLabel.ForeColor = System.Drawing.Color.Red;
+            this.NoConnectionLabel.Location = new System.Drawing.Point(84, 103);
+            this.NoConnectionLabel.Name = "NoConnectionLabel";
+            this.NoConnectionLabel.Size = new System.Drawing.Size(172, 17);
+            this.NoConnectionLabel.TabIndex = 7;
+            this.NoConnectionLabel.Text = "Соединение отсутствует";
             // 
             // DBConnectionForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(383, 146);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.NoConnectionLabel);
+            this.Controls.Add(this.ConnectionLabel);
+            this.Controls.Add(this.StatusLabel);
+            this.Controls.Add(this.OKDBButton);
+            this.Controls.Add(this.PasswordTextBox);
+            this.Controls.Add(this.LoginTextBox);
+            this.Controls.Add(this.PasswordLabel);
+            this.Controls.Add(this.LoginLabel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "DBConnectionForm";
-            this.Text = "DBConnectionForm";
+            this.Text = "Подключение к БД MS SQL";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -135,13 +136,13 @@ namespace RustabBot_v1._0
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label LoginLabel;
+        private System.Windows.Forms.Label PasswordLabel;
+        private System.Windows.Forms.TextBox LoginTextBox;
+        private System.Windows.Forms.TextBox PasswordTextBox;
+        private System.Windows.Forms.Button OKDBButton;
+        private System.Windows.Forms.Label StatusLabel;
+        private System.Windows.Forms.Label ConnectionLabel;
+        private System.Windows.Forms.Label NoConnectionLabel;
     }
 }
