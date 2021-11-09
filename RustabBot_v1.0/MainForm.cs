@@ -71,7 +71,7 @@ namespace RustabBot_v1._0
                 try
                 {
                     textbox.Text = openFileDialog.FileName;
-                    rastrSupplier.LoadFile(openFileDialog.FileName, "");
+                    rastrSupplier.LoadFile(openFileDialog.FileName);
                 }
                 catch (Exception exeption)
                 {
@@ -119,7 +119,7 @@ namespace RustabBot_v1._0
                     LoadScnListBox.Items.AddRange(ScnOpenFileDialog.FileNames);
                     foreach (string fileName in ScnOpenFileDialog.FileNames)
                     {
-                        _rastrSupplier.LoadFile(fileName, "");
+                        _rastrSupplier.LoadFile(fileName);
                     }
                 }
                 catch (Exception exeption)

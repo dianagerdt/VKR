@@ -235,7 +235,7 @@ namespace RustabBot_v1._0
             // 
             // InfluentFactorMinTextBox
             // 
-            this.InfluentFactorMinTextBox.Location = new System.Drawing.Point(342, 50);
+            this.InfluentFactorMinTextBox.Location = new System.Drawing.Point(343, 50);
             this.InfluentFactorMinTextBox.Name = "InfluentFactorMinTextBox";
             this.InfluentFactorMinTextBox.Size = new System.Drawing.Size(113, 22);
             this.InfluentFactorMinTextBox.TabIndex = 5;

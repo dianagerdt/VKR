@@ -45,8 +45,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="InfluentFactorBase.cs" />
+    <Compile Include="InfluentFactors\LoadFactor.cs" />
+    <Compile Include="InfluentFactors\SectionFactor.cs" />
+    <Compile Include="InfluentFactors\VoltageFactor.cs" />
     <Compile Include="RastrSupplier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TrajectoryMaker.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
