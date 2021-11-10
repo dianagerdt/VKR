@@ -12,9 +12,9 @@ namespace Model
     {
         private static Rastr _rastr = new Rastr();
 
-        public void LoadFile (string filePath)
+        public void LoadFile (string filePath, string shablon)
         {
-            _rastr.Load(RG_KOD.RG_REPL, filePath, "");
+            _rastr.Load(RG_KOD.RG_REPL, filePath, shablon);
         }
 
         public void SaveFile(string fileName)

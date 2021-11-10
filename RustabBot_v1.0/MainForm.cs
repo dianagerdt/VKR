@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Model;
+using System.Windows.Resources;
 
 
 namespace RustabBot_v1._0
@@ -60,8 +61,9 @@ namespace RustabBot_v1._0
             dbconnection.Show();
         }
 
-        // Открытие диалогового окна, выбор файла и запись его пути в Текстбокс
-        public void LoadInitialFile(string openFileDialogFilter, OpenFileDialog openFileDialog, TextBox textbox, RastrSupplier rastrSupplier)
+        // Открытие диалогового окна, выбор и загрузка файла и запись его пути в Текстбокс
+        public void LoadInitialFile(string openFileDialogFilter, OpenFileDialog openFileDialog, 
+            TextBox textbox, RastrSupplier rastrSupplier, string shablon)
         {
             openFileDialog.Filter = openFileDialogFilter;
             openFileDialog.RestoreDirectory = true;
@@ -71,12 +73,13 @@ namespace RustabBot_v1._0
                 try
                 {
                     textbox.Text = openFileDialog.FileName;
-                    rastrSupplier.LoadFile(openFileDialog.FileName);
+                    rastrSupplier.LoadFile(openFileDialog.FileName, shablon);
                 }
                 catch (Exception exeption)
                 {
                     textbox.Text = "";
-                    MessageBox.Show("Ошибка! Вы загрузили файл неверного формата.\nПопробуйте ещё раз.\n" + exeption.Message);
+                    MessageBox.Show("Ошибка! Вы загрузили файл неверного формата." +
+                        "\nПопробуйте ещё раз.\n" + exeption.Message);
                 }
             }
         }
@@ -85,33 +88,38 @@ namespace RustabBot_v1._0
         private void LoadRstButton_Click(object sender, EventArgs e)
         {
             string RstFilter = "Файл динамики (*.rst)|*.rst";
-            LoadInitialFile(RstFilter, RstOpenFileDialog, LoadRstTextBox, _rastrSupplier);
+            string shablon = @"../../Resources/динамика.rst";
+            LoadInitialFile(RstFilter, RstOpenFileDialog, LoadRstTextBox, _rastrSupplier, shablon);
         }
 
         private void LoadSchButton_Click(object sender, EventArgs e)
         {
             string SchFilter = "Файл сечения (*.sch)|*.sch";
-            LoadInitialFile(SchFilter, SchOpenFileDialog, LoadSchTextBox, _rastrSupplier);
+            string shablon = @"../../Resources/сечения.sch";
+            LoadInitialFile(SchFilter, SchOpenFileDialog, LoadSchTextBox, _rastrSupplier, shablon);
         }
 
         private void LoadDfwButton_Click(object sender, EventArgs e)
         {
             string DfwFilter = "Файл автоматики (*.dfw)|*.dfw";
-            LoadInitialFile(DfwFilter, DfwOpenFileDialog, LoadDfwTextBox, _rastrSupplier);
+            string shablon = @"../../Resources/автоматика.dfw";
+            LoadInitialFile(DfwFilter, DfwOpenFileDialog, LoadDfwTextBox, _rastrSupplier, shablon);
         }
 
         private void LoadTrajectoryButton_Click(object sender, EventArgs e)
         {
             string Ut2Filter = "Файл траектории (*.ut2)|*.ut2";
-            LoadInitialFile(Ut2Filter, Ut2OpenFileDialog, LoadTrajectoryTextBox, _rastrSupplier);
+            string shablon = @"../../Resources/траектория утяжеления.ut2";
+            LoadInitialFile(Ut2Filter, Ut2OpenFileDialog, LoadTrajectoryTextBox, _rastrSupplier, shablon);
         }
 
         private void LoadScnButton_Click(object sender, EventArgs e)
         {
-            LoadScnListBox.Text = "";
+            LoadScnListBox.Items.Clear();
             ScnOpenFileDialog.Multiselect = true;
             ScnOpenFileDialog.Filter = "Файл сценария (*.scn)|*.scn";
-
+            string shablon = @"../../Resources/сценарий.scn";
+            
             if (ScnOpenFileDialog.ShowDialog() == DialogResult.OK)
             {
                 try
@@ -119,12 +127,12 @@ namespace RustabBot_v1._0
                     LoadScnListBox.Items.AddRange(ScnOpenFileDialog.FileNames);
                     foreach (string fileName in ScnOpenFileDialog.FileNames)
                     {
-                        _rastrSupplier.LoadFile(fileName);
+                        _rastrSupplier.LoadFile(fileName, shablon);
                     }
                 }
                 catch (Exception exeption)
                 {
-                    LoadScnListBox.Text = "";
+                    LoadScnListBox.Items.Clear();
                     MessageBox.Show("Ошибка! Вы загрузили файл неверного формата.\nПопробуйте ещё раз.\n" + exeption.Message);
                 }
             }

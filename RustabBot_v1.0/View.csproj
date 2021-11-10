@@ -140,6 +140,11 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Resources\автоматика.dfw" />
+    <None Include="Resources\динамика.rst" />
+    <None Include="Resources\сечения.sch" />
+    <None Include="Resources\сценарий.scn" />
+    <None Include="Resources\траектория утяжеления.ut2" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -156,9 +161,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="Model\Model.csproj">
       <Project>{01ec1d2c-31e6-4e68-adf6-7706ae5ad7f8}</Project>
