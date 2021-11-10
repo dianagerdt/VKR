@@ -11,12 +11,12 @@ namespace Model
     /// </summary>
     public abstract class InfluentFactorBase
     {
-        public RastrSupplier _rastrSupplier = new RastrSupplier();
+        protected RastrSupplier _rastrSupplier = new RastrSupplier();
 
         private double _minValue;
         private double _maxValue;
         private double _currentValue;
-        private int _numberFromRastr;
+        protected int _numberFromRastr;
 
         public double MinValue
         {
@@ -54,6 +54,9 @@ namespace Model
             }
         }
 
+        /// <summary>
+        /// Номер узла/сечения, в зависимости от типа ВФ 
+        /// </summary>
         public int NumberFromRastr
         {
             get
@@ -81,11 +84,6 @@ namespace Model
             {
                 return true;
             }
-        }
-
-        public void ShowCurrentValueFromRastr()
-        {
-
         }
     }
 }

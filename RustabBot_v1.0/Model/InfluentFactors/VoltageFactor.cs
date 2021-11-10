@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ASTRALib;
 
 namespace Model.InfluentFactors
 {
@@ -12,5 +13,6 @@ namespace Model.InfluentFactors
         /// Тип фактора Напряжение
         /// </summary>
         public override string FactorType => "Напряжение";
+
     }
 }
