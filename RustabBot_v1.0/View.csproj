@@ -91,6 +91,7 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataGridViewTools.cs" />
     <Compile Include="DBConnectionForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -142,6 +143,7 @@
     </Compile>
     <None Include="Resources\автоматика.dfw" />
     <None Include="Resources\динамика.rst" />
+    <None Include="Resources\режим.rg2" />
     <None Include="Resources\сечения.sch" />
     <None Include="Resources\сценарий.scn" />
     <None Include="Resources\траектория утяжеления.ut2" />

@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Model;
-using System.Windows.Resources;
+using Model.InfluentFactors;
 
 
 namespace RustabBot_v1._0
@@ -16,6 +16,34 @@ namespace RustabBot_v1._0
     public partial class MainForm : Form
     {
         private RastrSupplier _rastrSupplier = new RastrSupplier();
+
+        /// <summary>
+        /// Поле для создания фактора
+        /// </summary>
+        private InfluentFactorBase _factor;
+
+        /// <summary>
+		/// Cписок факторов
+		/// </summary>
+		private BindingList<InfluentFactorBase> _factorList =
+            new BindingList<InfluentFactorBase>();
+
+        /// <summary>
+        /// Словарь для сопоставления TextBox и Action
+        /// </summary>
+        private readonly Dictionary<TextBox,
+            Action<InfluentFactorBase, double>> _textBoxValidationAction;
+
+        /// <summary>
+        /// Свойство для вывода данных о факторе
+        /// </summary>
+        public InfluentFactorBase FactorData
+        {
+            get
+            {
+                return _factor;
+            }
+        }
 
         public MainForm()
         {
@@ -29,6 +57,66 @@ namespace RustabBot_v1._0
 
             InfluentFactorsDataGridView.AllowUserToAddRows = false;
             InfluentFactorsDataGridView.RowHeadersVisible = false;
+
+            //Вторая вкладка
+
+            _textBoxValidationAction = new Dictionary<TextBox, Action<InfluentFactorBase, double>>
+            {
+                {
+                    InfluentFactorNumTextBox,
+                    (factor, value) =>
+                    {
+                        if (factor is LoadFactor loadFactor)
+                        {
+                            loadFactor.NumberFromRastr = value;
+                        }
+                        else if (factor is SectionFactor sectionFactor)
+                        {
+                            sectionFactor.NumberFromRastr = value;
+                        }
+                        else if (factor is VoltageFactor voltageFactor)
+                        {
+                            voltageFactor.NumberFromRastr = value;
+                        }
+                    }
+                },
+                {
+                    InfluentFactorMinTextBox,
+                    (factor, value) =>
+                    {
+                        if (factor is LoadFactor loadFactor)
+                        {
+                            loadFactor.MinValue = value;
+                        }
+                        else if (factor is SectionFactor sectionFactor)
+                        {
+                            sectionFactor.MinValue = value;
+                        }
+                        else if (factor is VoltageFactor voltageFactor)
+                        {
+                            voltageFactor.MinValue = value;
+                        }
+                    }
+                },
+                {
+                    InfluentFactorMaxTextbox,
+                    (factor, value) =>
+                    {
+                        if (factor is LoadFactor loadFactor)
+                        {
+                            loadFactor.MaxValue = value;
+                        }
+                        else if (factor is SectionFactor sectionFactor)
+                        {
+                            sectionFactor.MaxValue = value;
+                        }
+                        else if (factor is VoltageFactor voltageFactor)
+                        {
+                            voltageFactor.MaxValue = value;
+                        }
+                    }
+                }
+            };
         }
 
         private void ByHandRadioButton_MouseClick(object sender, MouseEventArgs e)
@@ -84,11 +172,11 @@ namespace RustabBot_v1._0
             }
         }
 
-        // Загрузка самого файла rst
+        // Загрузка самого файла rst!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         private void LoadRstButton_Click(object sender, EventArgs e)
         {
-            string RstFilter = "Файл динамики (*.rst)|*.rst";
-            string shablon = @"../../Resources/динамика.rst";
+            string RstFilter = "Файл динамики (*.rg2)|*.rg2";
+            string shablon = @"../../Resources/режим.rg2";
             LoadInitialFile(RstFilter, RstOpenFileDialog, LoadRstTextBox, _rastrSupplier, shablon);
         }
 
@@ -133,10 +221,223 @@ namespace RustabBot_v1._0
                 catch (Exception exeption)
                 {
                     LoadScnListBox.Items.Clear();
-                    MessageBox.Show("Ошибка! Вы загрузили файл неверного формата.\nПопробуйте ещё раз.\n" + exeption.Message);
+                    MessageBox.Show("Ошибка! Вы загрузили файл неверного формата.\n" +
+                        "Попробуйте ещё раз.\n" + exeption.Message);
                 }
             }
+        }
 
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            DataGridViewTools.CreateTableForFactors(_factorList, InfluentFactorsDataGridView);
+        }
+
+        private void FactorTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            switch (FactorTypeComboBox.SelectedIndex)
+            {
+                case 0:
+                    {
+                        _factor = new VoltageFactor();
+                        break;
+                    }
+                case 1:
+                    {
+                        _factor = new SectionFactor();
+                        break;
+                    }
+                case 2:
+                    {
+                        _factor = new LoadFactor();
+                        break;
+                    }
+            }
+        }
+
+        /// <summary>
+        /// Установить значение свойствам экземпляра класса 
+        /// </summary>
+        private void SetValue(Action action)
+        {
+            action.Invoke();
+        }
+
+        /// <summary>
+        /// Ввод данных о напряжении
+        /// </summary>
+        /// <returns>Созданный экземпляр класса VoltageFactor</returns>
+        private VoltageFactor GetNewVoltageFactor()
+        {
+            var newVoltageFactor = new VoltageFactor();
+
+            var actions = new List<Action>()
+            {
+                new Action(() =>
+                {
+                    newVoltageFactor.NumberFromRastr =
+                    Convert.ToDouble(InfluentFactorNumTextBox.Text);
+                }),
+                new Action(() =>
+                {
+                    newVoltageFactor.MinValue =
+                    Convert.ToDouble(InfluentFactorMinTextBox.Text);
+                }),
+                new Action(() =>
+                {
+                    newVoltageFactor.MaxValue =
+                    Convert.ToDouble(InfluentFactorMaxTextbox.Text);
+                }),
+                new Action(() =>
+                {
+                    newVoltageFactor.CurrentValue =
+                    RastrSupplier.GetValue("node", "ny", Convert.ToInt32(InfluentFactorNumTextBox.Text), "vras");
+                })
+            };
+            actions.ForEach(SetValue);
+            return newVoltageFactor;
+        }
+
+        /// <summary>
+        /// Ввод данных о перетоке
+        /// </summary>
+        /// <returns>Созданный экземпляр класса SectionFactor</returns>
+        private SectionFactor GetNewSectionFactor()
+        {
+            var newSectionFactor = new SectionFactor();
+
+            var actions = new List<Action>()
+            {
+                new Action(() =>
+                {
+                    newSectionFactor.NumberFromRastr =
+                    Convert.ToDouble(InfluentFactorNumTextBox.Text);
+                }),
+                new Action(() =>
+                {
+                    newSectionFactor.MinValue =
+                    Convert.ToDouble(InfluentFactorMinTextBox.Text);
+                }),
+                new Action(() =>
+                {
+                    newSectionFactor.MaxValue =
+                    Convert.ToDouble(InfluentFactorMaxTextbox.Text);
+                }),
+                new Action(() =>
+                {
+                    newSectionFactor.CurrentValue =
+                    RastrSupplier.GetValue("sechen", "ns", Convert.ToInt32(InfluentFactorNumTextBox.Text), "psech");
+                })
+            };
+            actions.ForEach(SetValue);
+            return newSectionFactor;
+        }
+
+        /// <summary>
+        /// Ввод данных о перетоке
+        /// </summary>
+        /// <returns>Созданный экземпляр класса LoadFactor</returns>
+        private LoadFactor GetNewLoadFactor()
+        {
+            var newLoadFactor = new LoadFactor();
+
+            var actions = new List<Action>()
+            {
+                new Action(() =>
+                {
+                    newLoadFactor.NumberFromRastr =
+                    Convert.ToDouble(InfluentFactorNumTextBox.Text);
+                }),
+                new Action(() =>
+                {
+                    newLoadFactor.MinValue =
+                    Convert.ToDouble(InfluentFactorMinTextBox.Text);
+                }),
+                new Action(() =>
+                {
+                    newLoadFactor.MaxValue =
+                    Convert.ToDouble(InfluentFactorMaxTextbox.Text);
+                }),
+                new Action(() =>
+                {
+                    newLoadFactor.CurrentValue =
+                    RastrSupplier.GetValue("node", "ny", Convert.ToInt32(InfluentFactorNumTextBox.Text), "pn");
+                })
+            };
+            actions.ForEach(SetValue);
+            return newLoadFactor;
+        }
+
+        /// <summary>
+        /// Ввод данных о фигурах
+        /// </summary>
+        private void InsertData()
+        {
+            switch (_factor)
+            {
+                case VoltageFactor _:
+                    {
+                        _factor = GetNewVoltageFactor();
+                        break;
+                    }
+                case SectionFactor _:
+                    {
+                        _factor = GetNewSectionFactor();
+                        break;
+                    }
+                case LoadFactor _:
+                    {
+                        _factor = GetNewLoadFactor();
+                        break;
+                    }
+                default:
+                    {
+                        throw new ArgumentException("Такого фактора нет.");
+                    }
+            }
+        }
+
+        private void AddFactorToGridButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                InsertData();
+                InfluentFactorBase.IsMinMaxCorrect(_factor.MinValue, _factor.MaxValue);
+
+                var countOfRows = InfluentFactorsDataGridView.Rows.Count;
+                for (int i = 0; i < countOfRows; i++)
+                {
+                    if(_factor.NumberFromRastr == Convert.ToDouble(InfluentFactorsDataGridView[1, i].Value))
+                    {
+                        throw new Exception("Этот влияющий фактор уже добавлен в список! Попробуйте ещё раз.");
+                    }
+                }
+
+                _factorList.Add(_factor);
+            }
+            catch
+            {
+                MessageBox.Show("Вы не загрузили исходные файлы или введено некорректное значение!\n" +
+                    "Пожалуйста, проверьте исходные данные.",
+                    "Ошибка",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                InfluentFactorNumTextBox.Clear();
+                InfluentFactorMinTextBox.Clear();
+                InfluentFactorMaxTextbox.Clear();
+            }
+        }
+
+        private void RemoveFactorFromGridButton_Click(object sender, EventArgs e)
+        {
+            var countOfRows = InfluentFactorsDataGridView.SelectedRows.Count;
+            for (int i = 0; i < countOfRows; i++)
+            {
+                _factorList.RemoveAt(InfluentFactorsDataGridView.SelectedRows[0].Index);
+            }
+        }
+
+        private void ClearAllFactorsFromGridButton_Click(object sender, EventArgs e)
+        {
+            _factorList.Clear();
         }
     }
 }

@@ -31,7 +31,6 @@ namespace Model
             {
                 if (columnItem.get_ZN(index) == number)
                 {
-                    Console.WriteLine(index);
                     return index;
                 }
             }
@@ -39,15 +38,42 @@ namespace Model
             throw new Exception($"Узел с номером {number} не найден.");
         }
 
-        public static double GetValue(string tableName, string parameterName, int number, string searchingParameter)
+        public static double GetValue(string tableName, string parameterName, int number, string chosenParameter)
         {
             ITable table = _rastr.Tables.Item(tableName);
-            ICol columnItem = table.Cols.Item(searchingParameter);
+            ICol columnItem = table.Cols.Item(chosenParameter);
 
             int index = GetIndexByNumber(tableName, parameterName, number);
-
-            Console.WriteLine(columnItem.get_ZN(index));
             return columnItem.get_ZN(index);
+        }
+
+        /// <summary>
+        /// Рассчитывает режим
+        /// </summary>
+        /// <returns> Возвращает 
+        /// true - расчет завершен успешно,
+        /// false - аварийное завершение расчета</returns>
+        public static bool Regime()
+        {
+            var statusRgm = _rastr.rgm("");
+
+            if (statusRgm == 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static void SetValue(string tableName, string parameterName, int number, string chosenParameter, double value)
+        {
+            ITable table = _rastr.Tables.Item(tableName);
+            ICol columnItem = table.Cols.Item(chosenParameter);
+
+            int index = GetIndexByNumber(tableName, parameterName, number);
+            columnItem.set_ZN(index, value);
         }
 
         public static void Worsening (Rastr rastr)

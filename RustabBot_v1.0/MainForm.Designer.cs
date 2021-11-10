@@ -198,6 +198,7 @@ namespace RustabBot_v1._0
             this.ClearAllFactorsFromGridButton.TabIndex = 10;
             this.ClearAllFactorsFromGridButton.Text = "Очистить";
             this.ClearAllFactorsFromGridButton.UseVisualStyleBackColor = true;
+            this.ClearAllFactorsFromGridButton.Click += new System.EventHandler(this.ClearAllFactorsFromGridButton_Click);
             // 
             // RemoveFactorFromGridButton
             // 
@@ -207,6 +208,7 @@ namespace RustabBot_v1._0
             this.RemoveFactorFromGridButton.TabIndex = 9;
             this.RemoveFactorFromGridButton.Text = "Удалить";
             this.RemoveFactorFromGridButton.UseVisualStyleBackColor = true;
+            this.RemoveFactorFromGridButton.Click += new System.EventHandler(this.RemoveFactorFromGridButton_Click);
             // 
             // AddFactorToGridButton
             // 
@@ -216,6 +218,7 @@ namespace RustabBot_v1._0
             this.AddFactorToGridButton.TabIndex = 8;
             this.AddFactorToGridButton.Text = "Добавить";
             this.AddFactorToGridButton.UseVisualStyleBackColor = true;
+            this.AddFactorToGridButton.Click += new System.EventHandler(this.AddFactorToGridButton_Click);
             // 
             // InfluentFactorMaxTextbox
             // 
@@ -277,6 +280,7 @@ namespace RustabBot_v1._0
             this.FactorTypeComboBox.Name = "FactorTypeComboBox";
             this.FactorTypeComboBox.Size = new System.Drawing.Size(180, 24);
             this.FactorTypeComboBox.TabIndex = 1;
+            this.FactorTypeComboBox.SelectedIndexChanged += new System.EventHandler(this.FactorTypeComboBox_SelectedIndexChanged);
             // 
             // FactorTypeLabel
             // 
@@ -573,6 +577,7 @@ namespace RustabBot_v1._0
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
             this.Text = "Расчёты ДУ с коррекцией траектории утяжеления";
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.TabPageCalc.ResumeLayout(false);
             this.TransientStabilityAnalysisGroupBox.ResumeLayout(false);
             this.InfluentFactorsGroupBox.ResumeLayout(false);

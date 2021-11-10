@@ -16,7 +16,27 @@ namespace Model
         private double _minValue;
         private double _maxValue;
         private double _currentValue;
-        protected int _numberFromRastr;
+        protected double _numberFromRastr;
+
+        /// <summary>
+        /// Тип фактора
+        /// </summary>
+        public abstract string FactorType { get; }
+
+        /// <summary>
+        /// Номер узла/сечения, в зависимости от типа ВФ 
+        /// </summary>
+        public double NumberFromRastr
+        {
+            get
+            {
+                return _numberFromRastr;
+            }
+            set
+            {
+                _numberFromRastr = value;
+            }
+        }
 
         public double MinValue
         {
@@ -50,35 +70,27 @@ namespace Model
             }
             set
             {
-                _currentValue = value;
+                _currentValue = Math.Round(value, 2);
             }
         }
-
-        /// <summary>
-        /// Номер узла/сечения, в зависимости от типа ВФ 
-        /// </summary>
-        public int NumberFromRastr
-        {
-            get
-            {
-                return _numberFromRastr;
-            }
-            set
-            {
-                _numberFromRastr = value;
-            }
-        }
-
-        /// <summary>
-        /// Тип фактора
-        /// </summary>
-        public abstract string FactorType { get; }
 
         public static bool IsInDiapasone(double minValue, double maxValue, double currentValue)
         {
             if (currentValue > maxValue || currentValue < minValue)
             {
                 return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public static bool IsMinMaxCorrect(double minValue, double maxValue)
+        {
+            if(minValue > maxValue || maxValue == minValue)
+            {
+                throw new Exception("Проверьте ввод максимального и минимального значения диапазона!");
             }
             else
             {
