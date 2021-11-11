@@ -107,6 +107,7 @@ namespace RustabBot_v1._0
             this.ResearchingSchComboBox.Name = "ResearchingSchComboBox";
             this.ResearchingSchComboBox.Size = new System.Drawing.Size(284, 24);
             this.ResearchingSchComboBox.TabIndex = 5;
+            this.ResearchingSchComboBox.SelectedIndexChanged += new System.EventHandler(this.ResearchingSchComboBox_SelectedIndexChanged);
             // 
             // TrajectoryGeneratorsSearchTextBox
             // 
@@ -187,6 +188,7 @@ namespace RustabBot_v1._0
             this.SchInfluentFactorComboBox.Name = "SchInfluentFactorComboBox";
             this.SchInfluentFactorComboBox.Size = new System.Drawing.Size(284, 24);
             this.SchInfluentFactorComboBox.TabIndex = 15;
+            this.SchInfluentFactorComboBox.SelectedIndexChanged += new System.EventHandler(this.SchInfluentFactorComboBox_SelectedIndexChanged);
             // 
             // SchInfluentFactorLabel
             // 

@@ -13,8 +13,14 @@ using Model.InfluentFactors;
 
 namespace RustabBot_v1._0
 {
+    /// <summary>
+    /// Класс MainForm
+    /// </summary>
     public partial class MainForm : Form
     {
+        /// <summary>
+        /// Экземпляр класса RastrSupplier для операций над данными из таблиц RastrWin
+        /// </summary>
         private RastrSupplier _rastrSupplier = new RastrSupplier();
 
         /// <summary>
@@ -28,8 +34,14 @@ namespace RustabBot_v1._0
 		private BindingList<InfluentFactorBase> _factorList =
             new BindingList<InfluentFactorBase>();
 
-        //Списки, хранящие номера узлов и сечений из файлов rst и sch
+        /// <summary>
+		/// Спискок, хранящий номера узлов из файла rst 
+		/// </summary>
         public List<int> numbersOfNodesFromRastr = new List<int>();
+
+        /// <summary>
+		/// Спискок, хранящий номера сечений из файла sch
+		/// </summary>
         public List<int> numbersOfSectionsFromRastr = new List<int>();
 
         /// <summary>
@@ -55,6 +67,9 @@ namespace RustabBot_v1._0
             }
         }
 
+        /// <summary>
+        /// Главная форма
+        /// </summary>
         public MainForm()
         {
             InitializeComponent();
@@ -130,6 +145,9 @@ namespace RustabBot_v1._0
             };
         }
 
+        /// <summary>
+        /// Событие при нажатии кнопки "вручную"
+        /// </summary>
         private void ByHandRadioButton_MouseClick(object sender, MouseEventArgs e)
         {
             FromFileRadioButton.Checked = false;
@@ -139,6 +157,9 @@ namespace RustabBot_v1._0
             InfoAboutTrajectoryLabel.Visible = true;
         }
 
+        /// <summary>
+        /// Событие при нажатии кнопки "из файла"
+        /// </summary>
         private void FromFileRadioButton_MouseClick(object sender, MouseEventArgs e)
         {
             FromFileRadioButton.Checked = true;
@@ -148,19 +169,27 @@ namespace RustabBot_v1._0
             InfoAboutTrajectoryLabel.Visible = false;
         }
 
+        /// <summary>
+        /// Событие при нажатии на кнопку "Настройка траектории"
+        /// </summary>
         private void TrajectorySettingsButton_Click(object sender, EventArgs e)
         {
             var trajectorySettings = new TrajectorySettingsForm(numbersOfSectionsFromRastr, numbersOfNodesFromRastr);
             trajectorySettings.Show();
         }
 
+        /// <summary>
+        /// Событие при нажатии на кнопку "Подключение к БД"
+        /// </summary>
         private void DBConnectionButton_Click(object sender, EventArgs e)
         {
             var dbconnection = new DBConnectionForm();
             dbconnection.Show();
         }
 
-        // Открытие диалогового окна, выбор и загрузка файла и запись его пути в Текстбокс
+        /// <summary>
+        ///  Открытие диалогового окна, выбор и загрузка файла и запись его пути в Текстбокс
+        /// </summary>
         public void LoadInitialFile(string openFileDialogFilter, OpenFileDialog openFileDialog, 
             TextBox textbox, RastrSupplier rastrSupplier, string shablon)
         {
@@ -184,6 +213,10 @@ namespace RustabBot_v1._0
         }
 
         // Загрузка самого файла rst!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        /// <summary>
+        /// Загрузка файла определенного формата
+        /// И заполнение списка с узлами
+        /// </summary>
         private void LoadRstButton_Click(object sender, EventArgs e)
         {
             string RstFilter = "Файл динамики (*.rg2)|*.rg2";

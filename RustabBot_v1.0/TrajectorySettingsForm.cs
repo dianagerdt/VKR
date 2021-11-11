@@ -77,5 +77,17 @@ namespace RustabBot_v1._0
                 GeneratorsFromFileListBox.Items.Add(number);
             }
         }
+
+        private void SchInfluentFactorComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SchInfluentFactorComboBox.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            SchInfluentFactorComboBox.AutoCompleteSource = AutoCompleteSource.ListItems;
+        }
+
+        private void ResearchingSchComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ResearchingSchComboBox.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            ResearchingSchComboBox.AutoCompleteSource = AutoCompleteSource.ListItems;
+        }
     }
 }
