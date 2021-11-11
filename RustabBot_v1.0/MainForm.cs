@@ -63,7 +63,7 @@ namespace RustabBot_v1._0
             ByHandRadioButton.Checked = false;
             LoadTrajectoryTextBox.Visible = true;
             LoadTrajectoryButton.Visible = true;
-            TrajectorySettingsButton.Visible = false;
+            InfoAboutTrajectoryLabel.Visible = false;
 
             //Вторая вкладка
 
@@ -136,7 +136,7 @@ namespace RustabBot_v1._0
             ByHandRadioButton.Checked = true;
             LoadTrajectoryTextBox.Visible = false;
             LoadTrajectoryButton.Visible = false;
-            TrajectorySettingsButton.Visible = true;
+            InfoAboutTrajectoryLabel.Visible = true;
         }
 
         private void FromFileRadioButton_MouseClick(object sender, MouseEventArgs e)
@@ -145,12 +145,12 @@ namespace RustabBot_v1._0
             ByHandRadioButton.Checked = false;
             LoadTrajectoryTextBox.Visible = true;
             LoadTrajectoryButton.Visible = true;
-            TrajectorySettingsButton.Visible = false;
+            InfoAboutTrajectoryLabel.Visible = false;
         }
 
         private void TrajectorySettingsButton_Click(object sender, EventArgs e)
         {
-            var trajectorySettings = new TrajectorySettingsForm();
+            var trajectorySettings = new TrajectorySettingsForm(numbersOfSectionsFromRastr, numbersOfNodesFromRastr);
             trajectorySettings.Show();
         }
 

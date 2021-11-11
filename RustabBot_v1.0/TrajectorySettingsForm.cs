@@ -12,7 +12,11 @@ namespace RustabBot_v1._0
 {
     public partial class TrajectorySettingsForm : Form
     {
-        public TrajectorySettingsForm()
+        public List<int> numbersOfSectionsFromRastrCopy;
+
+        public List<int> numbersOfNodesFromRastrCopy;
+
+        public TrajectorySettingsForm(List<int> numbersOfSectionsFromRastr, List<int> numbersOfNodesFromRastr)
         {
             InitializeComponent();
             StartPosition = FormStartPosition.CenterScreen;
@@ -21,6 +25,11 @@ namespace RustabBot_v1._0
             ResearchingSchComboBox.Visible = false;
             SchInfluentFactorLabel.Visible = false;
             SchInfluentFactorComboBox.Visible = false;
+            ChooseGenOfResearchingSection.Visible = false;
+            ChooseGenOfInfluentSection.Visible = false;
+
+            numbersOfSectionsFromRastrCopy = numbersOfSectionsFromRastr;
+            numbersOfNodesFromRastrCopy = numbersOfNodesFromRastr;
         }
 
         private void button5_Click(object sender, EventArgs e)
@@ -38,6 +47,8 @@ namespace RustabBot_v1._0
                         ResearchingSchComboBox.Visible = true;
                         SchInfluentFactorLabel.Visible = false;
                         SchInfluentFactorComboBox.Visible = false;
+                        ChooseGenOfResearchingSection.Visible = true;
+                        ChooseGenOfInfluentSection.Visible = false;
                         break;
                     }
                 case 1:
@@ -46,6 +57,8 @@ namespace RustabBot_v1._0
                         ResearchingSchComboBox.Visible = false;
                         SchInfluentFactorLabel.Visible = true;
                         SchInfluentFactorComboBox.Visible = true;
+                        ChooseGenOfResearchingSection.Visible = false;
+                        ChooseGenOfInfluentSection.Visible = true;
                         break;
                     }
             }
@@ -54,6 +67,15 @@ namespace RustabBot_v1._0
         private void TrajectorySettingsForm_Load(object sender, EventArgs e)
         {
             DataGridViewTools.CreateTableForTrajectory(ChosenGeneratorsForTrajectoryData);
+
+            SchInfluentFactorComboBox.DataSource = numbersOfSectionsFromRastrCopy;
+            ResearchingSchComboBox.DataSource = numbersOfSectionsFromRastrCopy;
+
+            GeneratorsFromFileListBox.SelectionMode = SelectionMode.MultiSimple;
+            foreach (var number in numbersOfNodesFromRastrCopy)
+            {
+                GeneratorsFromFileListBox.Items.Add(number);
+            }
         }
     }
 }
