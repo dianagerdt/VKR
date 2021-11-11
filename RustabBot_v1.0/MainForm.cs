@@ -28,11 +28,21 @@ namespace RustabBot_v1._0
 		private BindingList<InfluentFactorBase> _factorList =
             new BindingList<InfluentFactorBase>();
 
+        //Списки, хранящие номера узлов и сечений из файлов rst и sch
+        public List<int> numbersOfNodesFromRastr = new List<int>();
+        public List<int> numbersOfSectionsFromRastr = new List<int>();
+
         /// <summary>
         /// Словарь для сопоставления TextBox и Action
         /// </summary>
         private readonly Dictionary<TextBox,
-            Action<InfluentFactorBase, double>> _textBoxValidationAction;
+            Action<InfluentFactorBase, double>> _textBoxValidationActionForMinMax;
+
+        /// <summary>
+        /// Словарь для сопоставления TextBox и Action
+        /// </summary>
+        private readonly Dictionary<ComboBox,
+            Action<InfluentFactorBase, int>> _textBoxValidationActionForNumber;
 
         /// <summary>
         /// Свойство для вывода данных о факторе
@@ -55,31 +65,10 @@ namespace RustabBot_v1._0
             LoadTrajectoryButton.Visible = true;
             TrajectorySettingsButton.Visible = false;
 
-            InfluentFactorsDataGridView.AllowUserToAddRows = false;
-            InfluentFactorsDataGridView.RowHeadersVisible = false;
-
             //Вторая вкладка
 
-            _textBoxValidationAction = new Dictionary<TextBox, Action<InfluentFactorBase, double>>
+            _textBoxValidationActionForMinMax = new Dictionary<TextBox, Action<InfluentFactorBase, double>>
             {
-                {
-                    InfluentFactorNumTextBox,
-                    (factor, value) =>
-                    {
-                        if (factor is LoadFactor loadFactor)
-                        {
-                            loadFactor.NumberFromRastr = value;
-                        }
-                        else if (factor is SectionFactor sectionFactor)
-                        {
-                            sectionFactor.NumberFromRastr = value;
-                        }
-                        else if (factor is VoltageFactor voltageFactor)
-                        {
-                            voltageFactor.NumberFromRastr = value;
-                        }
-                    }
-                },
                 {
                     InfluentFactorMinTextBox,
                     (factor, value) =>
@@ -116,6 +105,28 @@ namespace RustabBot_v1._0
                         }
                     }
                 }
+            };
+
+            _textBoxValidationActionForNumber = new Dictionary<ComboBox, Action<InfluentFactorBase, int>>
+            {
+                {
+                    InfluentFactorNumCombobox,
+                    (factor, value) =>
+                    {
+                        if (factor is LoadFactor loadFactor)
+                        {
+                            loadFactor.NumberFromRastr = value;
+                        }
+                        else if (factor is SectionFactor sectionFactor)
+                        {
+                            sectionFactor.NumberFromRastr = value;
+                        }
+                        else if (factor is VoltageFactor voltageFactor)
+                        {
+                            voltageFactor.NumberFromRastr = value;
+                        }
+                    }
+                },
             };
         }
 
@@ -178,6 +189,7 @@ namespace RustabBot_v1._0
             string RstFilter = "Файл динамики (*.rg2)|*.rg2";
             string shablon = @"../../Resources/режим.rg2";
             LoadInitialFile(RstFilter, RstOpenFileDialog, LoadRstTextBox, _rastrSupplier, shablon);
+            RastrSupplier.FillListOfNumbersFromRastr(numbersOfNodesFromRastr, "node", "ny");
         }
 
         private void LoadSchButton_Click(object sender, EventArgs e)
@@ -185,6 +197,7 @@ namespace RustabBot_v1._0
             string SchFilter = "Файл сечения (*.sch)|*.sch";
             string shablon = @"../../Resources/сечения.sch";
             LoadInitialFile(SchFilter, SchOpenFileDialog, LoadSchTextBox, _rastrSupplier, shablon);
+            RastrSupplier.FillListOfNumbersFromRastr(numbersOfSectionsFromRastr, "sechen", "ns");
         }
 
         private void LoadDfwButton_Click(object sender, EventArgs e)
@@ -239,16 +252,22 @@ namespace RustabBot_v1._0
                 case 0:
                     {
                         _factor = new VoltageFactor();
+                        InfluentFactorNumCombobox.DataSource = numbersOfNodesFromRastr;
+                        InfluentFactorNumCombobox.Text = "";
                         break;
                     }
                 case 1:
                     {
                         _factor = new SectionFactor();
+                        InfluentFactorNumCombobox.DataSource = numbersOfSectionsFromRastr;
+                        InfluentFactorNumCombobox.Text = "";
                         break;
                     }
                 case 2:
                     {
                         _factor = new LoadFactor();
+                        InfluentFactorNumCombobox.DataSource = numbersOfNodesFromRastr;
+                        InfluentFactorNumCombobox.Text = "";
                         break;
                     }
             }
@@ -275,7 +294,7 @@ namespace RustabBot_v1._0
                 new Action(() =>
                 {
                     newVoltageFactor.NumberFromRastr =
-                    Convert.ToDouble(InfluentFactorNumTextBox.Text);
+                    Convert.ToInt32(InfluentFactorNumCombobox.Text);
                 }),
                 new Action(() =>
                 {
@@ -290,7 +309,7 @@ namespace RustabBot_v1._0
                 new Action(() =>
                 {
                     newVoltageFactor.CurrentValue =
-                    RastrSupplier.GetValue("node", "ny", Convert.ToInt32(InfluentFactorNumTextBox.Text), "vras");
+                    RastrSupplier.GetValue("node", "ny", Convert.ToInt32(InfluentFactorNumCombobox.Text), "vras");
                 })
             };
             actions.ForEach(SetValue);
@@ -310,7 +329,7 @@ namespace RustabBot_v1._0
                 new Action(() =>
                 {
                     newSectionFactor.NumberFromRastr =
-                    Convert.ToDouble(InfluentFactorNumTextBox.Text);
+                    Convert.ToInt32(InfluentFactorNumCombobox.Text);
                 }),
                 new Action(() =>
                 {
@@ -325,7 +344,7 @@ namespace RustabBot_v1._0
                 new Action(() =>
                 {
                     newSectionFactor.CurrentValue =
-                    RastrSupplier.GetValue("sechen", "ns", Convert.ToInt32(InfluentFactorNumTextBox.Text), "psech");
+                    RastrSupplier.GetValue("sechen", "ns", Convert.ToInt32(InfluentFactorNumCombobox.Text), "psech");
                 })
             };
             actions.ForEach(SetValue);
@@ -345,7 +364,7 @@ namespace RustabBot_v1._0
                 new Action(() =>
                 {
                     newLoadFactor.NumberFromRastr =
-                    Convert.ToDouble(InfluentFactorNumTextBox.Text);
+                    Convert.ToInt32(InfluentFactorNumCombobox.Text);
                 }),
                 new Action(() =>
                 {
@@ -360,7 +379,7 @@ namespace RustabBot_v1._0
                 new Action(() =>
                 {
                     newLoadFactor.CurrentValue =
-                    RastrSupplier.GetValue("node", "ny", Convert.ToInt32(InfluentFactorNumTextBox.Text), "pn");
+                    RastrSupplier.GetValue("node", "ny", Convert.ToInt32(InfluentFactorNumCombobox.Text), "pn");
                 })
             };
             actions.ForEach(SetValue);
@@ -420,7 +439,7 @@ namespace RustabBot_v1._0
                     "Пожалуйста, проверьте исходные данные.",
                     "Ошибка",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
-                InfluentFactorNumTextBox.Clear();
+                InfluentFactorNumCombobox.Text = "";
                 InfluentFactorMinTextBox.Clear();
                 InfluentFactorMaxTextbox.Clear();
             }
@@ -438,6 +457,13 @@ namespace RustabBot_v1._0
         private void ClearAllFactorsFromGridButton_Click(object sender, EventArgs e)
         {
             _factorList.Clear();
+        }
+
+        private void InfluentFactorNumCombobox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            InfluentFactorNumCombobox.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            InfluentFactorNumCombobox.AutoCompleteSource = AutoCompleteSource.ListItems;
+
         }
     }
 }

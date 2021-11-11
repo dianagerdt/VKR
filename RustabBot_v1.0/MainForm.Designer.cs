@@ -38,6 +38,7 @@ namespace RustabBot_v1._0
             this.StartCalcButton = new System.Windows.Forms.Button();
             this.ProtocolListBox = new System.Windows.Forms.ListBox();
             this.InfluentFactorsGroupBox = new System.Windows.Forms.GroupBox();
+            this.InfluentFactorNumCombobox = new System.Windows.Forms.ComboBox();
             this.InfluentFactorsDataGridView = new System.Windows.Forms.DataGridView();
             this.ClearAllFactorsFromGridButton = new System.Windows.Forms.Button();
             this.RemoveFactorFromGridButton = new System.Windows.Forms.Button();
@@ -46,7 +47,6 @@ namespace RustabBot_v1._0
             this.InfluentFactorMax = new System.Windows.Forms.Label();
             this.InfluentFactorMinTextBox = new System.Windows.Forms.TextBox();
             this.InfluentFactorMinLabel = new System.Windows.Forms.Label();
-            this.InfluentFactorNumTextBox = new System.Windows.Forms.TextBox();
             this.InfluentFactorNumLabel = new System.Windows.Forms.Label();
             this.FactorTypeComboBox = new System.Windows.Forms.ComboBox();
             this.FactorTypeLabel = new System.Windows.Forms.Label();
@@ -161,6 +161,7 @@ namespace RustabBot_v1._0
             // 
             // InfluentFactorsGroupBox
             // 
+            this.InfluentFactorsGroupBox.Controls.Add(this.InfluentFactorNumCombobox);
             this.InfluentFactorsGroupBox.Controls.Add(this.InfluentFactorsDataGridView);
             this.InfluentFactorsGroupBox.Controls.Add(this.ClearAllFactorsFromGridButton);
             this.InfluentFactorsGroupBox.Controls.Add(this.RemoveFactorFromGridButton);
@@ -169,7 +170,6 @@ namespace RustabBot_v1._0
             this.InfluentFactorsGroupBox.Controls.Add(this.InfluentFactorMax);
             this.InfluentFactorsGroupBox.Controls.Add(this.InfluentFactorMinTextBox);
             this.InfluentFactorsGroupBox.Controls.Add(this.InfluentFactorMinLabel);
-            this.InfluentFactorsGroupBox.Controls.Add(this.InfluentFactorNumTextBox);
             this.InfluentFactorsGroupBox.Controls.Add(this.InfluentFactorNumLabel);
             this.InfluentFactorsGroupBox.Controls.Add(this.FactorTypeComboBox);
             this.InfluentFactorsGroupBox.Controls.Add(this.FactorTypeLabel);
@@ -179,6 +179,15 @@ namespace RustabBot_v1._0
             this.InfluentFactorsGroupBox.TabIndex = 0;
             this.InfluentFactorsGroupBox.TabStop = false;
             this.InfluentFactorsGroupBox.Text = "Влияющие факторы";
+            // 
+            // InfluentFactorNumCombobox
+            // 
+            this.InfluentFactorNumCombobox.FormattingEnabled = true;
+            this.InfluentFactorNumCombobox.Location = new System.Drawing.Point(194, 50);
+            this.InfluentFactorNumCombobox.Name = "InfluentFactorNumCombobox";
+            this.InfluentFactorNumCombobox.Size = new System.Drawing.Size(145, 24);
+            this.InfluentFactorNumCombobox.TabIndex = 12;
+            this.InfluentFactorNumCombobox.SelectedIndexChanged += new System.EventHandler(this.InfluentFactorNumCombobox_SelectedIndexChanged);
             // 
             // InfluentFactorsDataGridView
             // 
@@ -251,13 +260,6 @@ namespace RustabBot_v1._0
             this.InfluentFactorMinLabel.Size = new System.Drawing.Size(68, 17);
             this.InfluentFactorMinLabel.TabIndex = 4;
             this.InfluentFactorMinLabel.Text = "Минимум";
-            // 
-            // InfluentFactorNumTextBox
-            // 
-            this.InfluentFactorNumTextBox.Location = new System.Drawing.Point(195, 50);
-            this.InfluentFactorNumTextBox.Name = "InfluentFactorNumTextBox";
-            this.InfluentFactorNumTextBox.Size = new System.Drawing.Size(141, 22);
-            this.InfluentFactorNumTextBox.TabIndex = 3;
             // 
             // InfluentFactorNumLabel
             // 
@@ -627,7 +629,6 @@ namespace RustabBot_v1._0
         private System.Windows.Forms.Label InfluentFactorMax;
         private System.Windows.Forms.TextBox InfluentFactorMinTextBox;
         private System.Windows.Forms.Label InfluentFactorMinLabel;
-        private System.Windows.Forms.TextBox InfluentFactorNumTextBox;
         private System.Windows.Forms.Button ClearAllFactorsFromGridButton;
         private System.Windows.Forms.Button RemoveFactorFromGridButton;
         private System.Windows.Forms.Button AddFactorToGridButton;
@@ -646,6 +647,7 @@ namespace RustabBot_v1._0
         private System.Windows.Forms.OpenFileDialog ScnOpenFileDialog;
         private System.Windows.Forms.TextBox LoadScnTextBox;
         private System.Windows.Forms.ListBox LoadScnListBox;
+        private System.Windows.Forms.ComboBox InfluentFactorNumCombobox;
     }
 }
 

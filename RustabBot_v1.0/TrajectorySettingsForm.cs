@@ -50,5 +50,10 @@ namespace RustabBot_v1._0
                     }
             }
         }
+
+        private void TrajectorySettingsForm_Load(object sender, EventArgs e)
+        {
+            DataGridViewTools.CreateTableForTrajectory(ChosenGeneratorsForTrajectoryData);
+        }
     }
 }

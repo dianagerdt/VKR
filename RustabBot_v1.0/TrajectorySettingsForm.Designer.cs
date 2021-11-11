@@ -219,6 +219,7 @@ namespace RustabBot_v1._0
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "TrajectorySettingsForm";
             this.Text = "TrajectorySettingsForm";
+            this.Load += new System.EventHandler(this.TrajectorySettingsForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.ChosenGeneratorsForTrajectoryData)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

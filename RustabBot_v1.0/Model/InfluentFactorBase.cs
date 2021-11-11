@@ -16,7 +16,7 @@ namespace Model
         private double _minValue;
         private double _maxValue;
         private double _currentValue;
-        protected double _numberFromRastr;
+        protected int _numberFromRastr;
 
         /// <summary>
         /// Тип фактора
@@ -26,7 +26,7 @@ namespace Model
         /// <summary>
         /// Номер узла/сечения, в зависимости от типа ВФ 
         /// </summary>
-        public double NumberFromRastr
+        public int NumberFromRastr
         {
             get
             {
