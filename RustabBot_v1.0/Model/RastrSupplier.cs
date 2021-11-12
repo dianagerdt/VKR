@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,9 +18,14 @@ namespace Model
             _rastr.Load(RG_KOD.RG_REPL, filePath, shablon);
         }
 
-        public void SaveFile(string fileName)
+        public static void SaveFile(string fileName, string shablon)
         {
-            _rastr.Save(fileName, "");
+            _rastr.Save(fileName, shablon);
+        }
+
+        public static void CreateFile(string shablon)
+        {
+            _rastr.NewFile(shablon);
         }
 
         public static int GetIndexByNumber(string tableName, string parameterName, int number)
@@ -110,6 +116,33 @@ namespace Model
             {
                 numbersFromRastr.Add(column.get_ZN(index)); 
             }
+        }
+
+        // Сохраняет данные из таблицы в файл траектории утяжеления
+        public static void SaveToUt2FromDataGrid(DataTable dataTable)
+        {
+            string shablon = @"../../Resources/траектория утяжеления.ut2";
+
+            CreateFile(shablon);
+
+            ITable table = _rastr.Tables.Item("ut_node");
+
+            for (int j = 0; j < dataTable.Rows.Count; j++)
+            {
+                table.AddRow();
+                for (int i = 0; i < dataTable.Columns.Count; i++)
+                {
+                    ICol column = table.Cols.Item(dataTable.Columns[i].ColumnName);
+                    column.set_Z(j, dataTable.Rows[j][i]);
+                }
+            }
+        }
+
+        public static void LoadUt2ToDataGrid(DataTable dataTable)
+        {
+            ITable table = _rastr.Tables.Item("ut_node");
+
+            
         }
     }
 }

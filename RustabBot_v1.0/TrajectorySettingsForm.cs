@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Model;
 
 namespace RustabBot_v1._0
 {
@@ -16,7 +17,12 @@ namespace RustabBot_v1._0
 
         public List<int> numbersOfNodesFromRastrCopy;
 
-        public TrajectorySettingsForm(List<int> numbersOfSectionsFromRastr, List<int> numbersOfNodesFromRastr)
+        public RadioButton FromFileRadioButtonCopy;
+
+        public RadioButton ByHandRadioButtonCopy;
+
+        public TrajectorySettingsForm(List<int> numbersOfSectionsFromRastr, List<int> numbersOfNodesFromRastr, 
+            RadioButton FromFileRadioButton, RadioButton ByHandRadioButton)
         {
             InitializeComponent();
             StartPosition = FormStartPosition.CenterScreen;
@@ -30,6 +36,8 @@ namespace RustabBot_v1._0
 
             numbersOfSectionsFromRastrCopy = numbersOfSectionsFromRastr;
             numbersOfNodesFromRastrCopy = numbersOfNodesFromRastr;
+            FromFileRadioButtonCopy = FromFileRadioButton;
+            ByHandRadioButtonCopy = ByHandRadioButton;
         }
 
         private void button5_Click(object sender, EventArgs e)
@@ -76,6 +84,11 @@ namespace RustabBot_v1._0
             {
                 GeneratorsFromFileListBox.Items.Add(number);
             }
+
+            if (FromFileRadioButtonCopy.Checked == true)
+            {
+                RastrSupplier.LoadUt2ToDataGrid((DataTable)ChosenGeneratorsForTrajectoryData.DataSource);
+            }
         }
 
         private void SchInfluentFactorComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -88,6 +101,45 @@ namespace RustabBot_v1._0
         {
             ResearchingSchComboBox.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             ResearchingSchComboBox.AutoCompleteSource = AutoCompleteSource.ListItems;
+        }
+
+        private void ChosenGeneratorsForTrajectoryData_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            if(e.Exception != null && e.Context == DataGridViewDataErrorContexts.Commit)
+            {
+                MessageBox.Show(e.Exception.Message, "Ошибка!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void MakeTrajectoryByHandButton_Click(object sender, EventArgs e)
+        {
+            if (ByHandRadioButtonCopy.Checked == true) 
+            {
+                RastrSupplier.SaveToUt2FromDataGrid((DataTable)ChosenGeneratorsForTrajectoryData.DataSource);
+
+                string shablon = @"../../Resources/траектория утяжеления.ut2";
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.DefaultExt = "ut2";
+                saveFileDialog.Filter = "Файл траектории (*.ut2)|*.ut2";
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string filename = saveFileDialog.FileName;
+                    RastrSupplier.SaveFile(filename, shablon);
+                }
+                MessageBox.Show($"Файл с траекторией утяжеления сохранен в {saveFileDialog.FileName}."); 
+            }
+        }
+
+        private void ClearDataGridButton_Click(object sender, EventArgs e)
+        {
+            while (ChosenGeneratorsForTrajectoryData.Rows.Count > 1)
+            {
+                for (int i = 0; i < ChosenGeneratorsForTrajectoryData.Rows.Count - 1; i++)
+                {
+                    ChosenGeneratorsForTrajectoryData.Rows.Remove(ChosenGeneratorsForTrajectoryData.Rows[i]);
+                }
+            }
         }
     }
 }

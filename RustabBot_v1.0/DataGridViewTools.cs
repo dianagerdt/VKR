@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Model;
 using System.ComponentModel;
+using System.Data;
 
 namespace RustabBot_v1._0
 {
@@ -48,22 +49,39 @@ namespace RustabBot_v1._0
         public static void CreateTableForTrajectory(
             DataGridView dataGridView)
         {
-            var columnGenerator = new DataGridViewColumn();
-            var columnIncrement = new DataGridViewColumn();
+            // Создаем объект DataTable.
+            DataTable dt = new DataTable("Trajectory");
+            // Добавление столбцов в DataTable.
+            dt.Columns.Add("ny", typeof(int));
+            dt.Columns.Add("pn", typeof(double));
+            dt.Columns.Add("qn", typeof(double));
+            dt.Columns.Add("tg", typeof(bool));
+            dt.Columns.Add("pg", typeof(double));
+            dt.Columns.Add("qg", typeof(double));
 
-            columnGenerator.HeaderText = "Генератор";
-            columnGenerator.ReadOnly = true; //значение в этой колонке нельзя править
-            columnGenerator.Name = "columnGenerator"; //текстовое имя колонки, его можно использовать вместо обращений по индексу
-            columnGenerator.CellTemplate = new DataGridViewTextBoxCell(); //тип нашей колонки
+            dt.Columns[0].Caption = "Номер";
+            dt.Columns[1].Caption = "dP";
+            dt.Columns[2].Caption = "dQ";
+            dt.Columns[3].Caption = "Tg";
+            dt.Columns[4].Caption = "dP_ген";
+            dt.Columns[5].Caption = "dQ_ген";
 
-            columnIncrement.HeaderText = "Приращение";
-            columnIncrement.ReadOnly = false; //значение в этой колонке нельзя править
-            columnIncrement.Name = "columnIncrement"; //текстовое имя колонки, его можно использовать вместо обращений по индексу
-            columnIncrement.CellTemplate = new DataGridViewTextBoxCell(); //тип нашей колонки
+            // Номер должен быть уникальным
+            DataColumn[] unique_cols =
+            {
+                dt.Columns["ny"],
+            };
 
-            dataGridView.Columns.Add(columnGenerator);
-            dataGridView.Columns.Add(columnIncrement);
-            dataGridView.AllowUserToAddRows = false; //запрещаем пользователю самому добавлять строки
+            dt.Constraints.Add(new UniqueConstraint(unique_cols));
+
+            dataGridView.DataSource = dt;
+
+            foreach (DataGridViewColumn col in dataGridView.Columns)
+            {
+                col.HeaderText = dt.Columns[col.Name].Caption;
+            }
+
+            //dataGridView.AllowUserToAddRows = false; //запрещаем пользователю самому добавлять строки
             dataGridView.RowHeadersVisible = false;
 
             dataGridView.AutoSizeColumnsMode =
@@ -75,6 +93,7 @@ namespace RustabBot_v1._0
             dataGridView.SelectionMode =
                 DataGridViewSelectionMode.FullRowSelect;
         }
+
 
     }
 }
