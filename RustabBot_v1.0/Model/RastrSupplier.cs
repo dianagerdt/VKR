@@ -82,23 +82,23 @@ namespace Model
             columnItem.set_ZN(index, value);
         }
 
-        public static void Worsening (Rastr rastr)
+        public static void Worsening()
         {
             RastrRetCode kod, kd;
-            if (rastr.ut_Param[ParamUt.UT_FORM_P] == 0)
+            if (_rastr.ut_Param[ParamUt.UT_FORM_P] == 0)
             {
-                rastr.Tables.Item("ut_common").Cols.Item("tip").Z[0] = 0;
-                rastr.ut_FormControl();
-                rastr.ClearControl();
-                kod = rastr.step_ut("i");
+                _rastr.Tables.Item("ut_common").Cols.Item("tip").Z[0] = 0;
+                _rastr.ut_FormControl();
+                _rastr.ClearControl();
+                kod = _rastr.step_ut("i");
                 if (kod == 0)
                 {
                     do
                     {
-                        kd = rastr.step_ut("z");
-                        if (((kd == 0) && (rastr.ut_Param[ParamUt.UT_ADD_P] == 0)) || rastr.ut_Param[ParamUt.UT_TIP] == 1)
+                        kd = _rastr.step_ut("z");
+                        if (((kd == 0) && (_rastr.ut_Param[ParamUt.UT_ADD_P] == 0)) || _rastr.ut_Param[ParamUt.UT_TIP] == 1)
                         {
-                            rastr.AddControl(-1, "");
+                            _rastr.AddControl(-1, "");
                         }
                     }
                     while (kd == 0);
@@ -142,7 +142,35 @@ namespace Model
         {
             ITable table = _rastr.Tables.Item("ut_node");
 
-            
+            for (int i = 0; i < table.Count; i++)
+            {
+                dataTable.Rows.Add();
+
+                for (int k = 0; k < dataTable.Columns.Count; k++)
+                {
+                    for (int j = 0; j < table.Cols.Count; j++)
+                    {
+                        ICol column = table.Cols.Item(j);
+
+                        if (column.Name == dataTable.Columns[k].ColumnName)
+                        {
+                            dataTable.Rows[i][k] = column.get_Z(i);
+                        }
+                    }
+                }
+            }
+
+        }
+
+        public int HowManyRows()
+        {
+            int count = 0;
+            ITable table = _rastr.Tables.Item("ut_node");
+            for (int i = 0; i < table.Count; i++)
+            {
+                count++;
+            }
+            return count;
         }
     }
 }

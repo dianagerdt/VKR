@@ -174,8 +174,11 @@ namespace RustabBot_v1._0
         /// </summary>
         private void TrajectorySettingsButton_Click(object sender, EventArgs e)
         {
-            var trajectorySettings = new TrajectorySettingsForm(numbersOfSectionsFromRastr, numbersOfNodesFromRastr, FromFileRadioButton, ByHandRadioButton);
+            var trajectorySettings = new TrajectorySettingsForm(numbersOfSectionsFromRastr, 
+                numbersOfNodesFromRastr, FromFileRadioButton, ByHandRadioButton, _rastrSupplier);
+            
             trajectorySettings.Show();
+
         }
 
         /// <summary>

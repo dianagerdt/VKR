@@ -51,10 +51,11 @@ namespace RustabBot_v1._0
             this.FactorTypeComboBox = new System.Windows.Forms.ComboBox();
             this.FactorTypeLabel = new System.Windows.Forms.Label();
             this.TabPageFiles = new System.Windows.Forms.TabPage();
+            this.TrajectorySettingsButton = new System.Windows.Forms.Button();
             this.LoadScnListBox = new System.Windows.Forms.ListBox();
             this.DBConnectionButton = new System.Windows.Forms.Button();
             this.TrajectoryGroupBox = new System.Windows.Forms.GroupBox();
-            this.TrajectorySettingsButton = new System.Windows.Forms.Button();
+            this.InfoAboutTrajectoryLabel = new System.Windows.Forms.Label();
             this.LoadTrajectoryTextBox = new System.Windows.Forms.TextBox();
             this.FromFileRadioButton = new System.Windows.Forms.RadioButton();
             this.LoadTrajectoryButton = new System.Windows.Forms.Button();
@@ -80,7 +81,6 @@ namespace RustabBot_v1._0
             this.DfwOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.Ut2OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.ScnOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.InfoAboutTrajectoryLabel = new System.Windows.Forms.Label();
             this.TabPageCalc.SuspendLayout();
             this.TransientStabilityAnalysisGroupBox.SuspendLayout();
             this.InfluentFactorsGroupBox.SuspendLayout();
@@ -320,6 +320,16 @@ namespace RustabBot_v1._0
             this.TabPageFiles.Text = "Файлы";
             this.TabPageFiles.UseVisualStyleBackColor = true;
             // 
+            // TrajectorySettingsButton
+            // 
+            this.TrajectorySettingsButton.Location = new System.Drawing.Point(255, 577);
+            this.TrajectorySettingsButton.Name = "TrajectorySettingsButton";
+            this.TrajectorySettingsButton.Size = new System.Drawing.Size(200, 30);
+            this.TrajectorySettingsButton.TabIndex = 14;
+            this.TrajectorySettingsButton.Text = "Настройка траектории";
+            this.TrajectorySettingsButton.UseVisualStyleBackColor = true;
+            this.TrajectorySettingsButton.Click += new System.EventHandler(this.TrajectorySettingsButton_Click);
+            // 
             // LoadScnListBox
             // 
             this.LoadScnListBox.FormattingEnabled = true;
@@ -355,15 +365,14 @@ namespace RustabBot_v1._0
             this.TrajectoryGroupBox.TabStop = false;
             this.TrajectoryGroupBox.Text = "Траектория утяжеления";
             // 
-            // TrajectorySettingsButton
+            // InfoAboutTrajectoryLabel
             // 
-            this.TrajectorySettingsButton.Location = new System.Drawing.Point(255, 577);
-            this.TrajectorySettingsButton.Name = "TrajectorySettingsButton";
-            this.TrajectorySettingsButton.Size = new System.Drawing.Size(200, 30);
-            this.TrajectorySettingsButton.TabIndex = 14;
-            this.TrajectorySettingsButton.Text = "Настройка траектории";
-            this.TrajectorySettingsButton.UseVisualStyleBackColor = true;
-            this.TrajectorySettingsButton.Click += new System.EventHandler(this.TrajectorySettingsButton_Click);
+            this.InfoAboutTrajectoryLabel.AutoSize = true;
+            this.InfoAboutTrajectoryLabel.Location = new System.Drawing.Point(6, 73);
+            this.InfoAboutTrajectoryLabel.Name = "InfoAboutTrajectoryLabel";
+            this.InfoAboutTrajectoryLabel.Size = new System.Drawing.Size(450, 17);
+            this.InfoAboutTrajectoryLabel.TabIndex = 16;
+            this.InfoAboutTrajectoryLabel.Text = "Выполните настройку вручную (нажмите \"Настройка траектории\")";
             // 
             // LoadTrajectoryTextBox
             // 
@@ -570,15 +579,6 @@ namespace RustabBot_v1._0
             // ScnOpenFileDialog
             // 
             this.ScnOpenFileDialog.FileName = "ScnOpenFileDialog";
-            // 
-            // InfoAboutTrajectoryLabel
-            // 
-            this.InfoAboutTrajectoryLabel.AutoSize = true;
-            this.InfoAboutTrajectoryLabel.Location = new System.Drawing.Point(6, 73);
-            this.InfoAboutTrajectoryLabel.Name = "InfoAboutTrajectoryLabel";
-            this.InfoAboutTrajectoryLabel.Size = new System.Drawing.Size(450, 17);
-            this.InfoAboutTrajectoryLabel.TabIndex = 16;
-            this.InfoAboutTrajectoryLabel.Text = "Выполните настройку вручную (нажмите \"Настройка траектории\")";
             // 
             // MainForm
             // 

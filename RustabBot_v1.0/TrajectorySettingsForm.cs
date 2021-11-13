@@ -13,16 +13,19 @@ namespace RustabBot_v1._0
 {
     public partial class TrajectorySettingsForm : Form
     {
-        public List<int> numbersOfSectionsFromRastrCopy;
+        private List<int> numbersOfSectionsFromRastrCopy;
 
-        public List<int> numbersOfNodesFromRastrCopy;
+        private List<int> numbersOfNodesFromRastrCopy;
 
-        public RadioButton FromFileRadioButtonCopy;
+        private RadioButton FromFileRadioButtonCopy;
 
-        public RadioButton ByHandRadioButtonCopy;
+        private RadioButton ByHandRadioButtonCopy;
+
+        private RastrSupplier _rastrSupplierCopy;
+
 
         public TrajectorySettingsForm(List<int> numbersOfSectionsFromRastr, List<int> numbersOfNodesFromRastr, 
-            RadioButton FromFileRadioButton, RadioButton ByHandRadioButton)
+            RadioButton FromFileRadioButton, RadioButton ByHandRadioButton, RastrSupplier _rastrSupplier)
         {
             InitializeComponent();
             StartPosition = FormStartPosition.CenterScreen;
@@ -38,11 +41,7 @@ namespace RustabBot_v1._0
             numbersOfNodesFromRastrCopy = numbersOfNodesFromRastr;
             FromFileRadioButtonCopy = FromFileRadioButton;
             ByHandRadioButtonCopy = ByHandRadioButton;
-        }
-
-        private void button5_Click(object sender, EventArgs e)
-        {
-            this.Close();
+            _rastrSupplierCopy = _rastrSupplier;
         }
 
         private void GeneratorTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -88,6 +87,9 @@ namespace RustabBot_v1._0
             if (FromFileRadioButtonCopy.Checked == true)
             {
                 RastrSupplier.LoadUt2ToDataGrid((DataTable)ChosenGeneratorsForTrajectoryData.DataSource);
+                ChosenGeneratorsForTrajectoryData.ReadOnly = true;
+                ChooseGeneratorForTrajectoryButton.Visible = false;
+                RemoveGeneratorFromTrajectoryButton.Visible = false;
             }
         }
 
@@ -113,6 +115,7 @@ namespace RustabBot_v1._0
 
         private void MakeTrajectoryByHandButton_Click(object sender, EventArgs e)
         {
+            // если в главном меню выбрана опция вручную
             if (ByHandRadioButtonCopy.Checked == true) 
             {
                 RastrSupplier.SaveToUt2FromDataGrid((DataTable)ChosenGeneratorsForTrajectoryData.DataSource);
@@ -127,7 +130,15 @@ namespace RustabBot_v1._0
                     string filename = saveFileDialog.FileName;
                     RastrSupplier.SaveFile(filename, shablon);
                 }
-                MessageBox.Show($"Файл с траекторией утяжеления сохранен в {saveFileDialog.FileName}."); 
+                MessageBox.Show($"Файл с траекторией утяжеления сохранен в {saveFileDialog.FileName}.");
+                
+                DialogResult = DialogResult.OK;
+                _rastrSupplierCopy.LoadFile(saveFileDialog.FileName, shablon);
+                Close();
+            }
+            else if(FromFileRadioButtonCopy.Checked == true) //если из файла, то своя логика
+            {
+                Close();
             }
         }
 
@@ -140,6 +151,11 @@ namespace RustabBot_v1._0
                     ChosenGeneratorsForTrajectoryData.Rows.Remove(ChosenGeneratorsForTrajectoryData.Rows[i]);
                 }
             }
+        }
+
+        private void TrajectoryCancelButton_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }

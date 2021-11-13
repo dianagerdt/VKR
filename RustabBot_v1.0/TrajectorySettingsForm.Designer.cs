@@ -182,7 +182,7 @@ namespace RustabBot_v1._0
             this.TrajectoryCancelButton.TabIndex = 13;
             this.TrajectoryCancelButton.Text = "Отмена";
             this.TrajectoryCancelButton.UseVisualStyleBackColor = true;
-            this.TrajectoryCancelButton.Click += new System.EventHandler(this.button5_Click);
+            this.TrajectoryCancelButton.Click += new System.EventHandler(this.TrajectoryCancelButton_Click);
             // 
             // SchInfluentFactorComboBox
             // 
@@ -222,7 +222,7 @@ namespace RustabBot_v1._0
             // 
             // ClearDataGridButton
             // 
-            this.ClearDataGridButton.Location = new System.Drawing.Point(524, 379);
+            this.ClearDataGridButton.Location = new System.Drawing.Point(496, 379);
             this.ClearDataGridButton.Name = "ClearDataGridButton";
             this.ClearDataGridButton.Size = new System.Drawing.Size(119, 27);
             this.ClearDataGridButton.TabIndex = 18;
