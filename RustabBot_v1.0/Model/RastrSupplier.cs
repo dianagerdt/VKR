@@ -8,29 +8,50 @@ using ASTRALib;
 
 namespace Model
 {
-    // Связь с растром
+    /// <summary>
+    /// Класс, осуществляющий взаимодействие с RastrWin3
+    /// </summary>
     public class RastrSupplier
     {
+        /// <summary>
+        /// Экземпляр класса Rastr
+        /// </summary>
         private static Rastr _rastr = new Rastr();
 
+        /// <summary>
+        /// Загрузка файла в рабочую область 
+        /// </summary>
         public void LoadFile (string filePath, string shablon)
         {
             _rastr.Load(RG_KOD.RG_REPL, filePath, shablon);
         }
 
+        /// <summary>
+        /// Сохранение файла
+        /// </summary>
         public static void SaveFile(string fileName, string shablon)
         {
             _rastr.Save(fileName, shablon);
         }
 
+        /// <summary>
+        /// Создание файла с помощью загрузки шаблона
+        /// </summary>
         public static void CreateFile(string shablon)
         {
             _rastr.NewFile(shablon);
         }
 
+        /// <summary>
+        /// Узнать индекс из таблицы по номеру 
+        /// </summary>
+        /// <param name="tableName" - название таблицы, в которой ведется поиск></param>
+        /// <param name="parameterName" - название параметра, по которому ищется индекс></param>
+        /// <param name="number" - номер узла (может быть так же номером сечения)></param>
+
         public static int GetIndexByNumber(string tableName, string parameterName, int number)
         {
-            ITable table = _rastr.Tables.Item(tableName);
+            ITable table = _rastr.Tables.Item(tableName); 
             ICol columnItem = table.Cols.Item(parameterName);
 
             for (int index = 0; index < table.Count; index++)
@@ -40,11 +61,19 @@ namespace Model
                     return index;
                 }
             }
-
-            throw new Exception($"Узел с номером {number} не найден.");
+            throw new Exception($"Узел/сечение с номером {number} не найден(о).");
         }
 
-        public static double GetValue(string tableName, string parameterName, int number, string chosenParameter)
+        /// <summary>
+        /// Получить значение из любой ячейки любой таблицы
+        /// </summary>
+        /// <param name="tableName" - название таблицы, в которой ведется поиск></param>
+        /// <param name="parameterName" - название параметра, по которому ищется индекс></param>
+        /// <param name="number" - номер узла (может быть так же номером сечения)></param>
+        /// <param name="chosenParameter" - любой параметр, значение из ячеек которого нужно получить
+        /// (например, модуль текущего напряжения в узле)
+        public static double GetValue(string tableName, string parameterName, 
+            int number, string chosenParameter)
         {
             ITable table = _rastr.Tables.Item(tableName);
             ICol columnItem = table.Cols.Item(chosenParameter);
@@ -56,8 +85,7 @@ namespace Model
         /// <summary>
         /// Рассчитывает режим
         /// </summary>
-        /// <returns> Возвращает 
-        /// true - расчет завершен успешно,
+        /// <returns> Возвращает true - расчет завершен успешно,
         /// false - аварийное завершение расчета</returns>
         public static bool Regime()
         {
@@ -73,7 +101,11 @@ namespace Model
             }
         }
 
-        public static void SetValue(string tableName, string parameterName, int number, string chosenParameter, double value)
+        /// <summary>
+        /// Записывает желаемое значение в любую ячейку таблицы
+        /// </summary>
+        public static void SetValue(string tableName, string parameterName, int number, 
+            string chosenParameter, double value)
         {
             ITable table = _rastr.Tables.Item(tableName);
             ICol columnItem = table.Cols.Item(chosenParameter);
@@ -82,6 +114,9 @@ namespace Model
             columnItem.set_ZN(index, value);
         }
 
+        /// <summary>
+        /// Алгоритм утяжеления
+        /// </summary>
         public static void Worsening()
         {
             RastrRetCode kod, kd;
@@ -96,7 +131,8 @@ namespace Model
                     do
                     {
                         kd = _rastr.step_ut("z");
-                        if (((kd == 0) && (_rastr.ut_Param[ParamUt.UT_ADD_P] == 0)) || _rastr.ut_Param[ParamUt.UT_TIP] == 1)
+                        if (((kd == 0) && (_rastr.ut_Param[ParamUt.UT_ADD_P] == 0))
+                            || _rastr.ut_Param[ParamUt.UT_TIP] == 1)
                         {
                             _rastr.AddControl(-1, "");
                         }
@@ -106,8 +142,11 @@ namespace Model
             }
         }
 
-        //Возвращает список с номерами сечений/узлов из файла
-        public static void FillListOfNumbersFromRastr(List<int> numbersFromRastr, string tableName, string parameterName)
+        /// <summary>
+        /// Заполняет список номерами узлов/сечений из загруженного файла
+        /// </summary>
+        public static void FillListOfNumbersFromRastr(List<int> numbersFromRastr, 
+            string tableName, string parameterName)
         {
             ITable table = _rastr.Tables.Item(tableName);
             ICol column = table.Cols.Item(parameterName);
@@ -118,7 +157,10 @@ namespace Model
             }
         }
 
-        // Сохраняет данные из таблицы в файл траектории утяжеления
+        /// <summary>
+        /// Сохранение данных из таблицы DataTable по шаблону в 
+        /// файл формата ut2 (траектория утяжеления)
+        /// </summary>
         public static void SaveToUt2FromDataGrid(DataTable dataTable)
         {
             string shablon = @"../../Resources/траектория утяжеления.ut2";
@@ -138,6 +180,10 @@ namespace Model
             }
         }
 
+        /// <summary>
+        /// Записать загруженный файл с траекторией
+        /// утяжеления в DataTable
+        /// </summary>
         public static void LoadUt2ToDataGrid(DataTable dataTable)
         {
             ITable table = _rastr.Tables.Item("ut_node");
@@ -162,7 +208,7 @@ namespace Model
 
         }
 
-        public int HowManyRows()
+        /*public int HowManyRows()
         {
             int count = 0;
             ITable table = _rastr.Tables.Item("ut_node");
@@ -171,6 +217,6 @@ namespace Model
                 count++;
             }
             return count;
-        }
+        }*/
     }
 }

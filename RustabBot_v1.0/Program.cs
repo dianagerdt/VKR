@@ -6,6 +6,9 @@ using System.Windows.Forms;
 
 namespace RustabBot_v1._0
 {
+    /// <summary>
+    /// Класс Program
+    /// </summary>
     public static class Program
     {
         /// <summary>

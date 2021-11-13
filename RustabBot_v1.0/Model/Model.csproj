@@ -51,7 +51,6 @@
     <Compile Include="InfluentFactors\VoltageFactor.cs" />
     <Compile Include="RastrSupplier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TrajectoryMaker.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Model.InfluentFactors
 {
+    /// <summary>
+    /// Влияющий фактор - Переток в сечении
+    /// </summary>
     public class SectionFactor : InfluentFactorBase
     {
         /// <summary>

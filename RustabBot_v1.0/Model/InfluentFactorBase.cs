@@ -11,12 +11,37 @@ namespace Model
     /// </summary>
     public abstract class InfluentFactorBase
     {
+        /// <summary>
+        /// Экземпляр класса RastrSupplier для операций 
+        /// над данными из таблиц RastrWin
+        /// </summary>
         protected RastrSupplier _rastrSupplier = new RastrSupplier();
-
+        
+        /// <summary>
+        /// Нижняя граница для фактора
+        /// </summary>
         private double _minValue;
+
+        /// <summary>
+        /// Верхняя граница для фактора
+        /// </summary>
         private double _maxValue;
+
+        /// <summary>
+        /// Текущее значение фактора
+        /// </summary>
         private double _currentValue;
+
+        /// <summary>
+        /// Идентификатор из RastrWin
+        /// </summary>
         protected int _numberFromRastr;
+
+        /// <summary>
+        /// Начальное значение фактора (из RastrWin)
+        /// до расчётов
+        /// </summary>
+        private double _initialValue;
 
         /// <summary>
         /// Тип фактора
@@ -24,7 +49,7 @@ namespace Model
         public abstract string FactorType { get; }
 
         /// <summary>
-        /// Номер узла/сечения, в зависимости от типа ВФ 
+        /// Идентификатор из RastrWin
         /// </summary>
         public int NumberFromRastr
         {
@@ -38,6 +63,9 @@ namespace Model
             }
         }
 
+        /// <summary>
+        /// Нижняя граница для фактора
+        /// </summary>
         public double MinValue
         {
             get
@@ -50,6 +78,9 @@ namespace Model
             }
         }
 
+        /// <summary>
+        /// Верхняя граница для фактора
+        /// </summary>
         public double MaxValue
         {
             get
@@ -62,6 +93,24 @@ namespace Model
             }
         }
 
+        /// <summary>
+        /// Текущее значение фактора
+        /// </summary>
+        public double InitialValue
+        {
+            get
+            {
+                return _initialValue;
+            }
+            set
+            {
+                _initialValue = Math.Round(value, 2);
+            }
+        }
+
+        /// <summary>
+        /// Текущее значение фактора
+        /// </summary>
         public double CurrentValue
         {
             get
@@ -74,6 +123,10 @@ namespace Model
             }
         }
 
+        /// <summary>
+        /// Проверка, входят ли факторы в диапазон
+        /// сравнивается с текущим значением
+        /// </summary>
         public static bool IsInDiapasone(double minValue, double maxValue, double currentValue)
         {
             if (currentValue > maxValue || currentValue < minValue)
@@ -86,6 +139,9 @@ namespace Model
             }
         }
 
+        /// <summary>
+        /// Проверка, корректные ли границы диапазона ввёл пользователь
+        /// </summary>
         public static bool IsMinMaxCorrect(double minValue, double maxValue)
         {
             if(minValue > maxValue || maxValue == minValue)

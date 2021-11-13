@@ -10,6 +10,9 @@ using System.Data;
 
 namespace RustabBot_v1._0
 {
+    /// <summary>
+    /// Класс для манипуляций с таблицами 
+    /// </summary>
     public class DataGridViewTools
     {
         /// <summary>
@@ -17,9 +20,6 @@ namespace RustabBot_v1._0
         /// </summary>
         /// <param name="factors">Список факторов</param>
         /// <param name="dataGridView">Таблица с факторами</param>
-        /// <summary>
-        /// Метод создания таблицы 
-        /// </summary>
         public static void CreateTableForFactors(BindingList<InfluentFactorBase> factors,
             DataGridView dataGridView)
         {
@@ -30,6 +30,7 @@ namespace RustabBot_v1._0
             dataGridView.Columns[2].HeaderText = "Минимум";
             dataGridView.Columns[3].HeaderText = "Максимум";
             dataGridView.Columns[4].HeaderText = "Текущее значение";
+            dataGridView.Columns[5].Visible = false;
 
             dataGridView.AllowUserToAddRows = false;
             dataGridView.RowHeadersVisible = false;
@@ -45,13 +46,14 @@ namespace RustabBot_v1._0
             dataGridView.ReadOnly = true;
         }
 
-        
+        /// <summary>
+        /// Метод для создания таблицы для траектории утяжеления
+        /// </summary>
         public static void CreateTableForTrajectory(
             DataGridView dataGridView)
         {
-            // Создаем объект DataTable.
             DataTable dt = new DataTable("Trajectory");
-            // Добавление столбцов в DataTable.
+
             dt.Columns.Add("ny", typeof(int));
             dt.Columns.Add("pn", typeof(double));
             dt.Columns.Add("qn", typeof(double));
@@ -66,7 +68,6 @@ namespace RustabBot_v1._0
             dt.Columns[4].Caption = "dP_ген";
             dt.Columns[5].Caption = "dQ_ген";
 
-            // Номер должен быть уникальным
             DataColumn[] unique_cols =
             {
                 dt.Columns["ny"],
@@ -81,9 +82,7 @@ namespace RustabBot_v1._0
                 col.HeaderText = dt.Columns[col.Name].Caption;
             }
 
-            //dataGridView.AllowUserToAddRows = false; //запрещаем пользователю самому добавлять строки
             dataGridView.RowHeadersVisible = false;
-
             dataGridView.AutoSizeColumnsMode =
                DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView.DefaultCellStyle.Alignment =

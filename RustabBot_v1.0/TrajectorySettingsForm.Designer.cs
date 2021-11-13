@@ -42,7 +42,7 @@ namespace RustabBot_v1._0
             this.ChosenGeneratorsForTrajectoryData = new System.Windows.Forms.DataGridView();
             this.ChooseGeneratorForTrajectoryButton = new System.Windows.Forms.Button();
             this.RemoveGeneratorFromTrajectoryButton = new System.Windows.Forms.Button();
-            this.MakeTrajectoryByHandButton = new System.Windows.Forms.Button();
+            this.SetTrajectorySettingsButton = new System.Windows.Forms.Button();
             this.TrajectoryCancelButton = new System.Windows.Forms.Button();
             this.SchInfluentFactorComboBox = new System.Windows.Forms.ComboBox();
             this.SchInfluentFactorLabel = new System.Windows.Forms.Label();
@@ -164,15 +164,15 @@ namespace RustabBot_v1._0
             this.RemoveGeneratorFromTrajectoryButton.Text = "<<";
             this.RemoveGeneratorFromTrajectoryButton.UseVisualStyleBackColor = true;
             // 
-            // MakeTrajectoryByHandButton
+            // SetTrajectorySettingsButton
             // 
-            this.MakeTrajectoryByHandButton.Location = new System.Drawing.Point(371, 379);
-            this.MakeTrajectoryByHandButton.Name = "MakeTrajectoryByHandButton";
-            this.MakeTrajectoryByHandButton.Size = new System.Drawing.Size(119, 27);
-            this.MakeTrajectoryByHandButton.TabIndex = 12;
-            this.MakeTrajectoryByHandButton.Text = "ОК";
-            this.MakeTrajectoryByHandButton.UseVisualStyleBackColor = true;
-            this.MakeTrajectoryByHandButton.Click += new System.EventHandler(this.MakeTrajectoryByHandButton_Click);
+            this.SetTrajectorySettingsButton.Location = new System.Drawing.Point(371, 379);
+            this.SetTrajectorySettingsButton.Name = "SetTrajectorySettingsButton";
+            this.SetTrajectorySettingsButton.Size = new System.Drawing.Size(119, 27);
+            this.SetTrajectorySettingsButton.TabIndex = 12;
+            this.SetTrajectorySettingsButton.Text = "ОК";
+            this.SetTrajectorySettingsButton.UseVisualStyleBackColor = true;
+            this.SetTrajectorySettingsButton.Click += new System.EventHandler(this.SetTrajectorySettingsButton_Click);
             // 
             // TrajectoryCancelButton
             // 
@@ -241,7 +241,7 @@ namespace RustabBot_v1._0
             this.Controls.Add(this.SchInfluentFactorComboBox);
             this.Controls.Add(this.SchInfluentFactorLabel);
             this.Controls.Add(this.TrajectoryCancelButton);
-            this.Controls.Add(this.MakeTrajectoryByHandButton);
+            this.Controls.Add(this.SetTrajectorySettingsButton);
             this.Controls.Add(this.RemoveGeneratorFromTrajectoryButton);
             this.Controls.Add(this.ChooseGeneratorForTrajectoryButton);
             this.Controls.Add(this.ChosenGeneratorsForTrajectoryData);
@@ -278,7 +278,7 @@ namespace RustabBot_v1._0
         private System.Windows.Forms.DataGridView ChosenGeneratorsForTrajectoryData;
         private System.Windows.Forms.Button ChooseGeneratorForTrajectoryButton;
         private System.Windows.Forms.Button RemoveGeneratorFromTrajectoryButton;
-        private System.Windows.Forms.Button MakeTrajectoryByHandButton;
+        private System.Windows.Forms.Button SetTrajectorySettingsButton;
         private System.Windows.Forms.Button TrajectoryCancelButton;
         private System.Windows.Forms.ComboBox SchInfluentFactorComboBox;
         private System.Windows.Forms.Label SchInfluentFactorLabel;

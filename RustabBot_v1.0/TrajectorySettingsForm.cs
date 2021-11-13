@@ -11,19 +11,40 @@ using Model;
 
 namespace RustabBot_v1._0
 {
+    /// <summary>
+    /// Класс с настройками траектории утяжеления
+    /// </summary>
     public partial class TrajectorySettingsForm : Form
     {
+        /// <summary>
+        /// Список с сечениями из файла sch
+        /// </summary>
         private List<int> numbersOfSectionsFromRastrCopy;
 
+        /// <summary>
+        /// Список с узлами из файла rst
+        /// </summary>
         private List<int> numbersOfNodesFromRastrCopy;
 
+        /// <summary>
+        /// RadioButton "из файла" MainForm
+        /// </summary>
         private RadioButton FromFileRadioButtonCopy;
 
+        /// <summary>
+        /// RadioButton "вручную" MainForm
+        /// </summary>
         private RadioButton ByHandRadioButtonCopy;
 
+        /// <summary>
+        /// Экземпляр класса RastrSupplier для операций 
+        /// над данными из таблиц RastrWin
+        /// </summary>
         private RastrSupplier _rastrSupplierCopy;
 
-
+        /// <summary>
+        /// Форма с настройками траектории утяжеления
+        /// </summary>
         public TrajectorySettingsForm(List<int> numbersOfSectionsFromRastr, List<int> numbersOfNodesFromRastr, 
             RadioButton FromFileRadioButton, RadioButton ByHandRadioButton, RastrSupplier _rastrSupplier)
         {
@@ -44,33 +65,42 @@ namespace RustabBot_v1._0
             _rastrSupplierCopy = _rastrSupplier;
         }
 
+        /// <summary>
+        /// Событие при выборе типа генераторов
+        /// </summary>
         private void GeneratorTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             switch(GeneratorTypeComboBox.SelectedIndex)
             {
                 case 0:
-                    {
-                        ResearchingSchLabel.Visible = true;
-                        ResearchingSchComboBox.Visible = true;
-                        SchInfluentFactorLabel.Visible = false;
-                        SchInfluentFactorComboBox.Visible = false;
-                        ChooseGenOfResearchingSection.Visible = true;
-                        ChooseGenOfInfluentSection.Visible = false;
-                        break;
-                    }
+                {
+                    ResearchingSchLabel.Visible = true;
+                    ResearchingSchComboBox.Visible = true;
+                    SchInfluentFactorLabel.Visible = false;
+                    SchInfluentFactorComboBox.Visible = false;
+                    ChooseGenOfResearchingSection.Visible = true;
+                    ChooseGenOfInfluentSection.Visible = false;
+                    break;
+                }
                 case 1:
-                    {
-                        ResearchingSchLabel.Visible = false;
-                        ResearchingSchComboBox.Visible = false;
-                        SchInfluentFactorLabel.Visible = true;
-                        SchInfluentFactorComboBox.Visible = true;
-                        ChooseGenOfResearchingSection.Visible = false;
-                        ChooseGenOfInfluentSection.Visible = true;
-                        break;
-                    }
+                {
+                    ResearchingSchLabel.Visible = false;
+                    ResearchingSchComboBox.Visible = false;
+                    SchInfluentFactorLabel.Visible = true;
+                    SchInfluentFactorComboBox.Visible = true;
+                    ChooseGenOfResearchingSection.Visible = false;
+                    ChooseGenOfInfluentSection.Visible = true;
+                    break;
+                }
             }
         }
 
+        /// <summary>
+        /// Событие при загрузке формы
+        /// Создается таблица по заготовленой схеме
+        /// Если траектория была ранее загружена из файла, она 
+        /// отобразиться в dataGridView
+        /// </summary>
         private void TrajectorySettingsForm_Load(object sender, EventArgs e)
         {
             DataGridViewTools.CreateTableForTrajectory(ChosenGeneratorsForTrajectoryData);
@@ -86,25 +116,45 @@ namespace RustabBot_v1._0
 
             if (FromFileRadioButtonCopy.Checked == true)
             {
-                RastrSupplier.LoadUt2ToDataGrid((DataTable)ChosenGeneratorsForTrajectoryData.DataSource);
-                ChosenGeneratorsForTrajectoryData.ReadOnly = true;
-                ChooseGeneratorForTrajectoryButton.Visible = false;
-                RemoveGeneratorFromTrajectoryButton.Visible = false;
+                try
+                {
+                    RastrSupplier.LoadUt2ToDataGrid((DataTable)ChosenGeneratorsForTrajectoryData.DataSource);
+                    ChosenGeneratorsForTrajectoryData.ReadOnly = true;
+                    ChooseGeneratorForTrajectoryButton.Visible = false;
+                    RemoveGeneratorFromTrajectoryButton.Visible = false;
+                }
+                catch 
+                {
+                    MessageBox.Show("Прежде чем приступить к настройке траектории, " +
+                        "загрузите файл формата *.ut2 или выберите опцию задания вручную.", 
+                        "Загрузите файл траектории!", 
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Close();
+                }
             }
         }
 
+        /// <summary>
+        /// Событие при нажатии на Combobox с выбором сечения - фактора
+        /// </summary>
         private void SchInfluentFactorComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             SchInfluentFactorComboBox.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             SchInfluentFactorComboBox.AutoCompleteSource = AutoCompleteSource.ListItems;
         }
 
+        /// <summary>
+        /// Событие при нажатии на Combobox с выбором исследуемого сечения
+        /// </summary>
         private void ResearchingSchComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             ResearchingSchComboBox.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             ResearchingSchComboBox.AutoCompleteSource = AutoCompleteSource.ListItems;
         }
 
+        /// <summary>
+        /// Обработчик исключения для DataGridView
+        /// </summary>
         private void ChosenGeneratorsForTrajectoryData_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
             if(e.Exception != null && e.Context == DataGridViewDataErrorContexts.Commit)
@@ -113,9 +163,14 @@ namespace RustabBot_v1._0
             }
         }
 
-        private void MakeTrajectoryByHandButton_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Событие при нажатии на кнопку "ОК"
+        /// Если выбрана опция "сформировать траекторию вручную",
+        /// система инициализирует сохранение в желаемую директорию
+        /// и подгрузит этот файл в экземпляр класса RastrSupplier для дальнейших расчётов
+        /// </summary>
+        private void SetTrajectorySettingsButton_Click(object sender, EventArgs e)
         {
-            // если в главном меню выбрана опция вручную
             if (ByHandRadioButtonCopy.Checked == true) 
             {
                 RastrSupplier.SaveToUt2FromDataGrid((DataTable)ChosenGeneratorsForTrajectoryData.DataSource);
@@ -136,12 +191,15 @@ namespace RustabBot_v1._0
                 _rastrSupplierCopy.LoadFile(saveFileDialog.FileName, shablon);
                 Close();
             }
-            else if(FromFileRadioButtonCopy.Checked == true) //если из файла, то своя логика
+            else if(FromFileRadioButtonCopy.Checked == true) 
             {
                 Close();
             }
         }
 
+        /// <summary>
+        /// Полностью очистить таблицу
+        /// </summary>
         private void ClearDataGridButton_Click(object sender, EventArgs e)
         {
             while (ChosenGeneratorsForTrajectoryData.Rows.Count > 1)
@@ -153,6 +211,9 @@ namespace RustabBot_v1._0
             }
         }
 
+        /// <summary>
+        /// Закрыть форму
+        /// </summary>
         private void TrajectoryCancelButton_Click(object sender, EventArgs e)
         {
             Close();

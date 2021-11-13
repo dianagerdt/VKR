@@ -7,6 +7,9 @@ using ASTRALib;
 
 namespace Model.InfluentFactors
 {
+    /// <summary>
+    /// Влияющий фактор - Напряжение в узле
+    /// </summary>
     public class VoltageFactor : InfluentFactorBase
     {
         /// <summary>

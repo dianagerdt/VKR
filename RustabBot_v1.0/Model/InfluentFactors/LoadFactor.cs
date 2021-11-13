@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Model.InfluentFactors
 {
+    /// <summary>
+    /// Влияющий фактор - Нагрузка
+    /// </summary>
     public class LoadFactor : InfluentFactorBase
     {
         /// <summary>

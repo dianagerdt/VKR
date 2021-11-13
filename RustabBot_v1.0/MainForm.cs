@@ -19,7 +19,9 @@ namespace RustabBot_v1._0
     public partial class MainForm : Form
     {
         /// <summary>
-        /// Экземпляр класса RastrSupplier для операций над данными из таблиц RastrWin
+        /// Экземпляр класса RastrSupplier для операций 
+        /// над данными из таблиц RastrWin
+        /// Здесь происходит вся магия
         /// </summary>
         private RastrSupplier _rastrSupplier = new RastrSupplier();
 
@@ -45,27 +47,17 @@ namespace RustabBot_v1._0
         public List<int> numbersOfSectionsFromRastr = new List<int>();
 
         /// <summary>
-        /// Словарь для сопоставления TextBox и Action
+        /// Словарь для сопоставления TextBox и Action для свойств double
         /// </summary>
         private readonly Dictionary<TextBox,
             Action<InfluentFactorBase, double>> _textBoxValidationActionForMinMax;
 
         /// <summary>
-        /// Словарь для сопоставления TextBox и Action
+        /// Словарь для сопоставления TextBox и Action для свойств int
         /// </summary>
         private readonly Dictionary<ComboBox,
             Action<InfluentFactorBase, int>> _textBoxValidationActionForNumber;
 
-        /// <summary>
-        /// Свойство для вывода данных о факторе
-        /// </summary>
-        public InfluentFactorBase FactorData
-        {
-            get
-            {
-                return _factor;
-            }
-        }
 
         /// <summary>
         /// Главная форма
@@ -80,7 +72,7 @@ namespace RustabBot_v1._0
             LoadTrajectoryButton.Visible = true;
             InfoAboutTrajectoryLabel.Visible = false;
 
-            //Вторая вкладка
+            //Вторая вкладка "Расчёт"
 
             _textBoxValidationActionForMinMax = new Dictionary<TextBox, Action<InfluentFactorBase, double>>
             {
@@ -146,7 +138,8 @@ namespace RustabBot_v1._0
         }
 
         /// <summary>
-        /// Событие при нажатии кнопки "вручную"
+        /// Событие при нажатии кнопки 
+        /// задать траекторию "вручную"
         /// </summary>
         private void ByHandRadioButton_MouseClick(object sender, MouseEventArgs e)
         {
@@ -158,7 +151,8 @@ namespace RustabBot_v1._0
         }
 
         /// <summary>
-        /// Событие при нажатии кнопки "из файла"
+        /// Событие при нажатии кнопки 
+        /// задать траекторию "из файла"
         /// </summary>
         private void FromFileRadioButton_MouseClick(object sender, MouseEventArgs e)
         {
@@ -171,6 +165,8 @@ namespace RustabBot_v1._0
 
         /// <summary>
         /// Событие при нажатии на кнопку "Настройка траектории"
+        /// передаёт в форму с настройками списки с узлами и генераторами,
+        /// радиокнопки и объект класса RastrSupplier
         /// </summary>
         private void TrajectorySettingsButton_Click(object sender, EventArgs e)
         {
@@ -191,7 +187,8 @@ namespace RustabBot_v1._0
         }
 
         /// <summary>
-        ///  Открытие диалогового окна, выбор и загрузка файла и запись его пути в Текстбокс
+        ///  Открытие диалогового окна, выбор и загрузка файла 
+        ///  и запись его пути в Текстбокс
         /// </summary>
         public void LoadInitialFile(string openFileDialogFilter, OpenFileDialog openFileDialog, 
             TextBox textbox, RastrSupplier rastrSupplier, string shablon)
@@ -215,9 +212,8 @@ namespace RustabBot_v1._0
             }
         }
 
-        // Загрузка самого файла rst!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         /// <summary>
-        /// Загрузка файла определенного формата
+        /// Загрузка файла динамики
         /// И заполнение списка с узлами
         /// </summary>
         private void LoadRstButton_Click(object sender, EventArgs e)
@@ -227,7 +223,11 @@ namespace RustabBot_v1._0
             LoadInitialFile(RstFilter, RstOpenFileDialog, LoadRstTextBox, _rastrSupplier, shablon);
             RastrSupplier.FillListOfNumbersFromRastr(numbersOfNodesFromRastr, "node", "ny");
         }
-
+        
+        /// <summary>
+        /// Загрузка файла сечения
+        /// И заполнение списка с номерами сечений
+        /// </summary>
         private void LoadSchButton_Click(object sender, EventArgs e)
         {
             string SchFilter = "Файл сечения (*.sch)|*.sch";
@@ -236,6 +236,10 @@ namespace RustabBot_v1._0
             RastrSupplier.FillListOfNumbersFromRastr(numbersOfSectionsFromRastr, "sechen", "ns");
         }
 
+        /// <summary>
+        /// Загрузка файла автоматики
+        /// И заполнение списка с узлами
+        /// </summary>
         private void LoadDfwButton_Click(object sender, EventArgs e)
         {
             string DfwFilter = "Файл автоматики (*.dfw)|*.dfw";
@@ -243,6 +247,9 @@ namespace RustabBot_v1._0
             LoadInitialFile(DfwFilter, DfwOpenFileDialog, LoadDfwTextBox, _rastrSupplier, shablon);
         }
 
+        /// <summary>
+        /// Загрузка файла траектории утяжеления
+        /// </summary>
         private void LoadTrajectoryButton_Click(object sender, EventArgs e)
         {
             string Ut2Filter = "Файл траектории (*.ut2)|*.ut2";
@@ -250,6 +257,9 @@ namespace RustabBot_v1._0
             LoadInitialFile(Ut2Filter, Ut2OpenFileDialog, LoadTrajectoryTextBox, _rastrSupplier, shablon);
         }
 
+        /// <summary>
+        /// Загрузка файлов сценариев
+        /// </summary>
         private void LoadScnButton_Click(object sender, EventArgs e)
         {
             LoadScnListBox.Items.Clear();
@@ -276,43 +286,51 @@ namespace RustabBot_v1._0
             }
         }
 
+        /// <summary>
+        /// Событие при загрузки MainForm
+        /// Создает таблицу влияющих факторов во вкладке "Расчёт"
+        /// </summary>
         private void MainForm_Load(object sender, EventArgs e)
         {
             DataGridViewTools.CreateTableForFactors(_factorList, InfluentFactorsDataGridView);
         }
 
+        /// <summary>
+        /// Событие при выборе пользователем
+        /// типа влияющего фактора 
+        /// </summary>
         private void FactorTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             switch (FactorTypeComboBox.SelectedIndex)
             {
                 case 0:
-                    {
-                        _factor = new VoltageFactor();
-                        InfluentFactorNumCombobox.DataSource = numbersOfNodesFromRastr;
-                        InfluentFactorNumCombobox.Text = "";
-                        break;
-                    }
+                {
+                    _factor = new VoltageFactor();
+                    InfluentFactorNumCombobox.DataSource = numbersOfNodesFromRastr;
+                    InfluentFactorNumCombobox.Text = "";
+                    break;
+                }
                 case 1:
-                    {
-                        _factor = new SectionFactor();
-                        InfluentFactorNumCombobox.DataSource = numbersOfSectionsFromRastr;
-                        InfluentFactorNumCombobox.Text = "";
-                        break;
-                    }
+                {
+                    _factor = new SectionFactor();
+                    InfluentFactorNumCombobox.DataSource = numbersOfSectionsFromRastr;
+                    InfluentFactorNumCombobox.Text = "";
+                    break;
+                }
                 case 2:
-                    {
-                        _factor = new LoadFactor();
-                        InfluentFactorNumCombobox.DataSource = numbersOfNodesFromRastr;
-                        InfluentFactorNumCombobox.Text = "";
-                        break;
-                    }
+                {
+                    _factor = new LoadFactor();
+                    InfluentFactorNumCombobox.DataSource = numbersOfNodesFromRastr;
+                    InfluentFactorNumCombobox.Text = "";
+                    break;
+                }
             }
         }
 
         /// <summary>
         /// Установить значение свойствам экземпляра класса 
         /// </summary>
-        private void SetValue(Action action)
+        private void SetFactorValue(Action action)
         {
             action.Invoke();
         }
@@ -320,7 +338,9 @@ namespace RustabBot_v1._0
         /// <summary>
         /// Ввод данных о напряжении
         /// </summary>
-        /// <returns>Созданный экземпляр класса VoltageFactor</returns>
+        /// <returns>
+        /// Созданный экземпляр класса VoltageFactor
+        /// </returns>
         private VoltageFactor GetNewVoltageFactor()
         {
             var newVoltageFactor = new VoltageFactor();
@@ -344,18 +364,21 @@ namespace RustabBot_v1._0
                 }),
                 new Action(() =>
                 {
-                    newVoltageFactor.CurrentValue =
-                    RastrSupplier.GetValue("node", "ny", Convert.ToInt32(InfluentFactorNumCombobox.Text), "vras");
+                    newVoltageFactor.InitialValue =
+                    RastrSupplier.GetValue("node", "ny", 
+                    Convert.ToInt32(InfluentFactorNumCombobox.Text), "vras");
                 })
             };
-            actions.ForEach(SetValue);
+            actions.ForEach(SetFactorValue);
             return newVoltageFactor;
         }
 
         /// <summary>
-        /// Ввод данных о перетоке
+        /// Ввод данных о перетоке во влияющем сечении
         /// </summary>
-        /// <returns>Созданный экземпляр класса SectionFactor</returns>
+        /// <returns>
+        /// Созданный экземпляр класса SectionFactor
+        /// </returns>
         private SectionFactor GetNewSectionFactor()
         {
             var newSectionFactor = new SectionFactor();
@@ -379,16 +402,17 @@ namespace RustabBot_v1._0
                 }),
                 new Action(() =>
                 {
-                    newSectionFactor.CurrentValue =
-                    RastrSupplier.GetValue("sechen", "ns", Convert.ToInt32(InfluentFactorNumCombobox.Text), "psech");
+                    newSectionFactor.InitialValue =
+                    RastrSupplier.GetValue("sechen", "ns", 
+                    Convert.ToInt32(InfluentFactorNumCombobox.Text), "psech");
                 })
             };
-            actions.ForEach(SetValue);
+            actions.ForEach(SetFactorValue);
             return newSectionFactor;
         }
 
         /// <summary>
-        /// Ввод данных о перетоке
+        /// Ввод данных о нагрузке
         /// </summary>
         /// <returns>Созданный экземпляр класса LoadFactor</returns>
         private LoadFactor GetNewLoadFactor()
@@ -414,16 +438,17 @@ namespace RustabBot_v1._0
                 }),
                 new Action(() =>
                 {
-                    newLoadFactor.CurrentValue =
-                    RastrSupplier.GetValue("node", "ny", Convert.ToInt32(InfluentFactorNumCombobox.Text), "pn");
+                    newLoadFactor.InitialValue =
+                    RastrSupplier.GetValue("node", "ny", 
+                    Convert.ToInt32(InfluentFactorNumCombobox.Text), "pn");
                 })
             };
-            actions.ForEach(SetValue);
+            actions.ForEach(SetFactorValue);
             return newLoadFactor;
         }
 
         /// <summary>
-        /// Ввод данных о фигурах
+        /// Ввод данных о факторах
         /// </summary>
         private void InsertData()
         {
@@ -451,6 +476,9 @@ namespace RustabBot_v1._0
             }
         }
 
+        /// <summary>
+        /// Добавить влияющий фактор в dataGridView
+        /// </summary>
         private void AddFactorToGridButton_Click(object sender, EventArgs e)
         {
             try
@@ -458,20 +486,21 @@ namespace RustabBot_v1._0
                 InsertData();
                 InfluentFactorBase.IsMinMaxCorrect(_factor.MinValue, _factor.MaxValue);
 
-                var countOfRows = InfluentFactorsDataGridView.Rows.Count;
-                for (int i = 0; i < countOfRows; i++)
+                for (int i = 0; i < InfluentFactorsDataGridView.Rows.Count; i++)
                 {
-                    if(_factor.NumberFromRastr == Convert.ToDouble(InfluentFactorsDataGridView[1, i].Value))
+                    if(_factor.NumberFromRastr == 
+                        Convert.ToDouble(InfluentFactorsDataGridView[1, i].Value))
                     {
-                        throw new Exception("Этот влияющий фактор уже добавлен в список! Попробуйте ещё раз.");
+                        throw new Exception("Этот влияющий фактор уже добавлен" +
+                            " в список! Попробуйте ещё раз.");
                     }
                 }
-
                 _factorList.Add(_factor);
             }
             catch
             {
-                MessageBox.Show("Вы не загрузили исходные файлы или введено некорректное значение!\n" +
+                MessageBox.Show("Вы не загрузили исходные файлы или" +
+                    " введено некорректное значение!\n" +
                     "Пожалуйста, проверьте исходные данные.",
                     "Ошибка",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -481,25 +510,34 @@ namespace RustabBot_v1._0
             }
         }
 
+        /// <summary>
+        /// Удалить любое количество выделенных строк в таблице
+        /// с влияющими факторами
+        /// </summary>
         private void RemoveFactorFromGridButton_Click(object sender, EventArgs e)
         {
-            var countOfRows = InfluentFactorsDataGridView.SelectedRows.Count;
-            for (int i = 0; i < countOfRows; i++)
+            for (int i = 0; i < InfluentFactorsDataGridView.SelectedRows.Count; i++)
             {
                 _factorList.RemoveAt(InfluentFactorsDataGridView.SelectedRows[0].Index);
             }
         }
 
+        /// <summary>
+        /// Удалить любое количество выделенных строк в таблице
+        /// с влияющими факторами
+        /// </summary>
         private void ClearAllFactorsFromGridButton_Click(object sender, EventArgs e)
         {
             _factorList.Clear();
         }
 
+        /// <summary>
+        /// Очистить таблицу
+        /// </summary>
         private void InfluentFactorNumCombobox_SelectedIndexChanged(object sender, EventArgs e)
         {
             InfluentFactorNumCombobox.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             InfluentFactorNumCombobox.AutoCompleteSource = AutoCompleteSource.ListItems;
-
         }
     }
 }
