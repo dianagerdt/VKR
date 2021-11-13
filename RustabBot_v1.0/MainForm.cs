@@ -39,12 +39,12 @@ namespace RustabBot_v1._0
         /// <summary>
 		/// Спискок, хранящий номера узлов из файла rst 
 		/// </summary>
-        public List<int> numbersOfNodesFromRastr = new List<int>();
+        private List<int> numbersOfNodesFromRastr = new List<int>();
 
         /// <summary>
 		/// Спискок, хранящий номера сечений из файла sch
 		/// </summary>
-        public List<int> numbersOfSectionsFromRastr = new List<int>();
+        private List<int> numbersOfSectionsFromRastr = new List<int>();
 
         /// <summary>
         /// Словарь для сопоставления TextBox и Action для свойств double
@@ -58,6 +58,10 @@ namespace RustabBot_v1._0
         private readonly Dictionary<ComboBox,
             Action<InfluentFactorBase, int>> _textBoxValidationActionForNumber;
 
+        /// <summary>
+        /// Таблица, в которой хранится траектория утяжеления
+        /// </summary>
+        private DataTable dataTable = new DataTable();
 
         /// <summary>
         /// Главная форма
@@ -171,7 +175,8 @@ namespace RustabBot_v1._0
         private void TrajectorySettingsButton_Click(object sender, EventArgs e)
         {
             var trajectorySettings = new TrajectorySettingsForm(numbersOfSectionsFromRastr, 
-                numbersOfNodesFromRastr, FromFileRadioButton, ByHandRadioButton, _rastrSupplier);
+                numbersOfNodesFromRastr, FromFileRadioButton, ByHandRadioButton, _rastrSupplier,
+                dataTable);
             
             trajectorySettings.Show();
 

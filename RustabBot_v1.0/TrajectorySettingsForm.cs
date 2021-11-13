@@ -43,10 +43,16 @@ namespace RustabBot_v1._0
         private RastrSupplier _rastrSupplierCopy;
 
         /// <summary>
+        /// Таблица, в которой хранится траектория утяжеления
+        /// </summary>
+        private DataTable dataTableCopy;
+
+        /// <summary>
         /// Форма с настройками траектории утяжеления
         /// </summary>
         public TrajectorySettingsForm(List<int> numbersOfSectionsFromRastr, List<int> numbersOfNodesFromRastr, 
-            RadioButton FromFileRadioButton, RadioButton ByHandRadioButton, RastrSupplier _rastrSupplier)
+            RadioButton FromFileRadioButton, RadioButton ByHandRadioButton, RastrSupplier _rastrSupplier,
+            DataTable dataTable)
         {
             InitializeComponent();
             StartPosition = FormStartPosition.CenterScreen;
@@ -63,6 +69,7 @@ namespace RustabBot_v1._0
             FromFileRadioButtonCopy = FromFileRadioButton;
             ByHandRadioButtonCopy = ByHandRadioButton;
             _rastrSupplierCopy = _rastrSupplier;
+            dataTableCopy = dataTable;
         }
 
         /// <summary>
@@ -104,6 +111,7 @@ namespace RustabBot_v1._0
         private void TrajectorySettingsForm_Load(object sender, EventArgs e)
         {
             DataGridViewTools.CreateTableForTrajectory(ChosenGeneratorsForTrajectoryData);
+            dataTableCopy = (DataTable)ChosenGeneratorsForTrajectoryData.DataSource;
 
             SchInfluentFactorComboBox.DataSource = numbersOfSectionsFromRastrCopy;
             ResearchingSchComboBox.DataSource = numbersOfSectionsFromRastrCopy;
@@ -118,10 +126,8 @@ namespace RustabBot_v1._0
             {
                 try
                 {
-                    RastrSupplier.LoadUt2ToDataGrid((DataTable)ChosenGeneratorsForTrajectoryData.DataSource);
+                    RastrSupplier.LoadUt2ToDataGrid(dataTableCopy);
                     ChosenGeneratorsForTrajectoryData.ReadOnly = true;
-                    ChooseGeneratorForTrajectoryButton.Visible = false;
-                    RemoveGeneratorFromTrajectoryButton.Visible = false;
                 }
                 catch 
                 {
@@ -173,7 +179,7 @@ namespace RustabBot_v1._0
         {
             if (ByHandRadioButtonCopy.Checked == true) 
             {
-                RastrSupplier.SaveToUt2FromDataGrid((DataTable)ChosenGeneratorsForTrajectoryData.DataSource);
+                RastrSupplier.SaveToUt2FromDataGrid(dataTableCopy);
 
                 string shablon = @"../../Resources/траектория утяжеления.ut2";
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -184,12 +190,11 @@ namespace RustabBot_v1._0
                 {
                     string filename = saveFileDialog.FileName;
                     RastrSupplier.SaveFile(filename, shablon);
+                    MessageBox.Show($"Файл с траекторией утяжеления сохранен в {saveFileDialog.FileName}.");
+                    DialogResult = DialogResult.OK;
+                    _rastrSupplierCopy.LoadFile(saveFileDialog.FileName, shablon);
+                    Close();
                 }
-                MessageBox.Show($"Файл с траекторией утяжеления сохранен в {saveFileDialog.FileName}.");
-                
-                DialogResult = DialogResult.OK;
-                _rastrSupplierCopy.LoadFile(saveFileDialog.FileName, shablon);
-                Close();
             }
             else if(FromFileRadioButtonCopy.Checked == true) 
             {
@@ -218,5 +223,23 @@ namespace RustabBot_v1._0
         {
             Close();
         }
+
+        /// <summary>
+        /// Поиск в ListBox по номеру узла
+        /// </summary>
+        private void TrajectoryGeneratorsSearchButton_Click(object sender, EventArgs e)
+        {
+            GeneratorsFromFileListBox.SelectedIndex = 
+                GeneratorsFromFileListBox.FindString(TrajectoryGeneratorsSearchTextBox.Text);
+        }
+
+        /// <summary>
+        /// Снимает выделение с выбранных генераторов
+        /// </summary>
+        private void DropSettings_Click(object sender, EventArgs e)
+        {
+            GeneratorsFromFileListBox.ClearSelected();
+        }
+
     }
 }
