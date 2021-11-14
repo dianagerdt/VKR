@@ -70,11 +70,13 @@ namespace RustabBot_v1._0
         {
             InitializeComponent();
             StartPosition = FormStartPosition.CenterScreen;
-            FromFileRadioButton.Checked = true;
-            ByHandRadioButton.Checked = false;
-            LoadTrajectoryTextBox.Visible = true;
-            LoadTrajectoryButton.Visible = true;
-            InfoAboutTrajectoryLabel.Visible = false;
+            FromFileRadioButton.Checked = false;
+            ByHandRadioButton.Checked = true;
+            LoadTrajectoryTextBox.Visible = false;
+            LoadTrajectoryButton.Visible = false;
+            InfoAboutTrajectoryLabel.Visible = true;
+            InfoAboutTrajectoryLabel2.Visible = true;
+
 
             //Вторая вкладка "Расчёт"
 
@@ -152,6 +154,7 @@ namespace RustabBot_v1._0
             LoadTrajectoryTextBox.Visible = false;
             LoadTrajectoryButton.Visible = false;
             InfoAboutTrajectoryLabel.Visible = true;
+            InfoAboutTrajectoryLabel2.Visible = true;
         }
 
         /// <summary>
@@ -165,6 +168,7 @@ namespace RustabBot_v1._0
             LoadTrajectoryTextBox.Visible = true;
             LoadTrajectoryButton.Visible = true;
             InfoAboutTrajectoryLabel.Visible = false;
+            InfoAboutTrajectoryLabel2.Visible = false;
         }
 
         /// <summary>
@@ -226,6 +230,7 @@ namespace RustabBot_v1._0
             string RstFilter = "Файл динамики (*.rg2)|*.rg2";
             string shablon = @"../../Resources/режим.rg2";
             LoadInitialFile(RstFilter, RstOpenFileDialog, LoadRstTextBox, _rastrSupplier, shablon);
+            numbersOfNodesFromRastr.Clear();
             RastrSupplier.FillListOfNumbersFromRastr(numbersOfNodesFromRastr, "node", "ny");
         }
         
@@ -238,6 +243,7 @@ namespace RustabBot_v1._0
             string SchFilter = "Файл сечения (*.sch)|*.sch";
             string shablon = @"../../Resources/сечения.sch";
             LoadInitialFile(SchFilter, SchOpenFileDialog, LoadSchTextBox, _rastrSupplier, shablon);
+            numbersOfSectionsFromRastr.Clear();
             RastrSupplier.FillListOfNumbersFromRastr(numbersOfSectionsFromRastr, "sechen", "ns");
         }
 

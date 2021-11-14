@@ -177,7 +177,7 @@ namespace RustabBot_v1._0
         /// </summary>
         private void SetTrajectorySettingsButton_Click(object sender, EventArgs e)
         {
-            if (ByHandRadioButtonCopy.Checked == true) 
+            if (ByHandRadioButtonCopy.Checked == true && dataTableCopy.Rows.Count != 0) 
             {
                 RastrSupplier.SaveToUt2FromDataGrid(dataTableCopy);
 
@@ -241,5 +241,26 @@ namespace RustabBot_v1._0
             GeneratorsFromFileListBox.ClearSelected();
         }
 
+        /// <summary>
+        /// Добавляет генераторные узлы в траекторию
+        /// </summary>
+        private void AddGensToTrajectory_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                foreach (var item in GeneratorsFromFileListBox.SelectedItems)
+                {
+                    dataTableCopy.Rows.Add();
+                    dataTableCopy.Rows[dataTableCopy.Rows.Count - 1]
+                        ["ny"] = Convert.ToInt32(item);
+                }
+            }
+            catch (Exception exeption)
+            {
+                MessageBox.Show("Ошибка! " + exeption.Message, 
+                    "",MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+        }
     }
 }

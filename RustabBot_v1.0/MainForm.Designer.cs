@@ -81,6 +81,7 @@ namespace RustabBot_v1._0
             this.DfwOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.Ut2OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.ScnOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.InfoAboutTrajectoryLabel2 = new System.Windows.Forms.Label();
             this.TabPageCalc.SuspendLayout();
             this.TransientStabilityAnalysisGroupBox.SuspendLayout();
             this.InfluentFactorsGroupBox.SuspendLayout();
@@ -352,6 +353,7 @@ namespace RustabBot_v1._0
             // 
             // TrajectoryGroupBox
             // 
+            this.TrajectoryGroupBox.Controls.Add(this.InfoAboutTrajectoryLabel2);
             this.TrajectoryGroupBox.Controls.Add(this.InfoAboutTrajectoryLabel);
             this.TrajectoryGroupBox.Controls.Add(this.LoadTrajectoryTextBox);
             this.TrajectoryGroupBox.Controls.Add(this.FromFileRadioButton);
@@ -368,11 +370,11 @@ namespace RustabBot_v1._0
             // InfoAboutTrajectoryLabel
             // 
             this.InfoAboutTrajectoryLabel.AutoSize = true;
-            this.InfoAboutTrajectoryLabel.Location = new System.Drawing.Point(6, 73);
+            this.InfoAboutTrajectoryLabel.Location = new System.Drawing.Point(15, 60);
             this.InfoAboutTrajectoryLabel.Name = "InfoAboutTrajectoryLabel";
-            this.InfoAboutTrajectoryLabel.Size = new System.Drawing.Size(450, 17);
+            this.InfoAboutTrajectoryLabel.Size = new System.Drawing.Size(482, 17);
             this.InfoAboutTrajectoryLabel.TabIndex = 16;
-            this.InfoAboutTrajectoryLabel.Text = "Выполните настройку вручную (нажмите \"Настройка траектории\")";
+            this.InfoAboutTrajectoryLabel.Text = "Выполните настройку вручную (нажмите \"Настройка траектории\") или ";
             // 
             // LoadTrajectoryTextBox
             // 
@@ -580,6 +582,15 @@ namespace RustabBot_v1._0
             // 
             this.ScnOpenFileDialog.FileName = "ScnOpenFileDialog";
             // 
+            // InfoAboutTrajectoryLabel2
+            // 
+            this.InfoAboutTrajectoryLabel2.AutoSize = true;
+            this.InfoAboutTrajectoryLabel2.Location = new System.Drawing.Point(15, 79);
+            this.InfoAboutTrajectoryLabel2.Name = "InfoAboutTrajectoryLabel2";
+            this.InfoAboutTrajectoryLabel2.Size = new System.Drawing.Size(255, 17);
+            this.InfoAboutTrajectoryLabel2.TabIndex = 17;
+            this.InfoAboutTrajectoryLabel2.Text = "выберите опцию загрузки \"из файла\"";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -660,6 +671,7 @@ namespace RustabBot_v1._0
         private System.Windows.Forms.ListBox LoadScnListBox;
         private System.Windows.Forms.ComboBox InfluentFactorNumCombobox;
         private System.Windows.Forms.Label InfoAboutTrajectoryLabel;
+        private System.Windows.Forms.Label InfoAboutTrajectoryLabel2;
     }
 }
 

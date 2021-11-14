@@ -148,12 +148,19 @@ namespace Model
         public static void FillListOfNumbersFromRastr(List<int> numbersFromRastr, 
             string tableName, string parameterName)
         {
-            ITable table = _rastr.Tables.Item(tableName);
-            ICol column = table.Cols.Item(parameterName);
-
-            for(int index = 0; index < table.Count; index++)
+            try
             {
-                numbersFromRastr.Add(column.get_ZN(index)); 
+                ITable table = _rastr.Tables.Item(tableName);
+                ICol column = table.Cols.Item(parameterName);
+
+                for (int index = 0; index < table.Count; index++)
+                {
+                    numbersFromRastr.Add(column.get_ZN(index));
+                }
+            }
+            catch
+            {
+
             }
         }
 

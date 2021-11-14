@@ -48,6 +48,7 @@ namespace RustabBot_v1._0
             this.ChooseGenOfInfluentSection = new System.Windows.Forms.Button();
             this.ClearDataGridButton = new System.Windows.Forms.Button();
             this.DropSettings = new System.Windows.Forms.Button();
+            this.AddGensToTrajectory = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.ChosenGeneratorsForTrajectoryData)).BeginInit();
             this.SuspendLayout();
             // 
@@ -81,7 +82,7 @@ namespace RustabBot_v1._0
             // ChosenGeneratorsLabel
             // 
             this.ChosenGeneratorsLabel.AutoSize = true;
-            this.ChosenGeneratorsLabel.Location = new System.Drawing.Point(478, 151);
+            this.ChosenGeneratorsLabel.Location = new System.Drawing.Point(510, 151);
             this.ChosenGeneratorsLabel.Name = "ChosenGeneratorsLabel";
             this.ChosenGeneratorsLabel.Size = new System.Drawing.Size(170, 17);
             this.ChosenGeneratorsLabel.TabIndex = 3;
@@ -113,7 +114,7 @@ namespace RustabBot_v1._0
             // 
             this.TrajectoryGeneratorsSearchTextBox.Location = new System.Drawing.Point(120, 120);
             this.TrajectoryGeneratorsSearchTextBox.Name = "TrajectoryGeneratorsSearchTextBox";
-            this.TrajectoryGeneratorsSearchTextBox.Size = new System.Drawing.Size(193, 22);
+            this.TrajectoryGeneratorsSearchTextBox.Size = new System.Drawing.Size(215, 22);
             this.TrajectoryGeneratorsSearchTextBox.TabIndex = 6;
             // 
             // TrajectoryGeneratorsSearchButton
@@ -132,23 +133,23 @@ namespace RustabBot_v1._0
             this.GeneratorsFromFileListBox.ItemHeight = 16;
             this.GeneratorsFromFileListBox.Location = new System.Drawing.Point(17, 189);
             this.GeneratorsFromFileListBox.Name = "GeneratorsFromFileListBox";
-            this.GeneratorsFromFileListBox.Size = new System.Drawing.Size(296, 180);
+            this.GeneratorsFromFileListBox.Size = new System.Drawing.Size(318, 180);
             this.GeneratorsFromFileListBox.TabIndex = 8;
             // 
             // ChosenGeneratorsForTrajectoryData
             // 
             this.ChosenGeneratorsForTrajectoryData.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.ChosenGeneratorsForTrajectoryData.Location = new System.Drawing.Point(337, 173);
+            this.ChosenGeneratorsForTrajectoryData.Location = new System.Drawing.Point(356, 173);
             this.ChosenGeneratorsForTrajectoryData.Name = "ChosenGeneratorsForTrajectoryData";
             this.ChosenGeneratorsForTrajectoryData.RowHeadersWidth = 51;
             this.ChosenGeneratorsForTrajectoryData.RowTemplate.Height = 24;
-            this.ChosenGeneratorsForTrajectoryData.Size = new System.Drawing.Size(453, 196);
+            this.ChosenGeneratorsForTrajectoryData.Size = new System.Drawing.Size(463, 196);
             this.ChosenGeneratorsForTrajectoryData.TabIndex = 9;
             this.ChosenGeneratorsForTrajectoryData.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.ChosenGeneratorsForTrajectoryData_DataError);
             // 
             // SetTrajectorySettingsButton
             // 
-            this.SetTrajectorySettingsButton.Location = new System.Drawing.Point(337, 379);
+            this.SetTrajectorySettingsButton.Location = new System.Drawing.Point(356, 379);
             this.SetTrajectorySettingsButton.Name = "SetTrajectorySettingsButton";
             this.SetTrajectorySettingsButton.Size = new System.Drawing.Size(119, 27);
             this.SetTrajectorySettingsButton.TabIndex = 12;
@@ -158,7 +159,7 @@ namespace RustabBot_v1._0
             // 
             // TrajectoryCancelButton
             // 
-            this.TrajectoryCancelButton.Location = new System.Drawing.Point(671, 379);
+            this.TrajectoryCancelButton.Location = new System.Drawing.Point(700, 379);
             this.TrajectoryCancelButton.Name = "TrajectoryCancelButton";
             this.TrajectoryCancelButton.Size = new System.Drawing.Size(119, 27);
             this.TrajectoryCancelButton.TabIndex = 13;
@@ -197,14 +198,14 @@ namespace RustabBot_v1._0
             // 
             this.ChooseGenOfInfluentSection.Location = new System.Drawing.Point(17, 151);
             this.ChooseGenOfInfluentSection.Name = "ChooseGenOfInfluentSection";
-            this.ChooseGenOfInfluentSection.Size = new System.Drawing.Size(296, 27);
+            this.ChooseGenOfInfluentSection.Size = new System.Drawing.Size(318, 27);
             this.ChooseGenOfInfluentSection.TabIndex = 17;
             this.ChooseGenOfInfluentSection.Text = "Генераторы для поддержания перетока";
             this.ChooseGenOfInfluentSection.UseVisualStyleBackColor = true;
             // 
             // ClearDataGridButton
             // 
-            this.ClearDataGridButton.Location = new System.Drawing.Point(462, 379);
+            this.ClearDataGridButton.Location = new System.Drawing.Point(481, 379);
             this.ClearDataGridButton.Name = "ClearDataGridButton";
             this.ClearDataGridButton.Size = new System.Drawing.Size(119, 27);
             this.ClearDataGridButton.TabIndex = 18;
@@ -214,19 +215,30 @@ namespace RustabBot_v1._0
             // 
             // DropSettings
             // 
-            this.DropSettings.Location = new System.Drawing.Point(194, 379);
+            this.DropSettings.Location = new System.Drawing.Point(214, 379);
             this.DropSettings.Name = "DropSettings";
-            this.DropSettings.Size = new System.Drawing.Size(119, 27);
+            this.DropSettings.Size = new System.Drawing.Size(121, 27);
             this.DropSettings.TabIndex = 19;
             this.DropSettings.Text = "Сбросить";
             this.DropSettings.UseVisualStyleBackColor = true;
             this.DropSettings.Click += new System.EventHandler(this.DropSettings_Click);
             // 
+            // AddGensToTrajectory
+            // 
+            this.AddGensToTrajectory.Location = new System.Drawing.Point(17, 379);
+            this.AddGensToTrajectory.Name = "AddGensToTrajectory";
+            this.AddGensToTrajectory.Size = new System.Drawing.Size(191, 27);
+            this.AddGensToTrajectory.TabIndex = 20;
+            this.AddGensToTrajectory.Text = "Добавить в траекторию";
+            this.AddGensToTrajectory.UseVisualStyleBackColor = true;
+            this.AddGensToTrajectory.Click += new System.EventHandler(this.AddGensToTrajectory_Click);
+            // 
             // TrajectorySettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(809, 418);
+            this.ClientSize = new System.Drawing.Size(831, 418);
+            this.Controls.Add(this.AddGensToTrajectory);
             this.Controls.Add(this.DropSettings);
             this.Controls.Add(this.ClearDataGridButton);
             this.Controls.Add(this.ChooseGenOfInfluentSection);
@@ -275,5 +287,6 @@ namespace RustabBot_v1._0
         private System.Windows.Forms.Button ChooseGenOfInfluentSection;
         private System.Windows.Forms.Button ClearDataGridButton;
         private System.Windows.Forms.Button DropSettings;
+        private System.Windows.Forms.Button AddGensToTrajectory;
     }
 }
