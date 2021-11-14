@@ -48,11 +48,27 @@ namespace RustabBot_v1._0
         private DataTable dataTableCopy;
 
         /// <summary>
+        /// Cписок с влияющими факторами
+        /// </summary>
+        private BindingList<InfluentFactorBase> _factorListCopy;
+
+        /// <summary>
+        /// Cписок с генераторами исследуемого сечения
+        /// </summary>
+        private List<int> researchingPlantGeneratorsCopy;
+
+        /// <summary>
+        /// Номер исследуемого сечения
+        /// </summary>
+        public int ResearchingSectionNumberCopy;
+
+        /// <summary>
         /// Форма с настройками траектории утяжеления
         /// </summary>
         public TrajectorySettingsForm(List<int> numbersOfSectionsFromRastr, List<int> numbersOfNodesFromRastr, 
             RadioButton FromFileRadioButton, RadioButton ByHandRadioButton, RastrSupplier _rastrSupplier,
-            DataTable dataTable)
+            DataTable dataTable, BindingList<InfluentFactorBase> _factorList, List<int> researchingPlantGenerators,
+            int ResearchingSectionNumber)
         {
             InitializeComponent();
             StartPosition = FormStartPosition.CenterScreen;
@@ -70,6 +86,9 @@ namespace RustabBot_v1._0
             ByHandRadioButtonCopy = ByHandRadioButton;
             _rastrSupplierCopy = _rastrSupplier;
             dataTableCopy = dataTable;
+            _factorListCopy = _factorList;
+            researchingPlantGeneratorsCopy = researchingPlantGenerators;
+            ResearchingSectionNumberCopy = ResearchingSectionNumber;
         }
 
         /// <summary>
@@ -87,6 +106,7 @@ namespace RustabBot_v1._0
                     SchInfluentFactorComboBox.Visible = false;
                     ChooseGenOfResearchingSection.Visible = true;
                     ChooseGenOfInfluentSection.Visible = false;
+                    GeneratorsFromFileListBox.ClearSelected();
                     break;
                 }
                 case 1:
@@ -97,6 +117,7 @@ namespace RustabBot_v1._0
                     SchInfluentFactorComboBox.Visible = true;
                     ChooseGenOfResearchingSection.Visible = false;
                     ChooseGenOfInfluentSection.Visible = true;
+                    GeneratorsFromFileListBox.ClearSelected();
                     break;
                 }
             }
@@ -196,6 +217,14 @@ namespace RustabBot_v1._0
                     Close();
                 }
             }
+            else if(dataTableCopy.Rows.Count == 0)
+            {
+                MessageBox.Show("Вы не добавили ни одного генератора в траекторию утяжеления! " +
+                    "\nДобавьте генераторы в таблицу и укажите их приращения." +
+                    "\nЕсли вы хотите задать траекторию из файла, нажмите 'Отмена' и загрузите файл из" +
+                    " главного меню. ",
+                    "Ошибка!",MessageBoxButtons.OK, MessageBoxIcon.Error);;
+            }
             else if(FromFileRadioButtonCopy.Checked == true) 
             {
                 Close();
@@ -239,6 +268,7 @@ namespace RustabBot_v1._0
         private void DropSettings_Click(object sender, EventArgs e)
         {
             GeneratorsFromFileListBox.ClearSelected();
+            researchingPlantGeneratorsCopy.Clear();
         }
 
         /// <summary>
@@ -260,6 +290,34 @@ namespace RustabBot_v1._0
                 MessageBox.Show("Ошибка! " + exeption.Message, 
                     "",MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        /// <summary>
+        /// Фиксирует номер исследуемого сечения
+        /// Фиксирует список генераторов исследуемого сечения
+        /// </summary>
+        private void ChooseGenOfResearchingSection_Click(object sender, EventArgs e)
+        {
+            if(GeneratorsFromFileListBox.SelectedItems.Count != 0)
+            {
+                ResearchingSectionNumberCopy = Convert.ToInt32(ResearchingSchComboBox.Text);
+                foreach (int item in GeneratorsFromFileListBox.SelectedItems)
+                {
+                    researchingPlantGeneratorsCopy.Add(item);
+                }
+                MessageBox.Show($"Выбрано исследуемое сечение - {ResearchingSectionNumberCopy} и генераторы исследуемой станции." +
+                    $"\nЕсли вы хотите сбросить настройки и ввести параметры заново, нажмите на кнопку 'Сбросить'. " );
+            }
+            else if (GeneratorsFromFileListBox.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("Выберите номер исследуемого сечения и номера генераторов исследуемой станции! " ,
+                    "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        //потом
+        private void ChooseGenOfInfluentSection_Click(object sender, EventArgs e)
+        {
 
         }
     }

@@ -87,7 +87,7 @@ namespace Model
         /// </summary>
         /// <returns> Возвращает true - расчет завершен успешно,
         /// false - аварийное завершение расчета</returns>
-        public static bool Regime()
+        public bool Regime()
         {
             var statusRgm = _rastr.rgm("");
 

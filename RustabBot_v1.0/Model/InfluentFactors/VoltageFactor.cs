@@ -8,7 +8,9 @@ using ASTRALib;
 namespace Model.InfluentFactors
 {
     /// <summary>
-    /// Влияющий фактор - Напряжение в узле
+    /// Влияющий фактор - Напряжение на шинах
+    /// исследумой станции
+    /// Регулируется генераторами исследуемой станции (изм. Vзад.)
     /// </summary>
     public class VoltageFactor : InfluentFactorBase
     {
@@ -17,5 +19,54 @@ namespace Model.InfluentFactors
         /// </summary>
         public override string FactorType => "Напряжение";
 
+
+        public void CorrectVoltage(List<int> listOfGenerators, VoltageFactor voltageFactor)
+        {
+            if(voltageFactor.CurrentValue < voltageFactor.MinValue)
+            {
+                for (int i = 0; i < listOfGenerators.Count; i++)
+                {
+                    double vzdOfGen = RastrSupplier.GetValue("node", "ny", listOfGenerators[i], "vzd");
+                    double uhomOfGen = RastrSupplier.GetValue("node", "ny", listOfGenerators[i], "uhom");
+
+                    if (vzdOfGen < setMaxValueForVoltage(uhomOfGen))
+                    {
+                        RastrSupplier.SetValue("node", "ny", listOfGenerators[i], "vzd", vzdOfGen + 0.1);
+                    }
+                    else
+                    {
+                        RastrSupplier.SetValue("node", "ny", listOfGenerators[i], "vzd", setMaxValueForVoltage(uhomOfGen));
+                    }
+                }
+            }
+
+            if (voltageFactor.CurrentValue > voltageFactor.MaxValue)
+            {
+                for (int i = 0; i < listOfGenerators.Count; i++)
+                {
+                    double vzdOfGen = RastrSupplier.GetValue("node", "ny", listOfGenerators[i], "vzd");
+                    double uhomOfGen = RastrSupplier.GetValue("node", "ny", listOfGenerators[i], "uhom");
+
+                    if (vzdOfGen > setMinValueForVoltage(uhomOfGen))
+                    {
+                        RastrSupplier.SetValue("node", "ny", listOfGenerators[i], "vzd", vzdOfGen - 0.1);
+                    }
+                    else
+                    {
+                        RastrSupplier.SetValue("node", "ny", listOfGenerators[i], "vzd", setMinValueForVoltage(uhomOfGen));
+                    }
+                }
+            }
+        }
+
+        private double setMaxValueForVoltage(double vzd)
+        {
+            return vzd * 1.05; 
+        }
+
+        private double setMinValueForVoltage(double vzd)
+        {
+            return vzd * 0.95; 
+        }
     }
 }

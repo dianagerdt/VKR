@@ -38,12 +38,6 @@ namespace Model
         protected int _numberFromRastr;
 
         /// <summary>
-        /// Начальное значение фактора (из RastrWin)
-        /// до расчётов
-        /// </summary>
-        private double _initialValue;
-
-        /// <summary>
         /// Тип фактора
         /// </summary>
         public abstract string FactorType { get; }
@@ -96,21 +90,6 @@ namespace Model
         /// <summary>
         /// Текущее значение фактора
         /// </summary>
-        public double InitialValue
-        {
-            get
-            {
-                return _initialValue;
-            }
-            set
-            {
-                _initialValue = Math.Round(value, 2);
-            }
-        }
-
-        /// <summary>
-        /// Текущее значение фактора
-        /// </summary>
         public double CurrentValue
         {
             get
@@ -127,7 +106,7 @@ namespace Model
         /// Проверка, входят ли факторы в диапазон
         /// сравнивается с текущим значением
         /// </summary>
-        public static bool IsInDiapasone(double minValue, double maxValue, double currentValue)
+        public bool IsInDiapasone(double minValue, double maxValue, double currentValue)
         {
             if (currentValue > maxValue || currentValue < minValue)
             {
@@ -140,11 +119,11 @@ namespace Model
         }
 
         /// <summary>
-        /// Проверка, корректные ли границы диапазона ввёл пользователь
+        /// Проверка, корректны ли границы диапазона, которые ввёл пользователь
         /// </summary>
         public static bool IsMinMaxCorrect(double minValue, double maxValue)
         {
-            if(minValue > maxValue || maxValue == minValue)
+            if (minValue > maxValue || maxValue == minValue)
             {
                 throw new Exception("Проверьте ввод максимального и минимального значения диапазона!");
             }

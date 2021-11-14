@@ -64,6 +64,20 @@ namespace RustabBot_v1._0
         private DataTable dataTable = new DataTable();
 
         /// <summary>
+        /// Генераторы исследуемой станции.
+        /// С их помощью будет осуществляться регулирование 
+        /// напряжения-влияющего фактора
+        /// Список формируется в форме TrajectorySettingsForm
+        /// </summary>
+        private List<int> researchingPlantGenerators = new List<int>();
+
+        /// <summary>
+        /// Номер исследуемого сечения
+        /// Назначается в форме TrajectorySettingsForm 
+        /// </summary>
+        public int ResearchingSectionNumber;
+
+        /// <summary>
         /// Главная форма
         /// </summary>
         public MainForm()
@@ -180,7 +194,7 @@ namespace RustabBot_v1._0
         {
             var trajectorySettings = new TrajectorySettingsForm(numbersOfSectionsFromRastr, 
                 numbersOfNodesFromRastr, FromFileRadioButton, ByHandRadioButton, _rastrSupplier,
-                dataTable);
+                dataTable, _factorList, researchingPlantGenerators, ResearchingSectionNumber);
             
             trajectorySettings.Show();
 
@@ -375,7 +389,7 @@ namespace RustabBot_v1._0
                 }),
                 new Action(() =>
                 {
-                    newVoltageFactor.InitialValue =
+                    newVoltageFactor.CurrentValue =
                     RastrSupplier.GetValue("node", "ny", 
                     Convert.ToInt32(InfluentFactorNumCombobox.Text), "vras");
                 })
@@ -413,7 +427,7 @@ namespace RustabBot_v1._0
                 }),
                 new Action(() =>
                 {
-                    newSectionFactor.InitialValue =
+                    newSectionFactor.CurrentValue =
                     RastrSupplier.GetValue("sechen", "ns", 
                     Convert.ToInt32(InfluentFactorNumCombobox.Text), "psech");
                 })
@@ -449,7 +463,7 @@ namespace RustabBot_v1._0
                 }),
                 new Action(() =>
                 {
-                    newLoadFactor.InitialValue =
+                    newLoadFactor.CurrentValue =
                     RastrSupplier.GetValue("node", "ny", 
                     Convert.ToInt32(InfluentFactorNumCombobox.Text), "pn");
                 })
@@ -466,24 +480,24 @@ namespace RustabBot_v1._0
             switch (_factor)
             {
                 case VoltageFactor _:
-                    {
-                        _factor = GetNewVoltageFactor();
-                        break;
-                    }
+                {
+                    _factor = GetNewVoltageFactor();
+                    break;
+                }
                 case SectionFactor _:
-                    {
-                        _factor = GetNewSectionFactor();
-                        break;
-                    }
+                {
+                    _factor = GetNewSectionFactor();
+                    break;
+                }
                 case LoadFactor _:
-                    {
-                        _factor = GetNewLoadFactor();
-                        break;
-                    }
+                {
+                    _factor = GetNewLoadFactor();
+                    break;
+                }
                 default:
-                    {
-                        throw new ArgumentException("Такого фактора нет.");
-                    }
+                {
+                    throw new ArgumentException("Такого фактора нет.");
+                }
             }
         }
 
@@ -549,6 +563,35 @@ namespace RustabBot_v1._0
         {
             InfluentFactorNumCombobox.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             InfluentFactorNumCombobox.AutoCompleteSource = AutoCompleteSource.ListItems;
+        }
+
+        /// <summary>
+        /// Инициирование расчёта (пока что только траектории)
+        /// </summary>
+        private void StartCalcButton_Click(object sender, EventArgs e)
+        {            
+            _rastrSupplier.Regime();
+
+            ProtocolListBox.Text += "Расчёт установившегося режима...";
+
+            foreach(var factor in _factorList)
+            {
+                if(!factor.IsInDiapasone(factor.MinValue, factor.MaxValue, factor.CurrentValue))
+                {
+                    ProtocolListBox.Text += "Расчёт остановлен. Проверьте исходные данные! " +
+                        "В исходном режиме влияющие факторы должны находиться в заданном диапазоне значений.";
+                    return;
+                }
+            }
+
+            int maxIteration = 100;
+
+            
+
+
+
+
+
         }
     }
 }

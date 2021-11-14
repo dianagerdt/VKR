@@ -55,6 +55,7 @@ namespace RustabBot_v1._0
             this.LoadScnListBox = new System.Windows.Forms.ListBox();
             this.DBConnectionButton = new System.Windows.Forms.Button();
             this.TrajectoryGroupBox = new System.Windows.Forms.GroupBox();
+            this.InfoAboutTrajectoryLabel2 = new System.Windows.Forms.Label();
             this.InfoAboutTrajectoryLabel = new System.Windows.Forms.Label();
             this.LoadTrajectoryTextBox = new System.Windows.Forms.TextBox();
             this.FromFileRadioButton = new System.Windows.Forms.RadioButton();
@@ -81,7 +82,6 @@ namespace RustabBot_v1._0
             this.DfwOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.Ut2OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.ScnOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.InfoAboutTrajectoryLabel2 = new System.Windows.Forms.Label();
             this.TabPageCalc.SuspendLayout();
             this.TransientStabilityAnalysisGroupBox.SuspendLayout();
             this.InfluentFactorsGroupBox.SuspendLayout();
@@ -151,6 +151,7 @@ namespace RustabBot_v1._0
             this.StartCalcButton.TabIndex = 12;
             this.StartCalcButton.Text = "Начать расчёт";
             this.StartCalcButton.UseVisualStyleBackColor = true;
+            this.StartCalcButton.Click += new System.EventHandler(this.StartCalcButton_Click);
             // 
             // ProtocolListBox
             // 
@@ -367,6 +368,15 @@ namespace RustabBot_v1._0
             this.TrajectoryGroupBox.TabStop = false;
             this.TrajectoryGroupBox.Text = "Траектория утяжеления";
             // 
+            // InfoAboutTrajectoryLabel2
+            // 
+            this.InfoAboutTrajectoryLabel2.AutoSize = true;
+            this.InfoAboutTrajectoryLabel2.Location = new System.Drawing.Point(15, 79);
+            this.InfoAboutTrajectoryLabel2.Name = "InfoAboutTrajectoryLabel2";
+            this.InfoAboutTrajectoryLabel2.Size = new System.Drawing.Size(255, 17);
+            this.InfoAboutTrajectoryLabel2.TabIndex = 17;
+            this.InfoAboutTrajectoryLabel2.Text = "выберите опцию загрузки \"из файла\"";
+            // 
             // InfoAboutTrajectoryLabel
             // 
             this.InfoAboutTrajectoryLabel.AutoSize = true;
@@ -581,15 +591,6 @@ namespace RustabBot_v1._0
             // ScnOpenFileDialog
             // 
             this.ScnOpenFileDialog.FileName = "ScnOpenFileDialog";
-            // 
-            // InfoAboutTrajectoryLabel2
-            // 
-            this.InfoAboutTrajectoryLabel2.AutoSize = true;
-            this.InfoAboutTrajectoryLabel2.Location = new System.Drawing.Point(15, 79);
-            this.InfoAboutTrajectoryLabel2.Name = "InfoAboutTrajectoryLabel2";
-            this.InfoAboutTrajectoryLabel2.Size = new System.Drawing.Size(255, 17);
-            this.InfoAboutTrajectoryLabel2.TabIndex = 17;
-            this.InfoAboutTrajectoryLabel2.Text = "выберите опцию загрузки \"из файла\"";
             // 
             // MainForm
             // 

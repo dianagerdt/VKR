@@ -189,10 +189,11 @@ namespace RustabBot_v1._0
             // 
             this.ChooseGenOfResearchingSection.Location = new System.Drawing.Point(17, 151);
             this.ChooseGenOfResearchingSection.Name = "ChooseGenOfResearchingSection";
-            this.ChooseGenOfResearchingSection.Size = new System.Drawing.Size(296, 27);
+            this.ChooseGenOfResearchingSection.Size = new System.Drawing.Size(318, 27);
             this.ChooseGenOfResearchingSection.TabIndex = 16;
             this.ChooseGenOfResearchingSection.Text = "Генераторы исследуемой станции";
             this.ChooseGenOfResearchingSection.UseVisualStyleBackColor = true;
+            this.ChooseGenOfResearchingSection.Click += new System.EventHandler(this.ChooseGenOfResearchingSection_Click);
             // 
             // ChooseGenOfInfluentSection
             // 
@@ -202,6 +203,7 @@ namespace RustabBot_v1._0
             this.ChooseGenOfInfluentSection.TabIndex = 17;
             this.ChooseGenOfInfluentSection.Text = "Генераторы для поддержания перетока";
             this.ChooseGenOfInfluentSection.UseVisualStyleBackColor = true;
+            this.ChooseGenOfInfluentSection.Click += new System.EventHandler(this.ChooseGenOfInfluentSection_Click);
             // 
             // ClearDataGridButton
             // 
