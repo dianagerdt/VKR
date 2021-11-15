@@ -156,6 +156,7 @@ namespace RustabBot_v1._0
             // ProtocolListBox
             // 
             this.ProtocolListBox.FormattingEnabled = true;
+            this.ProtocolListBox.HorizontalScrollbar = true;
             this.ProtocolListBox.ItemHeight = 16;
             this.ProtocolListBox.Location = new System.Drawing.Point(6, 75);
             this.ProtocolListBox.Name = "ProtocolListBox";

@@ -569,27 +569,39 @@ namespace RustabBot_v1._0
         /// Инициирование расчёта (пока что только траектории)
         /// </summary>
         private void StartCalcButton_Click(object sender, EventArgs e)
-        {            
-            _rastrSupplier.Regime();
+        {
+            if(_factorList.Count == 0)
+            {
+                MessageBox.Show("Вы не добавили в таблицу ни одного влияющего фактора!"
+                    +"\n Расчёт остановлен.");
+                return;
+            }
+            
+            _rastrSupplier.Regime(); //первичный расчёт режима
 
-            ProtocolListBox.Text += "Расчёт установившегося режима...";
+            ProtocolListBox.Items.Add("Расчёт установившегося режима...");
 
             foreach(var factor in _factorList)
             {
-                if(!factor.IsInDiapasone(factor.MinValue, factor.MaxValue, factor.CurrentValue))
+                if(!InfluentFactorBase.IsInDiapasone(factor))
                 {
-                    ProtocolListBox.Text += "Расчёт остановлен. Проверьте исходные данные! " +
-                        "В исходном режиме влияющие факторы должны находиться в заданном диапазоне значений.";
+                    ProtocolListBox.Items.Add("Расчёт остановлен. Проверьте исходные данные!");
+                    ProtocolListBox.Items.Add("В исходном режиме влияющие факторы должны " +
+                        "находиться в заданном диапазоне значений."); 
                     return;
                 }
             }
 
             int maxIteration = 100;
 
-            
+            RastrSupplier.Worsening(_factorList, maxIteration,
+                    researchingPlantGenerators, _rastrSupplier,
+                    ProtocolListBox, InfluentFactorsDataGridView);
 
+            InfluentFactorsDataGridView.Refresh();
 
-
+            ProtocolListBox.Items.Add($"Vzad = {RastrSupplier.GetValue("node", "ny", 60533008, "vzd")}" +
+                $" Vfactor = {RastrSupplier.GetValue("node", "ny", 60533027, "vras")}");
 
 
         }

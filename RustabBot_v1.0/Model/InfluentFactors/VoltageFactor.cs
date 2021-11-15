@@ -19,8 +19,7 @@ namespace Model.InfluentFactors
         /// </summary>
         public override string FactorType => "Напряжение";
 
-
-        public void CorrectVoltage(List<int> listOfGenerators, VoltageFactor voltageFactor)
+        public static void CorrectVoltage(List<int> listOfGenerators, InfluentFactorBase voltageFactor)
         {
             if(voltageFactor.CurrentValue < voltageFactor.MinValue)
             {
@@ -59,12 +58,12 @@ namespace Model.InfluentFactors
             }
         }
 
-        private double setMaxValueForVoltage(double vzd)
+        private static double setMaxValueForVoltage(double vzd)
         {
             return vzd * 1.05; 
         }
 
-        private double setMinValueForVoltage(double vzd)
+        private static double setMinValueForVoltage(double vzd)
         {
             return vzd * 0.95; 
         }

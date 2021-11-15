@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
+using System.Windows.Forms;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ASTRALib;
+using Model.InfluentFactors;
 
 namespace Model
 {
@@ -87,7 +90,7 @@ namespace Model
         /// </summary>
         /// <returns> Возвращает true - расчет завершен успешно,
         /// false - аварийное завершение расчета</returns>
-        public bool Regime()
+        public bool IsRegimeOK()
         {
             var statusRgm = _rastr.rgm("");
 
@@ -99,6 +102,14 @@ namespace Model
             {
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Рассчитывает режим
+        /// </summary>
+        public void Regime()
+        {
+            _rastr.rgm("");
         }
 
         /// <summary>
@@ -117,8 +128,12 @@ namespace Model
         /// <summary>
         /// Алгоритм утяжеления
         /// </summary>
-        public static void Worsening()
+        public static void Worsening(BindingList<InfluentFactorBase> factorList, int maxIteration,
+            List<int> researchingPlantGenerators, RastrSupplier rastrSupplier, 
+            ListBox protocolListBox, DataGridView dataGridView)
         {
+            int iteration = 0;
+
             RastrRetCode kod, kd;
             if (_rastr.ut_Param[ParamUt.UT_FORM_P] == 0)
             {
@@ -130,12 +145,85 @@ namespace Model
                 {
                     do
                     {
+                        //проверка, не дошли ли генераторы до максимума своих регулировочных способностей
+                        for (int j = 0; j < researchingPlantGenerators.Count; j++)
+                        {
+                            double powerOfGen = GetValue("Generator", "Node",
+                                researchingPlantGenerators[j], "P");
+                            double powerOfGenMax = GetValue("Generator", "Node",
+                                researchingPlantGenerators[j], "Pmax");
+
+                            if (powerOfGen == powerOfGenMax)
+                            {
+                                protocolListBox.Items.Add("Расчёт окончен. " +
+                                    "Генераторы достигли предельной загрузки, режим не разошёлся.");
+                                dataGridView.Refresh();
+                                return;
+                            }
+                        }
+                        
+                        //проверка, не разошёлся ли режим
+                        if (!rastrSupplier.IsRegimeOK())
+                        {
+                            protocolListBox.Items.Add("Расчёт окончен. " +
+                                    "Режим разошёлся (достигнуто предельное число итераций).");
+                            dataGridView.Refresh();
+                            return;
+                        }
+
+                        // шаг утяжеления
                         kd = _rastr.step_ut("z");
                         if (((kd == 0) && (_rastr.ut_Param[ParamUt.UT_ADD_P] == 0))
                             || _rastr.ut_Param[ParamUt.UT_TIP] == 1)
                         {
                             _rastr.AddControl(-1, "");
                         }
+                        // шаг утяжеления
+
+                        foreach(var factor in factorList)
+                        {
+                            switch (factor)
+                            {
+                                case VoltageFactor _:
+                                {
+                                    factor.CurrentValue = GetValue("node", "ny", factor.NumberFromRastr, "vras");
+
+                                    switch(InfluentFactorBase.IsInDiapasone(factor))
+                                    {
+                                        case true:
+                                        {
+                                            break;
+                                        }
+                                        case false:
+                                        {
+                                            VoltageFactor.CorrectVoltage(researchingPlantGenerators, factor);
+                                            rastrSupplier.Regime();
+                                            break;
+                                        }
+                                    }
+                                    break;
+                                }
+                                case SectionFactor _:
+                                {
+                                    // ту би континьюд
+                                    break;
+                                }
+                                case LoadFactor _:
+                                {
+                                    // ту би континьюд
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        iteration = iteration + 1;
+
+                        if(iteration > maxIteration)
+                        {
+                            protocolListBox.Items.Add("Превышено предельное число итераций! Расчёт остановлен.");
+                            return;
+                        }
+                        //если все факторы попали в диапазон, всё хорошо, шагаем дальше
                     }
                     while (kd == 0);
                 }

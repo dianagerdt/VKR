@@ -106,9 +106,9 @@ namespace Model
         /// Проверка, входят ли факторы в диапазон
         /// сравнивается с текущим значением
         /// </summary>
-        public bool IsInDiapasone(double minValue, double maxValue, double currentValue)
+        public static bool IsInDiapasone(InfluentFactorBase influentFactor)
         {
-            if (currentValue > maxValue || currentValue < minValue)
+            if (influentFactor.CurrentValue > influentFactor.MaxValue || influentFactor.CurrentValue < influentFactor.MinValue)
             {
                 return false;
             }
