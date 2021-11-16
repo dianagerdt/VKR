@@ -594,14 +594,27 @@ namespace RustabBot_v1._0
 
             int maxIteration = 100;
 
-            RastrSupplier.Worsening(_factorList, maxIteration,
+            try
+            {
+                RastrSupplier.Worsening(_factorList, maxIteration,
                     researchingPlantGenerators, _rastrSupplier,
                     ProtocolListBox, InfluentFactorsDataGridView);
+            }
+            catch(Exception exeption)
+            {
+                MessageBox.Show($"{exeption.Message}");
+                ProtocolListBox.Items.Add("Расчёт остановлен " +
+                    "в результате ошибки. Проверьте исходные данные!");
+                return;
+            }
 
             InfluentFactorsDataGridView.Refresh();
 
             ProtocolListBox.Items.Add($"Vzad = {RastrSupplier.GetValue("node", "ny", 60533008, "vzd")}" +
-                $" Vfactor = {RastrSupplier.GetValue("node", "ny", 60533027, "vras")}");
+                $" Vfactor = {RastrSupplier.GetValue("node", "ny", 60533027, "vras")}, " +
+                $"Psech={RastrSupplier.GetValue("sechen", "ns", 60014, "psech")}");
+
+            ProtocolListBox.Items.Add($"Рген = {RastrSupplier.GetValue("Generator", "Node", 60533008, "P")}");
 
 
         }
