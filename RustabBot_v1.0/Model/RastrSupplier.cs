@@ -137,12 +137,12 @@ namespace Model
                         $" {Math.Round(GetValue("sechen", "ns", ResearchingSectionNumber, "psech"), 0)} МВт.");
 
             RastrRetCode kod, kd;
-            if (_rastr.ut_Param[ParamUt.UT_FORM_P] == 0)
+            if (_rastr.ut_Param[ParamUt.UT_FORM_P] == 0) //формировать описание КВ
             {
-                _rastr.Tables.Item("ut_common").Cols.Item("tip").Z[0] = 0;
-                _rastr.ut_FormControl();
-                _rastr.ClearControl();
-                kod = _rastr.step_ut("i");
+                _rastr.Tables.Item("ut_common").Cols.Item("tip").Z[0] = 0; //тип утяжеления - стандартный
+                _rastr.ut_FormControl(); //формирует таблицу описаний контролируемых величин
+                _rastr.ClearControl(); //инициализировать таблицу значений контролируемых величин
+                kod = _rastr.step_ut("i"); //"i" – инициализировать значения параметров утяжеления (шаг в этом случае не выполняется)
                 if (kod == 0)
                 {
                     do
@@ -177,7 +177,7 @@ namespace Model
                         if (((kd == 0) && (_rastr.ut_Param[ParamUt.UT_ADD_P] == 0))
                             || _rastr.ut_Param[ParamUt.UT_TIP] == 1)
                         {
-                            _rastr.AddControl(-1, "");
+                            _rastr.AddControl(-1, ""); //Добавить строку в таблицу значений контролируемых величин
                         }
                         // шаг утяжеления
 
@@ -310,18 +310,20 @@ namespace Model
                     }
                 }
             }
-
         }
 
-        /*public int HowManyRows()
+        /// <summary>
+        /// Шаг назад по траектории
+        /// </summary>
+        private static void StepBack()
         {
-            int count = 0;
-            ITable table = _rastr.Tables.Item("ut_node");
-            for (int i = 0; i < table.Count; i++)
-            {
-                count++;
-            }
-            return count;
-        }*/
+            ITable table = _rastr.Tables.Item("ut_common");
+            ICol columnItem = table.Cols.Item("kfc"); //шаг утяжеления
+
+            int index = table.Count - 1; //индекс - самая последняя строка
+            double step = columnItem.get_ZN(index);
+
+            columnItem.set_Z(index, -step);
+        }
     }
 }
