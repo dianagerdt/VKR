@@ -153,7 +153,7 @@ namespace Model
                             double powerOfGenMax = GetValue("Generator", "Node",
                                 researchingPlantGenerators[j], "Pmax");
 
-                            if (powerOfGen == powerOfGenMax)
+                            if (powerOfGen >= powerOfGenMax)
                             {
                                 protocolListBox.Items.Add("Расчёт окончен. " +
                                     "Генераторы достигли предельной загрузки, режим не разошёлся.");
@@ -165,8 +165,7 @@ namespace Model
                         //проверка, не разошёлся ли режим
                         if (!rastrSupplier.IsRegimeOK())
                         {
-                            protocolListBox.Items.Add("Расчёт окончен. " +
-                                    "Режим разошёлся (достигнуто предельное число итераций).");
+                            protocolListBox.Items.Add("Аварийное завершение расчёта!");
                             dataGridView.Refresh();
                             return;
                         }
@@ -198,6 +197,7 @@ namespace Model
                                         {
                                             VoltageFactor.CorrectVoltage(researchingPlantGenerators, factor);
                                             rastrSupplier.Regime();
+                                            factor.CurrentValue = GetValue("node", "ny", factor.NumberFromRastr, "vras");
                                             break;
                                         }
                                     }
@@ -220,12 +220,15 @@ namespace Model
 
                         if(iteration > maxIteration)
                         {
-                            protocolListBox.Items.Add("Превышено предельное число итераций! Расчёт остановлен.");
+                            protocolListBox.Items.Add("Расчёт остановлен. Коррекция траектории утяжеления " +
+                                "по заданным исходным данным невозможна. Попробуйте ещё раз.");
                             return;
                         }
                         //если все факторы попали в диапазон, всё хорошо, шагаем дальше
                     }
                     while (kd == 0);
+
+                    protocolListBox.Items.Add("Превышено предельное число итераций! Расчёт успешно завершён.");
                 }
             }
         }
