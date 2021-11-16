@@ -193,11 +193,18 @@ namespace RustabBot_v1._0
         private void TrajectorySettingsButton_Click(object sender, EventArgs e)
         {
             var trajectorySettings = new TrajectorySettingsForm(numbersOfSectionsFromRastr, 
-                numbersOfNodesFromRastr, FromFileRadioButton, ByHandRadioButton, _rastrSupplier,
+                numbersOfNodesFromRastr, GetFromRadioButtons(), _rastrSupplier,
                 dataTable, _factorList, researchingPlantGenerators, ResearchingSectionNumber);
             
             trajectorySettings.Show();
 
+        }
+
+        private TrajectoryWeightnessLoadingType GetFromRadioButtons()
+        {
+            return ByHandRadioButton.Checked
+                ? TrajectoryWeightnessLoadingType.EnteredManually
+                : TrajectoryWeightnessLoadingType.LoadedFromFile;
         }
 
         /// <summary>

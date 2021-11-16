@@ -62,11 +62,13 @@ namespace RustabBot_v1._0
         /// </summary>
         public int ResearchingSectionNumberCopy;
 
+        private TrajectoryWeightnessLoadingType _trajectoryWeightnessLoadingType;
+
         /// <summary>
         /// Форма с настройками траектории утяжеления
         /// </summary>
         public TrajectorySettingsForm(List<int> numbersOfSectionsFromRastr, List<int> numbersOfNodesFromRastr, 
-            RadioButton FromFileRadioButton, RadioButton ByHandRadioButton, RastrSupplier _rastrSupplier,
+            TrajectoryWeightnessLoadingType trajectoryWeightnessLoadingType, RastrSupplier _rastrSupplier,
             DataTable dataTable, BindingList<InfluentFactorBase> _factorList, List<int> researchingPlantGenerators,
             int ResearchingSectionNumber)
         {
@@ -82,8 +84,7 @@ namespace RustabBot_v1._0
 
             numbersOfSectionsFromRastrCopy = numbersOfSectionsFromRastr;
             numbersOfNodesFromRastrCopy = numbersOfNodesFromRastr;
-            FromFileRadioButtonCopy = FromFileRadioButton;
-            ByHandRadioButtonCopy = ByHandRadioButton;
+            _trajectoryWeightnessLoadingType = trajectoryWeightnessLoadingType;
             _rastrSupplierCopy = _rastrSupplier;
             dataTableCopy = dataTable;
             _factorListCopy = _factorList;
