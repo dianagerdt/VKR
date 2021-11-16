@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.IO;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -192,12 +193,14 @@ namespace RustabBot_v1._0
         /// </summary>
         private void TrajectorySettingsButton_Click(object sender, EventArgs e)
         {
-            var trajectorySettings = new TrajectorySettingsForm(numbersOfSectionsFromRastr, 
+            using (TrajectorySettingsForm trajectorySettings = new TrajectorySettingsForm(numbersOfSectionsFromRastr,
                 numbersOfNodesFromRastr, GetFromRadioButtons(), _rastrSupplier,
-                dataTable, _factorList, researchingPlantGenerators, ResearchingSectionNumber);
-            
-            trajectorySettings.Show();
+                dataTable, _factorList, researchingPlantGenerators, ResearchingSectionNumber))
+            {
+                trajectorySettings.ShowDialog();
+                ResearchingSectionNumber = trajectorySettings.ResearchingSectionNumberCopy;
 
+            }
         }
 
         private TrajectoryWeightnessLoadingType GetFromRadioButtons()
@@ -250,9 +253,16 @@ namespace RustabBot_v1._0
         {
             string RstFilter = "Файл динамики (*.rg2)|*.rg2";
             string shablon = @"../../Resources/режим.rg2";
-            LoadInitialFile(RstFilter, RstOpenFileDialog, LoadRstTextBox, _rastrSupplier, shablon);
-            numbersOfNodesFromRastr.Clear();
-            RastrSupplier.FillListOfNumbersFromRastr(numbersOfNodesFromRastr, "node", "ny");
+            if(File.Exists(shablon))
+            {
+                LoadInitialFile(RstFilter, RstOpenFileDialog, LoadRstTextBox, _rastrSupplier, shablon);
+                numbersOfNodesFromRastr.Clear();
+                RastrSupplier.FillListOfNumbersFromRastr(numbersOfNodesFromRastr, "node", "ny");
+            }
+            else
+            {
+                MessageBox.Show("Вам необходимо добавить шаблон 'режим.rg2' в папку Resources!");
+            }
         }
         
         /// <summary>
@@ -600,12 +610,14 @@ namespace RustabBot_v1._0
             }
 
             int maxIteration = 100;
+            int iteration = 0;
 
             try
             {
                 RastrSupplier.Worsening(_factorList, maxIteration,
                     researchingPlantGenerators, _rastrSupplier,
-                    ProtocolListBox, InfluentFactorsDataGridView);
+                    ProtocolListBox, InfluentFactorsDataGridView, 
+                    iteration, ResearchingSectionNumber);
             }
             catch(Exception exeption)
             {
@@ -624,6 +636,19 @@ namespace RustabBot_v1._0
             ProtocolListBox.Items.Add($"Рген = {RastrSupplier.GetValue("Generator", "Node", 60533008, "P")}");
 
 
+        }
+
+        /// <summary>
+        /// Очистить протокол
+        /// </summary>
+        private void ClearProtocol_Click(object sender, EventArgs e)
+        {
+            ProtocolListBox.Items.Clear();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show($"{ResearchingSectionNumber}");
         }
     }
 }

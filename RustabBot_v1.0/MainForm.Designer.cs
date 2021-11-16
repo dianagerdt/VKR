@@ -32,6 +32,7 @@ namespace RustabBot_v1._0
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.TabPageCalc = new System.Windows.Forms.TabPage();
             this.TransientStabilityAnalysisGroupBox = new System.Windows.Forms.GroupBox();
+            this.ClearProtocol = new System.Windows.Forms.Button();
             this.SaveResultsButton = new System.Windows.Forms.Button();
             this.ProgressBar = new System.Windows.Forms.ProgressBar();
             this.StopCalcButton = new System.Windows.Forms.Button();
@@ -82,6 +83,7 @@ namespace RustabBot_v1._0
             this.DfwOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.Ut2OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.ScnOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.button1 = new System.Windows.Forms.Button();
             this.TabPageCalc.SuspendLayout();
             this.TransientStabilityAnalysisGroupBox.SuspendLayout();
             this.InfluentFactorsGroupBox.SuspendLayout();
@@ -106,6 +108,7 @@ namespace RustabBot_v1._0
             // 
             // TransientStabilityAnalysisGroupBox
             // 
+            this.TransientStabilityAnalysisGroupBox.Controls.Add(this.ClearProtocol);
             this.TransientStabilityAnalysisGroupBox.Controls.Add(this.SaveResultsButton);
             this.TransientStabilityAnalysisGroupBox.Controls.Add(this.ProgressBar);
             this.TransientStabilityAnalysisGroupBox.Controls.Add(this.StopCalcButton);
@@ -117,6 +120,16 @@ namespace RustabBot_v1._0
             this.TransientStabilityAnalysisGroupBox.TabIndex = 1;
             this.TransientStabilityAnalysisGroupBox.TabStop = false;
             this.TransientStabilityAnalysisGroupBox.Text = "Расчёты";
+            // 
+            // ClearProtocol
+            // 
+            this.ClearProtocol.Location = new System.Drawing.Point(401, 30);
+            this.ClearProtocol.Name = "ClearProtocol";
+            this.ClearProtocol.Size = new System.Drawing.Size(171, 30);
+            this.ClearProtocol.TabIndex = 15;
+            this.ClearProtocol.Text = "Очистить протокол";
+            this.ClearProtocol.UseVisualStyleBackColor = true;
+            this.ClearProtocol.Click += new System.EventHandler(this.ClearProtocol_Click);
             // 
             // SaveResultsButton
             // 
@@ -136,7 +149,7 @@ namespace RustabBot_v1._0
             // 
             // StopCalcButton
             // 
-            this.StopCalcButton.Location = new System.Drawing.Point(312, 30);
+            this.StopCalcButton.Location = new System.Drawing.Point(204, 30);
             this.StopCalcButton.Name = "StopCalcButton";
             this.StopCalcButton.Size = new System.Drawing.Size(171, 30);
             this.StopCalcButton.TabIndex = 13;
@@ -145,7 +158,7 @@ namespace RustabBot_v1._0
             // 
             // StartCalcButton
             // 
-            this.StartCalcButton.Location = new System.Drawing.Point(112, 30);
+            this.StartCalcButton.Location = new System.Drawing.Point(6, 30);
             this.StartCalcButton.Name = "StartCalcButton";
             this.StartCalcButton.Size = new System.Drawing.Size(171, 30);
             this.StartCalcButton.TabIndex = 12;
@@ -165,6 +178,7 @@ namespace RustabBot_v1._0
             // 
             // InfluentFactorsGroupBox
             // 
+            this.InfluentFactorsGroupBox.Controls.Add(this.button1);
             this.InfluentFactorsGroupBox.Controls.Add(this.InfluentFactorNumCombobox);
             this.InfluentFactorsGroupBox.Controls.Add(this.InfluentFactorsDataGridView);
             this.InfluentFactorsGroupBox.Controls.Add(this.ClearAllFactorsFromGridButton);
@@ -593,6 +607,16 @@ namespace RustabBot_v1._0
             // 
             this.ScnOpenFileDialog.FileName = "ScnOpenFileDialog";
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(467, 84);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(119, 30);
+            this.button1.TabIndex = 13;
+            this.button1.Text = "Очистить";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -674,6 +698,8 @@ namespace RustabBot_v1._0
         private System.Windows.Forms.ComboBox InfluentFactorNumCombobox;
         private System.Windows.Forms.Label InfoAboutTrajectoryLabel;
         private System.Windows.Forms.Label InfoAboutTrajectoryLabel2;
+        private System.Windows.Forms.Button ClearProtocol;
+        private System.Windows.Forms.Button button1;
     }
 }
 

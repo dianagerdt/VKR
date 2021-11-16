@@ -27,16 +27,6 @@ namespace RustabBot_v1._0
         private List<int> numbersOfNodesFromRastrCopy;
 
         /// <summary>
-        /// RadioButton "из файла" MainForm
-        /// </summary>
-        private RadioButton FromFileRadioButtonCopy;
-
-        /// <summary>
-        /// RadioButton "вручную" MainForm
-        /// </summary>
-        private RadioButton ByHandRadioButtonCopy;
-
-        /// <summary>
         /// Экземпляр класса RastrSupplier для операций 
         /// над данными из таблиц RastrWin
         /// </summary>
@@ -60,8 +50,12 @@ namespace RustabBot_v1._0
         /// <summary>
         /// Номер исследуемого сечения
         /// </summary>
-        public int ResearchingSectionNumberCopy;
+        public int ResearchingSectionNumberCopy { get; set; }
 
+        /// <summary>
+        /// Состояние Radio Buttons на главной форме: вручную
+        /// или из файла задаётся траектория утяжеления
+        /// </summary>
         private TrajectoryWeightnessLoadingType _trajectoryWeightnessLoadingType;
 
         /// <summary>
@@ -144,7 +138,7 @@ namespace RustabBot_v1._0
                 GeneratorsFromFileListBox.Items.Add(number);
             }
 
-            if (FromFileRadioButtonCopy.Checked == true)
+            if (_trajectoryWeightnessLoadingType == TrajectoryWeightnessLoadingType.LoadedFromFile)
             {
                 try
                 {
@@ -199,7 +193,8 @@ namespace RustabBot_v1._0
         /// </summary>
         private void SetTrajectorySettingsButton_Click(object sender, EventArgs e)
         {
-            if (ByHandRadioButtonCopy.Checked == true && dataTableCopy.Rows.Count != 0) 
+            if (_trajectoryWeightnessLoadingType == TrajectoryWeightnessLoadingType.EnteredManually
+                == true && dataTableCopy.Rows.Count != 0) 
             {
                 RastrSupplier.SaveToUt2FromDataGrid(dataTableCopy);
 
@@ -226,7 +221,7 @@ namespace RustabBot_v1._0
                     " главного меню. ",
                     "Ошибка!",MessageBoxButtons.OK, MessageBoxIcon.Error);;
             }
-            else if(FromFileRadioButtonCopy.Checked == true) 
+            else if(_trajectoryWeightnessLoadingType == TrajectoryWeightnessLoadingType.LoadedFromFile) 
             {
                 Close();
             }
@@ -301,11 +296,11 @@ namespace RustabBot_v1._0
         {
             if(GeneratorsFromFileListBox.SelectedItems.Count != 0)
             {
-                ResearchingSectionNumberCopy = Convert.ToInt32(ResearchingSchComboBox.Text);
                 foreach (int item in GeneratorsFromFileListBox.SelectedItems)
                 {
                     researchingPlantGeneratorsCopy.Add(item);
                 }
+                ResearchingSectionNumberCopy = Convert.ToInt32(ResearchingSchComboBox.Text);
                 MessageBox.Show($"Выбрано исследуемое сечение - {ResearchingSectionNumberCopy} и генераторы исследуемой станции." +
                     $"\nЕсли вы хотите сбросить настройки и ввести параметры заново, нажмите на кнопку 'Сбросить'. " );
             }

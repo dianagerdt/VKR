@@ -130,9 +130,11 @@ namespace Model
         /// </summary>
         public static void Worsening(BindingList<InfluentFactorBase> factorList, int maxIteration,
             List<int> researchingPlantGenerators, RastrSupplier rastrSupplier, 
-            ListBox protocolListBox, DataGridView dataGridView)
+            ListBox protocolListBox, DataGridView dataGridView, int iteration, int ResearchingSectionNumber)
         {
-            int iteration = 0;
+            protocolListBox.Items.Add($"Величина перетока в исследуемом" +
+                        $" {ResearchingSectionNumber} сечении до утяжеления - " +
+                        $" {Math.Round(GetValue("sechen", "ns", ResearchingSectionNumber, "psech"), 0)} МВт.");
 
             RastrRetCode kod, kd;
             if (_rastr.ut_Param[ParamUt.UT_FORM_P] == 0)
@@ -228,7 +230,12 @@ namespace Model
                     }
                     while (kd == 0);
 
-                    protocolListBox.Items.Add("Превышено предельное число итераций! Расчёт успешно завершён.");
+                    protocolListBox.Items.Add($"Превышено предельное число итераций!");
+                    protocolListBox.Items.Add($"Расчёт успешно завершён на {iteration} шаге утяжеления.");
+                    protocolListBox.Items.Add($"Величина перетока в исследуемом" +
+                        $" {ResearchingSectionNumber} сечении составляет" +
+                        $" {Math.Round(GetValue("sechen", "ns", ResearchingSectionNumber, "psech"), 0)} МВт.");
+
                 }
             }
         }
