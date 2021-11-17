@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Model;
+using Model.InfluentFactors;
 
 namespace RustabBot_v1._0
 {
@@ -144,6 +145,8 @@ namespace RustabBot_v1._0
                 {
                     RastrSupplier.LoadUt2ToDataGrid(dataTableCopy);
                     ChosenGeneratorsForTrajectoryData.ReadOnly = true;
+                    AddGensToTrajectory.Enabled = false;
+                    ClearDataGridButton.Enabled = false;
                 }
                 catch 
                 {
@@ -265,6 +268,16 @@ namespace RustabBot_v1._0
         {
             GeneratorsFromFileListBox.ClearSelected();
             researchingPlantGeneratorsCopy.Clear();
+            if(_factorListCopy.Count != 0)
+            {
+                foreach (var factor in _factorListCopy)
+                {
+                    ((SectionFactor)factor).RegulatingGeneratorsList.Clear();
+                }
+            }
+            MessageBox.Show("Настройки сброшены.\n" +
+                "Укажите исследуемое и влияющие сечения (при наличии) " +
+                "и укажите их генераторы!");
         }
 
         /// <summary>
@@ -311,10 +324,43 @@ namespace RustabBot_v1._0
             }
         }
 
-        //потом
+        //Событие для формирования списков с генераторами, поддерживающими
+        //переток в каждом из сечений-факторов.
+        //Обязательное условие - соответствие номера сечения таблице во вкладке "Расчёт"
         private void ChooseGenOfInfluentSection_Click(object sender, EventArgs e)
         {
+            if (GeneratorsFromFileListBox.SelectedItems.Count != 0)
+            {
+                int counterOfSections = 0;
+                foreach (var factor in _factorListCopy)
+                {
+                    if (factor is SectionFactor)
+                    {
+                        if (factor.NumberFromRastr == Convert.ToInt32(SchInfluentFactorComboBox.Text))
+                        {
+                            foreach (int item in GeneratorsFromFileListBox.SelectedItems)
+                            {
+                                ((SectionFactor)factor).RegulatingGeneratorsList.Add(item);
+                                counterOfSections++;
+                            }
 
+                            MessageBox.Show($"Выбрано влияющее сечение - {factor.NumberFromRastr} и генераторы влияющей станции." +
+                                $"\nЕсли вы хотите сбросить настройки и ввести параметры заново, нажмите на кнопку 'Сбросить'. ");
+                        }
+                    }
+                }
+                if (counterOfSections == 0)
+                {
+                    MessageBox.Show("Не найдено влияющего фактора, соответствующего выбранному влияющему сечению!" +
+                        "\nПроверьте, добавили ли вы Сечение-влияющий фактор во вкладке 'Расчёт' основного меню.");
+                }
+                GeneratorsFromFileListBox.SelectedItems.Clear();
+            }
+            else if (GeneratorsFromFileListBox.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("Выберите номер влияющего сечения и номера генераторов влияющей станции! ",
+                    "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

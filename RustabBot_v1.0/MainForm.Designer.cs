@@ -83,7 +83,6 @@ namespace RustabBot_v1._0
             this.DfwOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.Ut2OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.ScnOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.button1 = new System.Windows.Forms.Button();
             this.TabPageCalc.SuspendLayout();
             this.TransientStabilityAnalysisGroupBox.SuspendLayout();
             this.InfluentFactorsGroupBox.SuspendLayout();
@@ -178,7 +177,6 @@ namespace RustabBot_v1._0
             // 
             // InfluentFactorsGroupBox
             // 
-            this.InfluentFactorsGroupBox.Controls.Add(this.button1);
             this.InfluentFactorsGroupBox.Controls.Add(this.InfluentFactorNumCombobox);
             this.InfluentFactorsGroupBox.Controls.Add(this.InfluentFactorsDataGridView);
             this.InfluentFactorsGroupBox.Controls.Add(this.ClearAllFactorsFromGridButton);
@@ -607,16 +605,6 @@ namespace RustabBot_v1._0
             // 
             this.ScnOpenFileDialog.FileName = "ScnOpenFileDialog";
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(467, 84);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(119, 30);
-            this.button1.TabIndex = 13;
-            this.button1.Text = "Очистить";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -699,7 +687,6 @@ namespace RustabBot_v1._0
         private System.Windows.Forms.Label InfoAboutTrajectoryLabel;
         private System.Windows.Forms.Label InfoAboutTrajectoryLabel2;
         private System.Windows.Forms.Button ClearProtocol;
-        private System.Windows.Forms.Button button1;
     }
 }
 

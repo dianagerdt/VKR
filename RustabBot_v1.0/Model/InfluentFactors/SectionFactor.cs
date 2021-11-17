@@ -15,5 +15,22 @@ namespace Model.InfluentFactors
         /// Тип фактора Переток в сечении
         /// </summary>
         public override string FactorType => "Переток";
+
+        //У каждого сечения - свой список регулирующих генераторов
+        private List<int> _regulatingGeneratorsList = new List<int>();
+
+        public List<int> RegulatingGeneratorsList
+        {
+            get
+            {
+                return _regulatingGeneratorsList;
+            }
+
+            set
+            {
+                _regulatingGeneratorsList = value;
+            }
+        }
+
     }
 }

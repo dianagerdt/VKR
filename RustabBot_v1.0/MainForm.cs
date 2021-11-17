@@ -199,7 +199,7 @@ namespace RustabBot_v1._0
             {
                 trajectorySettings.ShowDialog();
                 ResearchingSectionNumber = trajectorySettings.ResearchingSectionNumberCopy;
-
+                
             }
         }
 
@@ -644,11 +644,6 @@ namespace RustabBot_v1._0
         private void ClearProtocol_Click(object sender, EventArgs e)
         {
             ProtocolListBox.Items.Clear();
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show($"{ResearchingSectionNumber}");
         }
     }
 }
