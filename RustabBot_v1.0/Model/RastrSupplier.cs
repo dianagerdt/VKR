@@ -189,26 +189,28 @@ namespace Model
                                 {
                                     factor.CurrentValue = GetValue("node", "ny", factor.NumberFromRastr, "vras");
 
-                                    switch(InfluentFactorBase.IsInDiapasone(factor))
+                                    if(InfluentFactorBase.IsInDiapasone(factor) == false)
                                     {
-                                        case true:
-                                        {
-                                            break;
-                                        }
-                                        case false:
-                                        {
-                                            VoltageFactor.CorrectVoltage(researchingPlantGenerators, factor);
-                                            rastrSupplier.Regime();
-                                            factor.CurrentValue = GetValue("node", "ny", factor.NumberFromRastr, "vras");
-                                            break;
-                                        }
+                                        VoltageFactor.CorrectVoltage(researchingPlantGenerators, factor);
+                                        rastrSupplier.Regime();
+                                        factor.CurrentValue = GetValue("node", "ny", factor.NumberFromRastr, "vras");
+                                        continue;
                                     }
-                                    break;
+                                    else continue;
                                 }
                                 case SectionFactor _:
                                 {
-                                    // ту би континьюд
-                                    break;
+                                    factor.CurrentValue = GetValue("sechen", "ns", factor.NumberFromRastr, "psech");
+
+                                    if (InfluentFactorBase.IsInDiapasone(factor) == false)
+                                    {
+                                        // тут какое-то мясо с коррекцией
+
+
+                                        factor.CurrentValue = GetValue("sechen", "ns", factor.NumberFromRastr, "psech");
+                                        continue;
+                                    }
+                                    else continue;
                                 }
                                 case LoadFactor _:
                                 {

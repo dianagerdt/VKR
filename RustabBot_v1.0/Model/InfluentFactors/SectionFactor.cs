@@ -19,6 +19,7 @@ namespace Model.InfluentFactors
         //У каждого сечения - свой список регулирующих генераторов
         private List<int> _regulatingGeneratorsList = new List<int>();
 
+
         public List<int> RegulatingGeneratorsList
         {
             get
