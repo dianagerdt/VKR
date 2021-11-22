@@ -24,7 +24,7 @@ namespace Model
         /// <summary>
         /// Загрузка файла в рабочую область 
         /// </summary>
-        public void LoadFile (string filePath, string shablon)
+        public static void LoadFile (string filePath, string shablon)
         {
             _rastr.Load(RG_KOD.RG_REPL, filePath, shablon);
         }
@@ -34,7 +34,15 @@ namespace Model
         /// </summary>
         public static void SaveFile(string fileName, string shablon)
         {
-            _rastr.Save(fileName, shablon);
+            try //если нет лицензии, то файл не сохранится
+            {
+                _rastr.Save(fileName, shablon); 
+            }
+            catch(Exception exeption)
+            {
+                MessageBox.Show(exeption.Message, "Ошибка!", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         /// <summary>
@@ -83,6 +91,41 @@ namespace Model
 
             int index = GetIndexByNumber(tableName, parameterName, number);
             return columnItem.get_ZN(index);
+        }
+
+        public static double GetAnyValue(string tableName, string parameterName,
+            int number, string chosenParameter, Rastr anyRastr)
+        {
+            ITable table = anyRastr.Tables.Item(tableName);
+            ICol columnItem = table.Cols.Item(chosenParameter);
+
+            int index = GetAnyIndexByNumber(tableName, parameterName, number, anyRastr);
+            return columnItem.get_ZN(index);
+        }
+
+        public static int GetAnyIndexByNumber(string tableName, string parameterName, int number, Rastr anyRastr)
+        {
+            ITable table = anyRastr.Tables.Item(tableName);
+            ICol columnItem = table.Cols.Item(parameterName);
+
+            for (int index = 0; index < table.Count; index++)
+            {
+                if (columnItem.get_ZN(index) == number)
+                {
+                    return index;
+                }
+            }
+            throw new Exception($"Узел/сечение с номером {number} не найден(о).");
+        }
+
+        public static void SetAnyValue(string tableName, string parameterName, int number,
+            string chosenParameter, double value, Rastr anyRastr)
+        {
+            ITable table = anyRastr.Tables.Item(tableName);
+            ICol columnItem = table.Cols.Item(chosenParameter);
+
+            int index = GetAnyIndexByNumber(tableName, parameterName, number, anyRastr);
+            columnItem.set_ZN(index, value);
         }
 
         /// <summary>
@@ -317,15 +360,191 @@ namespace Model
         /// <summary>
         /// Шаг назад по траектории
         /// </summary>
-        private static void StepBack()
+        private static void StepBack(Rastr rastr)
         {
-            ITable table = _rastr.Tables.Item("ut_common");
+            ITable table = rastr.Tables.Item("ut_common");
             ICol columnItem = table.Cols.Item("kfc"); //шаг утяжеления
 
             int index = table.Count - 1; //индекс - самая последняя строка
             double step = columnItem.get_ZN(index);
 
             columnItem.set_Z(index, -step);
+        }
+
+        private static void SetBool(string tableName, string parameterName, int number, 
+            string chosenParameter, bool value)
+        {
+            ITable table = _rastr.Tables.Item(tableName);
+            ICol columnItem = table.Cols.Item(chosenParameter);
+
+            int index = GetAnyIndexByNumber(tableName, parameterName, number, _rastr);
+            columnItem.set_ZN(index, value);
+        }
+        
+        // Первичная проверка для всех факторов-сечений:
+        // Если реакции нет, тогда фактору присваивается Реакция = 0
+        // Если реакция есть, она рассчитывается для этого сечения-ВФ
+        public static void PrimaryCheckForReactionOfSection(BindingList<InfluentFactorBase> factorList, List<int> researchingPlantGenerators, string rg2FileName)
+        {
+            string shablonRg2 = @"../../Resources/режим.rg2";
+            /*string shablonSch = @"../../Resources/сечения.sch";
+            string shablonUt2 = @"../../Resources/траектория утяжеления.ut2";
+            Rastr newRastr = new Rastr(); //новый экземпляр, чтобы посчитать коэф влияния и приращения
+            newRastr.Load(RG_KOD.RG_REPL, rg2FileName, shablonRg2); //подгружаем файл режима
+            newRastr.Load(RG_KOD.RG_REPL, schFileName, shablonSch); //подгружаем файл сечений*/
+
+            ITable tableForIncrement = _rastr.Tables.Item("ut_node");
+            ICol columnForStatement = tableForIncrement.Cols.Item("sta");
+
+            //Приращения для всех сечений-факторов выставляем равным нулю (иначе говоря, их строки отключается)
+            foreach (var factor in factorList)
+            {
+                if (factor is SectionFactor) //если ВФ это сечение
+                {
+                    for (int j = 0; j < ((SectionFactor)factor).RegulatingGeneratorsList.Count; j++)
+                    {
+                        SetBool("ut_node", "ny", ((SectionFactor)factor).RegulatingGeneratorsList[j], "sta", true);
+                    }
+                }
+            }
+
+            foreach (var factor in factorList)
+            {
+                if (factor is SectionFactor) //если ВФ это сечение
+                {
+                    double initialSectionPower = Math.Round(GetValue("sechen", "ns", factor.NumberFromRastr, "psech"), 0); //1772
+
+                    //Расчёт шага утяжеления только основными ГГ (после первого шага цикл прерывается)
+                    if (_rastr.ut_Param[ParamUt.UT_FORM_P] == 0)
+                    {
+                        _rastr.Tables.Item("ut_common").Cols.Item("tip").Z[0] = 0;
+                        _rastr.ut_FormControl();
+                        _rastr.ClearControl();
+                        RastrRetCode kod = _rastr.step_ut("i");
+                        if (kod == 0)
+                        {
+                            RastrRetCode kd;
+                            do
+                            {
+                                //шаг утяжеления
+                                kd = _rastr.step_ut("z");
+                                if (((kd == 0) && (_rastr.ut_Param[ParamUt.UT_ADD_P] == 0)) || _rastr.ut_Param[ParamUt.UT_TIP] == 1)
+                                {
+                                    _rastr.AddControl(-1, "");
+                                }
+                                //шаг утяжеления
+
+                                double sectionPowerAfterStep = Math.Round(GetValue("sechen", "ns", factor.NumberFromRastr, "psech"), 0); //значение перетока после шага утяжеления
+
+                                StepBack(_rastr); //шагаем назад (возвращаемся к исходному режиму)
+
+                                if (sectionPowerAfterStep == initialSectionPower) //если переток НЕ изменился после шага утяжеления, то приращения остаются равными нулю
+                                {
+                                    ((SectionFactor)factor).Reaction = 0;
+                                    return;
+                                }
+                                else //если переток меняется, значит есть зависимость -> нужно рассчитать приращение
+                                {
+                                    ((SectionFactor)factor).Reaction = sectionPowerAfterStep - initialSectionPower; //расчёт реакции 1802 - 1772 = 32
+
+                                    /*newRastr.Load(RG_KOD.RG_REPL, rg2FileName, shablonRg2); //подгружаем файл режима
+                                    newRastr.NewFile(shablonUt2); //новый файл траектории утяжеления
+                                    ITable tableForIncrement = newRastr.Tables.Item("ut_node");
+                                    ICol columnForIncrementNy = tableForIncrement.Cols.Item("ny");
+                                    ICol columnForIncrementPg = tableForIncrement.Cols.Item("pg");*/
+
+                                    //Обратно включаем номера влияющих генераторов в таблице приращений
+                                    for (int i = 0; i < ((SectionFactor)factor).RegulatingGeneratorsList.Count; i++) 
+                                    {
+                                        SetBool("ut_node", "ny", ((SectionFactor)factor).RegulatingGeneratorsList[i], "sta", false);
+                                    }
+
+                                    //Выключаем номера ГГ исследуемой станции
+                                    for (int i = 0; i < researchingPlantGenerators.Count; i++)
+                                    {
+                                        SetBool("ut_node", "ny", researchingPlantGenerators[i], "sta", true);
+                                    }
+
+                                    if (((SectionFactor)factor).Reaction > 0) //если реакция положительная, установить приращение влияющим ГГ со знаком "-"
+                                    {
+                                        for (int i = 0; i < ((SectionFactor)factor).RegulatingGeneratorsList.Count; i++)
+                                        {
+                                            SetValue("ut_node", "ny", ((SectionFactor)factor).RegulatingGeneratorsList[i], "pg", -1);
+                                        }
+                                    }
+                                    else if(((SectionFactor)factor).Reaction < 0) // если реакция отрицательная, установить приращение влияющим ГГ со знаком "+"
+                                    {
+                                        for (int i = 0; i < ((SectionFactor)factor).RegulatingGeneratorsList.Count; i++)
+                                        {
+                                            SetValue("ut_node", "ny", ((SectionFactor)factor).RegulatingGeneratorsList[i], "pg", 1);
+                                        }
+                                    }
+                                }
+                                break; //прерываем после одного шага
+                            }
+                            while (kd == 0);
+                        }
+                    }
+
+                    //Траектория готова. Делаем по ней шаг, чтобы рассчитать коэффициент влияния влияющих ГГ на сечение-ВФ
+
+                    //double powerFlowBeforeStep;
+                    double powerFlowAfterStep;
+
+                    //Загружаем исходный режим
+
+                    LoadFile(rg2FileName, shablonRg2);
+                   
+
+                    //powerFlowBeforeStep = GetValue("sechen", "ns", factor.NumberFromRastr, "psech"); //фиксируем переток ДО 
+
+                    if (_rastr.ut_Param[ParamUt.UT_FORM_P] == 0)
+                    {
+                        //_rastr.Tables.Item("ut_common").Cols.Item("tip").Z[0] = 0;
+                        _rastr.ut_FormControl();
+                        _rastr.ClearControl();
+                        RastrRetCode kod = _rastr.step_ut("i");
+                        if (kod == 0)
+                        {
+                            RastrRetCode kd;
+                            do
+                            {
+                                kd = _rastr.step_ut("z");
+                                if (((kd == 0) && (_rastr.ut_Param[ParamUt.UT_ADD_P] == 0)) || _rastr.ut_Param[ParamUt.UT_TIP] == 1)
+                                {
+                                    _rastr.AddControl(-1, "");
+                                }
+                                // Шаг выполнен. Определяем реакцию
+
+                                powerFlowAfterStep = GetValue("sechen", "ns", factor.NumberFromRastr, "psech"); //фиксируем переток ПОСЛЕ почему 1796?
+                                StepBack(_rastr);
+
+                                double InfluentCoeff = ((powerFlowAfterStep - initialSectionPower) / ((SectionFactor)factor).RegulatingGeneratorsList.Count); // -8 / 9 = -0,89
+                                double compensationPower = ((SectionFactor)factor).Reaction / InfluentCoeff; // 32 / -0,89 = -35,9
+                                double increment = compensationPower / ((SectionFactor)factor).RegulatingGeneratorsList.Count; // -35,9 / 9 = -4
+
+                                // присваиваем приращение в таблице траектории
+
+                                for (int i = 0; i < ((SectionFactor)factor).RegulatingGeneratorsList.Count; i++) //для каждого генератора данного сечения
+                                {
+                                    SetValue("ut_node", "ny", ((SectionFactor)factor).RegulatingGeneratorsList[i], "pg", increment); //приращение генерации пересчитанное
+                                }
+                                break;
+                            }
+                            while (kd == 0);
+                        }
+                    }
+                }
+            }
+
+            for(int i = 0; i < tableForIncrement.Count; i++)
+            {
+                columnForStatement.set_Z(i, false);
+            }
+
+            //Опять исходный режим
+
+            LoadFile(rg2FileName, shablonRg2);
         }
     }
 }

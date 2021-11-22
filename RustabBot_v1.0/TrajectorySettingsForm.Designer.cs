@@ -143,7 +143,7 @@ namespace RustabBot_v1._0
             this.ChosenGeneratorsForTrajectoryData.Name = "ChosenGeneratorsForTrajectoryData";
             this.ChosenGeneratorsForTrajectoryData.RowHeadersWidth = 51;
             this.ChosenGeneratorsForTrajectoryData.RowTemplate.Height = 24;
-            this.ChosenGeneratorsForTrajectoryData.Size = new System.Drawing.Size(463, 196);
+            this.ChosenGeneratorsForTrajectoryData.Size = new System.Drawing.Size(480, 196);
             this.ChosenGeneratorsForTrajectoryData.TabIndex = 9;
             this.ChosenGeneratorsForTrajectoryData.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.ChosenGeneratorsForTrajectoryData_DataError);
             // 
@@ -159,7 +159,7 @@ namespace RustabBot_v1._0
             // 
             // TrajectoryCancelButton
             // 
-            this.TrajectoryCancelButton.Location = new System.Drawing.Point(700, 379);
+            this.TrajectoryCancelButton.Location = new System.Drawing.Point(717, 379);
             this.TrajectoryCancelButton.Name = "TrajectoryCancelButton";
             this.TrajectoryCancelButton.Size = new System.Drawing.Size(119, 27);
             this.TrajectoryCancelButton.TabIndex = 13;
@@ -239,7 +239,7 @@ namespace RustabBot_v1._0
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(831, 418);
+            this.ClientSize = new System.Drawing.Size(848, 418);
             this.Controls.Add(this.AddGensToTrajectory);
             this.Controls.Add(this.DropSettings);
             this.Controls.Add(this.ClearDataGridButton);

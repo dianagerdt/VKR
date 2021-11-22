@@ -59,13 +59,16 @@ namespace RustabBot_v1._0
         /// </summary>
         private TrajectoryWeightnessLoadingType _trajectoryWeightnessLoadingType;
 
+        string rg2FileNameCopy;
+        
+
         /// <summary>
         /// Форма с настройками траектории утяжеления
         /// </summary>
         public TrajectorySettingsForm(List<int> numbersOfSectionsFromRastr, List<int> numbersOfNodesFromRastr, 
             TrajectoryWeightnessLoadingType trajectoryWeightnessLoadingType, RastrSupplier _rastrSupplier,
             DataTable dataTable, BindingList<InfluentFactorBase> _factorList, List<int> researchingPlantGenerators,
-            int ResearchingSectionNumber)
+            int ResearchingSectionNumber, string rg2FileName)
         {
             InitializeComponent();
             StartPosition = FormStartPosition.CenterScreen;
@@ -85,6 +88,7 @@ namespace RustabBot_v1._0
             _factorListCopy = _factorList;
             researchingPlantGeneratorsCopy = researchingPlantGenerators;
             ResearchingSectionNumberCopy = ResearchingSectionNumber;
+            rg2FileNameCopy = rg2FileName;
         }
 
         /// <summary>
@@ -199,8 +203,8 @@ namespace RustabBot_v1._0
             if (_trajectoryWeightnessLoadingType == TrajectoryWeightnessLoadingType.EnteredManually
                 == true && dataTableCopy.Rows.Count != 0) 
             {
-                RastrSupplier.SaveToUt2FromDataGrid(dataTableCopy);
-
+                RastrSupplier.SaveToUt2FromDataGrid(dataTableCopy); //взяли траекторию из таблицы
+                RastrSupplier.PrimaryCheckForReactionOfSection(_factorListCopy, researchingPlantGeneratorsCopy, rg2FileNameCopy);
                 string shablon = @"../../Resources/траектория утяжеления.ut2";
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
                 saveFileDialog.DefaultExt = "ut2";
@@ -212,7 +216,7 @@ namespace RustabBot_v1._0
                     RastrSupplier.SaveFile(filename, shablon);
                     MessageBox.Show($"Файл с траекторией утяжеления сохранен в {saveFileDialog.FileName}.");
                     DialogResult = DialogResult.OK;
-                    _rastrSupplierCopy.LoadFile(saveFileDialog.FileName, shablon);
+                    RastrSupplier.LoadFile(saveFileDialog.FileName, shablon);
                     Close();
                 }
             }
@@ -222,10 +226,11 @@ namespace RustabBot_v1._0
                     "\nДобавьте генераторы в таблицу и укажите их приращения." +
                     "\nЕсли вы хотите задать траекторию из файла, нажмите 'Отмена' и загрузите файл из" +
                     " главного меню. ",
-                    "Ошибка!",MessageBoxButtons.OK, MessageBoxIcon.Error);;
+                    "Ошибка!",MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else if(_trajectoryWeightnessLoadingType == TrajectoryWeightnessLoadingType.LoadedFromFile) 
             {
+                RastrSupplier.PrimaryCheckForReactionOfSection(_factorListCopy, researchingPlantGeneratorsCopy, rg2FileNameCopy);
                 Close();
             }
         }
@@ -272,7 +277,10 @@ namespace RustabBot_v1._0
             {
                 foreach (var factor in _factorListCopy)
                 {
-                    ((SectionFactor)factor).RegulatingGeneratorsList.Clear();
+                    if(factor is SectionFactor)
+                    {
+                        ((SectionFactor)factor).RegulatingGeneratorsList.Clear();
+                    }
                 }
             }
             MessageBox.Show("Настройки сброшены.\n" +

@@ -11,6 +11,8 @@ namespace Model.InfluentFactors
     /// </summary>
     public class SectionFactor : InfluentFactorBase
     {
+        private double _reaction;
+        
         /// <summary>
         /// Тип фактора Переток в сечении
         /// </summary>
@@ -30,6 +32,19 @@ namespace Model.InfluentFactors
             set
             {
                 _regulatingGeneratorsList = value;
+            }
+        }
+
+        public double Reaction
+        {
+            get
+            {
+                return _reaction;
+            }
+
+            set
+            {
+                _reaction = value;
             }
         }
 

@@ -78,6 +78,8 @@ namespace RustabBot_v1._0
         /// </summary>
         public int ResearchingSectionNumber;
 
+        private string _rg2FileName;
+
         /// <summary>
         /// Главная форма
         /// </summary>
@@ -195,7 +197,7 @@ namespace RustabBot_v1._0
         {
             using (TrajectorySettingsForm trajectorySettings = new TrajectorySettingsForm(numbersOfSectionsFromRastr,
                 numbersOfNodesFromRastr, GetFromRadioButtons(), _rastrSupplier,
-                dataTable, _factorList, researchingPlantGenerators, ResearchingSectionNumber))
+                dataTable, _factorList, researchingPlantGenerators, ResearchingSectionNumber, _rg2FileName))
             {
                 trajectorySettings.ShowDialog();
                 ResearchingSectionNumber = trajectorySettings.ResearchingSectionNumberCopy;
@@ -234,7 +236,7 @@ namespace RustabBot_v1._0
                 try
                 {
                     textbox.Text = openFileDialog.FileName;
-                    rastrSupplier.LoadFile(openFileDialog.FileName, shablon);
+                    RastrSupplier.LoadFile(openFileDialog.FileName, shablon);
                 }
                 catch (Exception exeption)
                 {
@@ -256,6 +258,7 @@ namespace RustabBot_v1._0
             if(File.Exists(shablon))
             {
                 LoadInitialFile(RstFilter, RstOpenFileDialog, LoadRstTextBox, _rastrSupplier, shablon);
+                _rg2FileName = LoadRstTextBox.Text;
                 numbersOfNodesFromRastr.Clear();
                 RastrSupplier.FillListOfNumbersFromRastr(numbersOfNodesFromRastr, "node", "ny");
             }
@@ -316,7 +319,7 @@ namespace RustabBot_v1._0
                     LoadScnListBox.Items.AddRange(ScnOpenFileDialog.FileNames);
                     foreach (string fileName in ScnOpenFileDialog.FileNames)
                     {
-                        _rastrSupplier.LoadFile(fileName, shablon);
+                        RastrSupplier.LoadFile(fileName, shablon);
                     }
                 }
                 catch (Exception exeption)
@@ -587,7 +590,9 @@ namespace RustabBot_v1._0
         /// </summary>
         private void StartCalcButton_Click(object sender, EventArgs e)
         {
-            if(_factorList.Count == 0)
+            ProtocolListBox.Items.Add($"ТАЗ = {RastrSupplier.GetValue("sechen", "ns", 60015, "psech")}");
+
+            if (_factorList.Count == 0)
             {
                 MessageBox.Show("Вы не добавили в таблицу ни одного влияющего фактора!"
                     +"\n Расчёт остановлен.");
@@ -634,6 +639,16 @@ namespace RustabBot_v1._0
                 $"Psech={RastrSupplier.GetValue("sechen", "ns", 60014, "psech")}");
 
             ProtocolListBox.Items.Add($"Рген = {RastrSupplier.GetValue("Generator", "Node", 60533008, "P")}");
+
+            ProtocolListBox.Items.Add($"ТАЗ = {RastrSupplier.GetValue("sechen", "ns", 60015, "psech")}");
+
+            foreach(var factor in _factorList)
+            {
+                if(factor is SectionFactor)
+                {
+                    ProtocolListBox.Items.Add($"{((SectionFactor)factor).Reaction}");
+                }
+            }
 
 
         }
