@@ -6,6 +6,10 @@
     using System.Text;
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// Класс для определения состояния RadioButton
+    /// выбора способа формирования траектории
+    /// </summary>
     public enum TrajectoryWeightnessLoadingType
     {
         LoadedFromFile,

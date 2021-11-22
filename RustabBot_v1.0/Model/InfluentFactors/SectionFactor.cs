@@ -13,6 +13,9 @@ namespace Model.InfluentFactors
     /// </summary>
     public class SectionFactor : InfluentFactorBase
     {
+        /// <summary>
+        /// Поле для реакции перетока в сечении на шаг по траектории
+        /// </summary>
         private double _reaction;
         
         /// <summary>
@@ -20,10 +23,14 @@ namespace Model.InfluentFactors
         /// </summary>
         public override string FactorType => "Переток";
 
-        //У каждого сечения - свой список регулирующих генераторов
+        /// <summary>
+        /// Поле для списка генераторов, поддерживающих переток в этом сечении
+        /// </summary>
         private List<int> _regulatingGeneratorsList = new List<int>();
 
-
+        /// <summary>
+        /// Список генераторов, поддерживающих переток в этом сечении
+        /// </summary>
         public List<int> RegulatingGeneratorsList
         {
             get
@@ -37,6 +44,9 @@ namespace Model.InfluentFactors
             }
         }
 
+        /// <summary>
+        /// Реакция перетока в сечении на шаг по траектории
+        /// </summary>
         public double Reaction
         {
             get
@@ -50,7 +60,9 @@ namespace Model.InfluentFactors
             }
         }
 
-        // Расчёт приращений
+        /// <summary>
+        /// Коррекция траектории утяжеление в процессе расчёта
+        /// </summary>
         public static void CorrectTrajectory(BindingList<InfluentFactorBase>
             factorList, List<int> researchingPlantGenerators, string rg2FileName, Rastr rastr, InfluentFactorBase sectionFactor)
         {

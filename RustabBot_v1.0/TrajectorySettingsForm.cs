@@ -28,12 +28,6 @@ namespace RustabBot_v1._0
         private List<int> numbersOfNodesFromRastrCopy;
 
         /// <summary>
-        /// Экземпляр класса RastrSupplier для операций 
-        /// над данными из таблиц RastrWin
-        /// </summary>
-        private RastrSupplier _rastrSupplierCopy;
-
-        /// <summary>
         /// Таблица, в которой хранится траектория утяжеления
         /// </summary>
         private DataTable dataTableCopy;
@@ -83,7 +77,6 @@ namespace RustabBot_v1._0
             numbersOfSectionsFromRastrCopy = numbersOfSectionsFromRastr;
             numbersOfNodesFromRastrCopy = numbersOfNodesFromRastr;
             _trajectoryWeightnessLoadingType = trajectoryWeightnessLoadingType;
-            _rastrSupplierCopy = _rastrSupplier;
             dataTableCopy = dataTable;
             _factorListCopy = _factorList;
             researchingPlantGeneratorsCopy = researchingPlantGenerators;
@@ -334,9 +327,11 @@ namespace RustabBot_v1._0
             }
         }
 
-        //Событие для формирования списков с генераторами, поддерживающими
-        //переток в каждом из сечений-факторов.
-        //Обязательное условие - соответствие номера сечения таблице во вкладке "Расчёт"
+        /// <summary>
+        /// Событие для формирования списков с генераторами, поддерживающими
+        /// переток в каждом из сечений-факторов.
+        /// Обязательное условие - соответствие номера сечения таблице во вкладке "Расчёт"
+        /// </summary>
         private void ChooseGenOfInfluentSection_Click(object sender, EventArgs e)
         {
             if (GeneratorsFromFileListBox.SelectedItems.Count != 0)

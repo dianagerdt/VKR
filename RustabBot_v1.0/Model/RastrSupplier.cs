@@ -261,9 +261,9 @@ namespace Model
                     numbersFromRastr.Add(column.get_ZN(index));
                 }
             }
-            catch
+            catch(Exception exeption)
             {
-
+                throw new Exception(exeption.Message);
             }
         }
 
@@ -343,10 +343,12 @@ namespace Model
             int index = GetIndexByNumber(tableName, parameterName, number);
             columnItem.set_ZN(index, value);
         }
-        
-        // Первичная проверка для всех факторов-сечений:
-        // Если реакции нет, тогда фактору присваивается Реакция = 0
-        // Если реакция есть, она рассчитывается для этого сечения-ВФ
+
+        /// <summary>
+        /// Первичная проверка для всех факторов-сечений:
+        /// Если реакции нет, тогда фактору присваивается Реакция = 0
+        /// Если реакция есть, она рассчитывается для этого сечения-ВФ
+        /// </summary>
         public static void PrimaryCheckForReactionOfSection(BindingList<InfluentFactorBase> factorList, List<int> researchingPlantGenerators, string rg2FileName)
         {
             string shablonRg2 = @"../../Resources/режим.rg2";

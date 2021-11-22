@@ -78,6 +78,9 @@ namespace RustabBot_v1._0
         /// </summary>
         public int ResearchingSectionNumber;
 
+        /// <summary>
+        /// Путь к файлу исходного режима
+        /// </summary>
         private string _rg2FileName;
 
         /// <summary>
@@ -589,8 +592,6 @@ namespace RustabBot_v1._0
                     ProtocolListBox.Items.Add($"{((SectionFactor)factor).Reaction}");
                 }
             }
-
-
         }
 
         /// <summary>
