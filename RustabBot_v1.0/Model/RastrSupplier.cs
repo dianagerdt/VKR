@@ -93,43 +93,8 @@ namespace Model
             return columnItem.get_ZN(index);
         }
 
-        public static double GetAnyValue(string tableName, string parameterName,
-            int number, string chosenParameter, Rastr anyRastr)
-        {
-            ITable table = anyRastr.Tables.Item(tableName);
-            ICol columnItem = table.Cols.Item(chosenParameter);
-
-            int index = GetAnyIndexByNumber(tableName, parameterName, number, anyRastr);
-            return columnItem.get_ZN(index);
-        }
-
-        public static int GetAnyIndexByNumber(string tableName, string parameterName, int number, Rastr anyRastr)
-        {
-            ITable table = anyRastr.Tables.Item(tableName);
-            ICol columnItem = table.Cols.Item(parameterName);
-
-            for (int index = 0; index < table.Count; index++)
-            {
-                if (columnItem.get_ZN(index) == number)
-                {
-                    return index;
-                }
-            }
-            throw new Exception($"Узел/сечение с номером {number} не найден(о).");
-        }
-
-        public static void SetAnyValue(string tableName, string parameterName, int number,
-            string chosenParameter, double value, Rastr anyRastr)
-        {
-            ITable table = anyRastr.Tables.Item(tableName);
-            ICol columnItem = table.Cols.Item(chosenParameter);
-
-            int index = GetAnyIndexByNumber(tableName, parameterName, number, anyRastr);
-            columnItem.set_ZN(index, value);
-        }
-
         /// <summary>
-        /// Рассчитывает режим
+        /// Проверяет режим
         /// </summary>
         /// <returns> Возвращает true - расчет завершен успешно,
         /// false - аварийное завершение расчета</returns>
@@ -173,8 +138,9 @@ namespace Model
         /// </summary>
         public static void Worsening(BindingList<InfluentFactorBase> factorList, int maxIteration,
             List<int> researchingPlantGenerators, RastrSupplier rastrSupplier, 
-            ListBox protocolListBox, DataGridView dataGridView, int iteration, int ResearchingSectionNumber)
+            ListBox protocolListBox, DataGridView dataGridView, int iteration, int ResearchingSectionNumber, string rg2FileName)
         {
+            string shablonRg2 = @"../../Resources/режим.rg2";
             protocolListBox.Items.Add($"Величина перетока в исследуемом" +
                         $" {ResearchingSectionNumber} сечении до утяжеления - " +
                         $" {Math.Round(GetValue("sechen", "ns", ResearchingSectionNumber, "psech"), 0)} МВт.");
@@ -247,18 +213,13 @@ namespace Model
 
                                     if (InfluentFactorBase.IsInDiapasone(factor) == false)
                                     {
-                                        // тут какое-то мясо с коррекцией
-
-
+                                            StepBack(); //шаг назад по траектории
+                                            SaveFile(rg2FileName, shablonRg2); //сохранение последнего правильного режима после шага назад 
+                                            SectionFactor.CorrectTrajectory(factorList, researchingPlantGenerators, rg2FileName, _rastr, factor);
                                         factor.CurrentValue = GetValue("sechen", "ns", factor.NumberFromRastr, "psech");
                                         continue;
                                     }
                                     else continue;
-                                }
-                                case LoadFactor _:
-                                {
-                                    // ту би континьюд
-                                    break;
                                 }
                             }
                         }
@@ -274,15 +235,14 @@ namespace Model
                         //если все факторы попали в диапазон, всё хорошо, шагаем дальше
                     }
                     while (kd == 0);
-
-                    protocolListBox.Items.Add($"Превышено предельное число итераций!");
-                    protocolListBox.Items.Add($"Расчёт успешно завершён на {iteration} шаге утяжеления.");
-                    protocolListBox.Items.Add($"Величина перетока в исследуемом" +
-                        $" {ResearchingSectionNumber} сечении составляет" +
-                        $" {Math.Round(GetValue("sechen", "ns", ResearchingSectionNumber, "psech"), 0)} МВт.");
-
                 }
             }
+
+            protocolListBox.Items.Add($"Превышено предельное число итераций!");
+            protocolListBox.Items.Add($"Расчёт успешно завершён на {iteration} шаге утяжеления.");
+            protocolListBox.Items.Add($"Величина перетока в исследуемом" +
+                $" {ResearchingSectionNumber} сечении составляет" +
+                $" {Math.Round(GetValue("sechen", "ns", ResearchingSectionNumber, "psech"), 0)} МВт.");
         }
 
         /// <summary>
@@ -360,9 +320,9 @@ namespace Model
         /// <summary>
         /// Шаг назад по траектории
         /// </summary>
-        private static void StepBack(Rastr rastr)
+        public static void StepBack()
         {
-            ITable table = rastr.Tables.Item("ut_common");
+            ITable table = _rastr.Tables.Item("ut_common");
             ICol columnItem = table.Cols.Item("kfc"); //шаг утяжеления
 
             int index = table.Count - 1; //индекс - самая последняя строка
@@ -371,13 +331,16 @@ namespace Model
             columnItem.set_Z(index, -step);
         }
 
-        private static void SetBool(string tableName, string parameterName, int number, 
+        /// <summary>
+        /// Задать булевое значение
+        /// </summary>
+        public static void SetBool(string tableName, string parameterName, int number, 
             string chosenParameter, bool value)
         {
             ITable table = _rastr.Tables.Item(tableName);
             ICol columnItem = table.Cols.Item(chosenParameter);
 
-            int index = GetAnyIndexByNumber(tableName, parameterName, number, _rastr);
+            int index = GetIndexByNumber(tableName, parameterName, number);
             columnItem.set_ZN(index, value);
         }
         
@@ -387,11 +350,6 @@ namespace Model
         public static void PrimaryCheckForReactionOfSection(BindingList<InfluentFactorBase> factorList, List<int> researchingPlantGenerators, string rg2FileName)
         {
             string shablonRg2 = @"../../Resources/режим.rg2";
-            /*string shablonSch = @"../../Resources/сечения.sch";
-            string shablonUt2 = @"../../Resources/траектория утяжеления.ut2";
-            Rastr newRastr = new Rastr(); //новый экземпляр, чтобы посчитать коэф влияния и приращения
-            newRastr.Load(RG_KOD.RG_REPL, rg2FileName, shablonRg2); //подгружаем файл режима
-            newRastr.Load(RG_KOD.RG_REPL, schFileName, shablonSch); //подгружаем файл сечений*/
 
             ITable tableForIncrement = _rastr.Tables.Item("ut_node");
             ICol columnForStatement = tableForIncrement.Cols.Item("sta");
@@ -436,7 +394,7 @@ namespace Model
 
                                 double sectionPowerAfterStep = Math.Round(GetValue("sechen", "ns", factor.NumberFromRastr, "psech"), 0); //значение перетока после шага утяжеления
 
-                                StepBack(_rastr); //шагаем назад (возвращаемся к исходному режиму)
+                                StepBack(); //шагаем назад (возвращаемся к исходному режиму)
 
                                 if (sectionPowerAfterStep == initialSectionPower) //если переток НЕ изменился после шага утяжеления, то приращения остаются равными нулю
                                 {
@@ -446,12 +404,6 @@ namespace Model
                                 else //если переток меняется, значит есть зависимость -> нужно рассчитать приращение
                                 {
                                     ((SectionFactor)factor).Reaction = sectionPowerAfterStep - initialSectionPower; //расчёт реакции 1802 - 1772 = 32
-
-                                    /*newRastr.Load(RG_KOD.RG_REPL, rg2FileName, shablonRg2); //подгружаем файл режима
-                                    newRastr.NewFile(shablonUt2); //новый файл траектории утяжеления
-                                    ITable tableForIncrement = newRastr.Tables.Item("ut_node");
-                                    ICol columnForIncrementNy = tableForIncrement.Cols.Item("ny");
-                                    ICol columnForIncrementPg = tableForIncrement.Cols.Item("pg");*/
 
                                     //Обратно включаем номера влияющих генераторов в таблице приращений
                                     for (int i = 0; i < ((SectionFactor)factor).RegulatingGeneratorsList.Count; i++) 
@@ -495,9 +447,6 @@ namespace Model
 
                     LoadFile(rg2FileName, shablonRg2);
                    
-
-                    //powerFlowBeforeStep = GetValue("sechen", "ns", factor.NumberFromRastr, "psech"); //фиксируем переток ДО 
-
                     if (_rastr.ut_Param[ParamUt.UT_FORM_P] == 0)
                     {
                         //_rastr.Tables.Item("ut_common").Cols.Item("tip").Z[0] = 0;
@@ -517,7 +466,7 @@ namespace Model
                                 // Шаг выполнен. Определяем реакцию
 
                                 powerFlowAfterStep = GetValue("sechen", "ns", factor.NumberFromRastr, "psech"); //фиксируем переток ПОСЛЕ почему 1796?
-                                StepBack(_rastr);
+                                StepBack();
 
                                 double InfluentCoeff = ((powerFlowAfterStep - initialSectionPower) / ((SectionFactor)factor).RegulatingGeneratorsList.Count); // -8 / 9 = -0,89
                                 double compensationPower = ((SectionFactor)factor).Reaction / InfluentCoeff; // 32 / -0,89 = -35,9

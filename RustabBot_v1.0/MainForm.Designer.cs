@@ -292,8 +292,7 @@ namespace RustabBot_v1._0
             this.FactorTypeComboBox.FormattingEnabled = true;
             this.FactorTypeComboBox.Items.AddRange(new object[] {
             "Напряжение",
-            "Переток",
-            "Нагрузка"});
+            "Переток"});
             this.FactorTypeComboBox.Location = new System.Drawing.Point(9, 50);
             this.FactorTypeComboBox.Name = "FactorTypeComboBox";
             this.FactorTypeComboBox.Size = new System.Drawing.Size(180, 24);

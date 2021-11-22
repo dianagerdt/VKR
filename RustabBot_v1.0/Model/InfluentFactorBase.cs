@@ -98,7 +98,7 @@ namespace Model
             }
             set
             {
-                _currentValue = Math.Round(value, 2);
+                _currentValue = Math.Round(value, 0);
             }
         }
 

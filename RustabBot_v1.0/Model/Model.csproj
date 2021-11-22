@@ -47,7 +47,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="InfluentFactorBase.cs" />
-    <Compile Include="InfluentFactors\LoadFactor.cs" />
     <Compile Include="InfluentFactors\SectionFactor.cs" />
     <Compile Include="InfluentFactors\VoltageFactor.cs" />
     <Compile Include="RastrSupplier.cs" />

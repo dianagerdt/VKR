@@ -103,11 +103,7 @@ namespace RustabBot_v1._0
                     InfluentFactorMinTextBox,
                     (factor, value) =>
                     {
-                        if (factor is LoadFactor loadFactor)
-                        {
-                            loadFactor.MinValue = value;
-                        }
-                        else if (factor is SectionFactor sectionFactor)
+                        if (factor is SectionFactor sectionFactor)
                         {
                             sectionFactor.MinValue = value;
                         }
@@ -121,11 +117,7 @@ namespace RustabBot_v1._0
                     InfluentFactorMaxTextbox,
                     (factor, value) =>
                     {
-                        if (factor is LoadFactor loadFactor)
-                        {
-                            loadFactor.MaxValue = value;
-                        }
-                        else if (factor is SectionFactor sectionFactor)
+                        if (factor is SectionFactor sectionFactor)
                         {
                             sectionFactor.MaxValue = value;
                         }
@@ -143,11 +135,7 @@ namespace RustabBot_v1._0
                     InfluentFactorNumCombobox,
                     (factor, value) =>
                     {
-                        if (factor is LoadFactor loadFactor)
-                        {
-                            loadFactor.NumberFromRastr = value;
-                        }
-                        else if (factor is SectionFactor sectionFactor)
+                        if (factor is SectionFactor sectionFactor)
                         {
                             sectionFactor.NumberFromRastr = value;
                         }
@@ -362,13 +350,6 @@ namespace RustabBot_v1._0
                     InfluentFactorNumCombobox.Text = "";
                     break;
                 }
-                case 2:
-                {
-                    _factor = new LoadFactor();
-                    InfluentFactorNumCombobox.DataSource = numbersOfNodesFromRastr;
-                    InfluentFactorNumCombobox.Text = "";
-                    break;
-                }
             }
         }
 
@@ -457,42 +438,6 @@ namespace RustabBot_v1._0
         }
 
         /// <summary>
-        /// Ввод данных о нагрузке
-        /// </summary>
-        /// <returns>Созданный экземпляр класса LoadFactor</returns>
-        private LoadFactor GetNewLoadFactor()
-        {
-            var newLoadFactor = new LoadFactor();
-
-            var actions = new List<Action>()
-            {
-                new Action(() =>
-                {
-                    newLoadFactor.NumberFromRastr =
-                    Convert.ToInt32(InfluentFactorNumCombobox.Text);
-                }),
-                new Action(() =>
-                {
-                    newLoadFactor.MinValue =
-                    Convert.ToDouble(InfluentFactorMinTextBox.Text);
-                }),
-                new Action(() =>
-                {
-                    newLoadFactor.MaxValue =
-                    Convert.ToDouble(InfluentFactorMaxTextbox.Text);
-                }),
-                new Action(() =>
-                {
-                    newLoadFactor.CurrentValue =
-                    RastrSupplier.GetValue("node", "ny", 
-                    Convert.ToInt32(InfluentFactorNumCombobox.Text), "pn");
-                })
-            };
-            actions.ForEach(SetFactorValue);
-            return newLoadFactor;
-        }
-
-        /// <summary>
         /// Ввод данных о факторах
         /// </summary>
         private void InsertData()
@@ -507,11 +452,6 @@ namespace RustabBot_v1._0
                 case SectionFactor _:
                 {
                     _factor = GetNewSectionFactor();
-                    break;
-                }
-                case LoadFactor _:
-                {
-                    _factor = GetNewLoadFactor();
                     break;
                 }
                 default:
@@ -622,7 +562,7 @@ namespace RustabBot_v1._0
                 RastrSupplier.Worsening(_factorList, maxIteration,
                     researchingPlantGenerators, _rastrSupplier,
                     ProtocolListBox, InfluentFactorsDataGridView, 
-                    iteration, ResearchingSectionNumber);
+                    iteration, ResearchingSectionNumber, _rg2FileName);
             }
             catch(Exception exeption)
             {

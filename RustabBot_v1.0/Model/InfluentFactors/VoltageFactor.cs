@@ -19,6 +19,9 @@ namespace Model.InfluentFactors
         /// </summary>
         public override string FactorType => "Напряжение";
 
+        /// <summary>
+        /// Метод для коррекции V_зд у генераторов для поддержания напряжения-влияющего фактора
+        /// </summary>
         public static void CorrectVoltage(List<int> listOfGenerators, InfluentFactorBase voltageFactor)
         {
             if(voltageFactor.CurrentValue < voltageFactor.MinValue)
@@ -58,11 +61,17 @@ namespace Model.InfluentFactors
             }
         }
 
+        /// <summary>
+        /// Максильмано возможное значение V_зд генератора
+        /// </summary>
         private static double setMaxValueForVoltage(double vzd)
         {
             return vzd * 1.05; 
         }
 
+        /// <summary>
+        /// Минимально возможное значение V_зд генератора
+        /// </summary>
         private static double setMinValueForVoltage(double vzd)
         {
             return vzd * 0.95; 

@@ -204,7 +204,9 @@ namespace RustabBot_v1._0
                 == true && dataTableCopy.Rows.Count != 0) 
             {
                 RastrSupplier.SaveToUt2FromDataGrid(dataTableCopy); //взяли траекторию из таблицы
+
                 RastrSupplier.PrimaryCheckForReactionOfSection(_factorListCopy, researchingPlantGeneratorsCopy, rg2FileNameCopy);
+
                 string shablon = @"../../Resources/траектория утяжеления.ut2";
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
                 saveFileDialog.DefaultExt = "ut2";
