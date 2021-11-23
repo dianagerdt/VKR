@@ -186,9 +186,11 @@ namespace RustabBot_v1._0
         /// </summary>
         private void TrajectorySettingsButton_Click(object sender, EventArgs e)
         {
-            using (TrajectorySettingsForm trajectorySettings = new TrajectorySettingsForm(numbersOfSectionsFromRastr,
-                numbersOfNodesFromRastr, GetFromRadioButtons(), _rastrSupplier,
-                dataTable, _factorList, researchingPlantGenerators, ResearchingSectionNumber, _rg2FileName))
+            var tmpRastrData = new RastrData(numbersOfNodesFromRastr,
+                numbersOfSectionsFromRastr,
+                researchingPlantGenerators);
+            using (TrajectorySettingsForm trajectorySettings = new TrajectorySettingsForm(tmpRastrData, GetFromRadioButtons(), _rastrSupplier,
+                dataTable, _factorList, ResearchingSectionNumber, _rg2FileName))
             {
                 trajectorySettings.ShowDialog();
                 ResearchingSectionNumber = trajectorySettings.ResearchingSectionNumberCopy;
@@ -250,6 +252,7 @@ namespace RustabBot_v1._0
             {
                 LoadInitialFile(RstFilter, RstOpenFileDialog, LoadRstTextBox, _rastrSupplier, shablon);
                 _rg2FileName = LoadRstTextBox.Text;
+                //TODO: поменять
                 numbersOfNodesFromRastr.Clear();
                 RastrSupplier.FillListOfNumbersFromRastr(numbersOfNodesFromRastr, "node", "ny");
             }

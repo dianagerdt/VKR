@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.IO;
 using System.Windows.Forms;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms.VisualStyles;
 using ASTRALib;
 using Model.InfluentFactors;
 
@@ -36,7 +38,11 @@ namespace Model
         {
             try //если нет лицензии, то файл не сохранится
             {
-                _rastr.Save(fileName, shablon); 
+                //TODO: проверить
+                var fileInfo = new FileInfo(fileName);
+                var currentTime = DateTime.Now;
+                _rastr.Save($"{fileInfo.Name}_{currentTime.ToShortDateString()}.{fileInfo.Extension}", 
+                    shablon); 
             }
             catch(Exception exeption)
             {

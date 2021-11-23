@@ -59,9 +59,9 @@ namespace RustabBot_v1._0
         /// <summary>
         /// Форма с настройками траектории утяжеления
         /// </summary>
-        public TrajectorySettingsForm(List<int> numbersOfSectionsFromRastr, List<int> numbersOfNodesFromRastr, 
+        public TrajectorySettingsForm(RastrData rastrData, 
             TrajectoryWeightnessLoadingType trajectoryWeightnessLoadingType, RastrSupplier _rastrSupplier,
-            DataTable dataTable, BindingList<InfluentFactorBase> _factorList, List<int> researchingPlantGenerators,
+            DataTable dataTable, BindingList<InfluentFactorBase> _factorList, 
             int ResearchingSectionNumber, string rg2FileName)
         {
             InitializeComponent();
@@ -74,7 +74,9 @@ namespace RustabBot_v1._0
             ChooseGenOfResearchingSection.Visible = false;
             ChooseGenOfInfluentSection.Visible = false;
 
-            numbersOfSectionsFromRastrCopy = numbersOfSectionsFromRastr;
+            var tmpRastrData = (RastrData)rastrData.Clone();
+
+            numbersOfSectionsFromRastrCopy = tmpRastrData.NumbersOfSectionsFromRastr;
             numbersOfNodesFromRastrCopy = numbersOfNodesFromRastr;
             _trajectoryWeightnessLoadingType = trajectoryWeightnessLoadingType;
             dataTableCopy = dataTable;
