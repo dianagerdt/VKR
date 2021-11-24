@@ -20,13 +20,6 @@ namespace RustabBot_v1._0
     public partial class MainForm : Form
     {
         /// <summary>
-        /// Экземпляр класса RastrSupplier для операций 
-        /// над данными из таблиц RastrWin
-        /// Здесь происходит вся магия
-        /// </summary>
-        private RastrSupplier _rastrSupplier = new RastrSupplier();
-
-        /// <summary>
         /// Поле для создания фактора
         /// </summary>
         private InfluentFactorBase _factor;
@@ -189,7 +182,8 @@ namespace RustabBot_v1._0
             var tmpRastrData = new RastrData(numbersOfNodesFromRastr,
                 numbersOfSectionsFromRastr,
                 researchingPlantGenerators);
-            using (TrajectorySettingsForm trajectorySettings = new TrajectorySettingsForm(tmpRastrData, GetFromRadioButtons(), _rastrSupplier,
+
+            using (TrajectorySettingsForm trajectorySettings = new TrajectorySettingsForm(tmpRastrData, GetFromRadioButtons(), 
                 dataTable, _factorList, ResearchingSectionNumber, _rg2FileName))
             {
                 trajectorySettings.ShowDialog();
@@ -219,7 +213,7 @@ namespace RustabBot_v1._0
         ///  и запись его пути в Текстбокс
         /// </summary>
         public void LoadInitialFile(string openFileDialogFilter, OpenFileDialog openFileDialog, 
-            TextBox textbox, RastrSupplier rastrSupplier, string shablon)
+            TextBox textbox, string shablon)
         {
             openFileDialog.Filter = openFileDialogFilter;
             openFileDialog.RestoreDirectory = true;
@@ -250,11 +244,10 @@ namespace RustabBot_v1._0
             string shablon = @"../../Resources/режим.rg2";
             if(File.Exists(shablon))
             {
-                LoadInitialFile(RstFilter, RstOpenFileDialog, LoadRstTextBox, _rastrSupplier, shablon);
+                LoadInitialFile(RstFilter, RstOpenFileDialog, LoadRstTextBox, shablon);
                 _rg2FileName = LoadRstTextBox.Text;
-                //TODO: поменять
-                numbersOfNodesFromRastr.Clear();
-                RastrSupplier.FillListOfNumbersFromRastr(numbersOfNodesFromRastr, "node", "ny");
+                //TODO: поменять +
+                numbersOfNodesFromRastr = RastrSupplier.FillListOfNumbersFromRastr("node", "ny");
             }
             else
             {
@@ -270,9 +263,8 @@ namespace RustabBot_v1._0
         {
             string SchFilter = "Файл сечения (*.sch)|*.sch";
             string shablon = @"../../Resources/сечения.sch";
-            LoadInitialFile(SchFilter, SchOpenFileDialog, LoadSchTextBox, _rastrSupplier, shablon);
-            numbersOfSectionsFromRastr.Clear();
-            RastrSupplier.FillListOfNumbersFromRastr(numbersOfSectionsFromRastr, "sechen", "ns");
+            LoadInitialFile(SchFilter, SchOpenFileDialog, LoadSchTextBox, shablon);
+            numbersOfSectionsFromRastr = RastrSupplier.FillListOfNumbersFromRastr("sechen", "ns");
         }
 
         /// <summary>
@@ -283,7 +275,7 @@ namespace RustabBot_v1._0
         {
             string DfwFilter = "Файл автоматики (*.dfw)|*.dfw";
             string shablon = @"../../Resources/автоматика.dfw";
-            LoadInitialFile(DfwFilter, DfwOpenFileDialog, LoadDfwTextBox, _rastrSupplier, shablon);
+            LoadInitialFile(DfwFilter, DfwOpenFileDialog, LoadDfwTextBox, shablon);
         }
 
         /// <summary>
@@ -293,7 +285,7 @@ namespace RustabBot_v1._0
         {
             string Ut2Filter = "Файл траектории (*.ut2)|*.ut2";
             string shablon = @"../../Resources/траектория утяжеления.ut2";
-            LoadInitialFile(Ut2Filter, Ut2OpenFileDialog, LoadTrajectoryTextBox, _rastrSupplier, shablon);
+            LoadInitialFile(Ut2Filter, Ut2OpenFileDialog, LoadTrajectoryTextBox, shablon);
         }
 
         /// <summary>
@@ -544,8 +536,8 @@ namespace RustabBot_v1._0
                     +"\n Расчёт остановлен.");
                 return;
             }
-            
-            _rastrSupplier.Regime(); //первичный расчёт режима
+
+            RastrSupplier.Regime(); //первичный расчёт режима
 
             ProtocolListBox.Items.Add("Расчёт установившегося режима...");
 
@@ -566,7 +558,7 @@ namespace RustabBot_v1._0
             try
             {
                 RastrSupplier.Worsening(_factorList, maxIteration,
-                    researchingPlantGenerators, _rastrSupplier,
+                    researchingPlantGenerators,
                     ProtocolListBox, InfluentFactorsDataGridView, 
                     iteration, ResearchingSectionNumber, _rg2FileName);
             }

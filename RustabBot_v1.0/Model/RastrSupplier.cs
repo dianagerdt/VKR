@@ -104,7 +104,7 @@ namespace Model
         /// </summary>
         /// <returns> Возвращает true - расчет завершен успешно,
         /// false - аварийное завершение расчета</returns>
-        public bool IsRegimeOK()
+        public static bool IsRegimeOK()
         {
             var statusRgm = _rastr.rgm("");
 
@@ -121,7 +121,7 @@ namespace Model
         /// <summary>
         /// Рассчитывает режим
         /// </summary>
-        public void Regime()
+        public static void Regime()
         {
             _rastr.rgm("");
         }
@@ -143,8 +143,8 @@ namespace Model
         /// Алгоритм утяжеления
         /// </summary>
         public static void Worsening(BindingList<InfluentFactorBase> factorList, int maxIteration,
-            List<int> researchingPlantGenerators, RastrSupplier rastrSupplier, 
-            ListBox protocolListBox, DataGridView dataGridView, int iteration, int ResearchingSectionNumber, string rg2FileName)
+            List<int> researchingPlantGenerators, ListBox protocolListBox, DataGridView dataGridView, 
+            int iteration, int ResearchingSectionNumber, string rg2FileName)
         {
             string shablonRg2 = @"../../Resources/режим.rg2";
             protocolListBox.Items.Add($"Величина перетока в исследуемом" +
@@ -180,7 +180,7 @@ namespace Model
                         }
                         
                         //проверка, не разошёлся ли режим
-                        if (!rastrSupplier.IsRegimeOK())
+                        if (!IsRegimeOK())
                         {
                             protocolListBox.Items.Add("Аварийное завершение расчёта!");
                             dataGridView.Refresh();
@@ -207,7 +207,7 @@ namespace Model
                                     if(InfluentFactorBase.IsInDiapasone(factor) == false)
                                     {
                                         VoltageFactor.CorrectVoltage(researchingPlantGenerators, factor);
-                                        rastrSupplier.Regime();
+                                        Regime();
                                         factor.CurrentValue = GetValue("node", "ny", factor.NumberFromRastr, "vras");
                                         continue;
                                     }
@@ -254,9 +254,10 @@ namespace Model
         /// <summary>
         /// Заполняет список номерами узлов/сечений из загруженного файла
         /// </summary>
-        public static void FillListOfNumbersFromRastr(List<int> numbersFromRastr, 
-            string tableName, string parameterName)
+        public static List<int> FillListOfNumbersFromRastr(string tableName, string parameterName)
         {
+            List<int> ListOfNumbersFromRastr = new List<int>();
+
             try
             {
                 ITable table = _rastr.Tables.Item(tableName);
@@ -264,8 +265,10 @@ namespace Model
 
                 for (int index = 0; index < table.Count; index++)
                 {
-                    numbersFromRastr.Add(column.get_ZN(index));
+                    ListOfNumbersFromRastr.Add(column.get_ZN(index));
                 }
+
+                return ListOfNumbersFromRastr;
             }
             catch(Exception exeption)
             {

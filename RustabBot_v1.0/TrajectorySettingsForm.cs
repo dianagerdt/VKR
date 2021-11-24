@@ -60,7 +60,7 @@ namespace RustabBot_v1._0
         /// Форма с настройками траектории утяжеления
         /// </summary>
         public TrajectorySettingsForm(RastrData rastrData, 
-            TrajectoryWeightnessLoadingType trajectoryWeightnessLoadingType, RastrSupplier _rastrSupplier,
+            TrajectoryWeightnessLoadingType trajectoryWeightnessLoadingType,
             DataTable dataTable, BindingList<InfluentFactorBase> _factorList, 
             int ResearchingSectionNumber, string rg2FileName)
         {
@@ -77,11 +77,12 @@ namespace RustabBot_v1._0
             var tmpRastrData = (RastrData)rastrData.Clone();
 
             numbersOfSectionsFromRastrCopy = tmpRastrData.NumbersOfSectionsFromRastr;
-            numbersOfNodesFromRastrCopy = numbersOfNodesFromRastr;
+            numbersOfNodesFromRastrCopy = tmpRastrData.NumbersOfNodesFromRastr;
+            researchingPlantGeneratorsCopy = tmpRastrData.ResearchingPlantGenerators;
+
             _trajectoryWeightnessLoadingType = trajectoryWeightnessLoadingType;
             dataTableCopy = dataTable;
             _factorListCopy = _factorList;
-            researchingPlantGeneratorsCopy = researchingPlantGenerators;
             ResearchingSectionNumberCopy = ResearchingSectionNumber;
             rg2FileNameCopy = rg2FileName;
         }

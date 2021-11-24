@@ -12,12 +12,6 @@ namespace Model
     public abstract class InfluentFactorBase
     {
         /// <summary>
-        /// Экземпляр класса RastrSupplier для операций 
-        /// над данными из таблиц RastrWin
-        /// </summary>
-        protected RastrSupplier _rastrSupplier = new RastrSupplier();
-        
-        /// <summary>
         /// Нижняя граница для фактора
         /// </summary>
         private double _minValue;
