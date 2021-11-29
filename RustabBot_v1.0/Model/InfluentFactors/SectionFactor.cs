@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ASTRALib;
 using System.ComponentModel;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -66,9 +67,13 @@ namespace Model.InfluentFactors
         public static void CorrectTrajectory(BindingList<InfluentFactorBase>
             factorList, List<int> researchingPlantGenerators, string rg2FileName, Rastr rastr, InfluentFactorBase sectionFactor)
         {
+            string shablonRg2 = @"../../Resources/режим.rg2";
+            //_rastr.Save(rg2NewFileName, shablonRg2);
+
+            //RastrSupplier.SaveFile(rg2FileName, shablonRg2); //сохранение последнего правильного режима после шага назад 
+
             ITable tableForIncrement = rastr.Tables.Item("ut_node");
             ICol columnForStatement = tableForIncrement.Cols.Item("sta");
-            string shablonRg2 = @"../../Resources/режим.rg2";
 
             //Приращения для ВСЕХ сечений-факторов выставляем равным нулю (иначе говоря, их строки отключается)
             foreach (var factor in factorList)
@@ -162,7 +167,7 @@ namespace Model.InfluentFactors
 
                         double InfluentCoeff = ((powerFlowAfterStep - initialSectionPower) / ((SectionFactor)sectionFactor).RegulatingGeneratorsList.Count); 
                         double compensationPower = ((SectionFactor)sectionFactor).Reaction / InfluentCoeff; 
-                        double increment = compensationPower / ((SectionFactor)sectionFactor).RegulatingGeneratorsList.Count; 
+                        double increment = -compensationPower / ((SectionFactor)sectionFactor).RegulatingGeneratorsList.Count; 
 
                         // присваиваем приращение в таблице траектории
 

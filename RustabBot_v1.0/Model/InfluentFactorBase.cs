@@ -62,7 +62,7 @@ namespace Model
             }
             set
             {
-                _minValue = value;
+                _minValue = Math.Round(value, 0);
             }
         }
 
@@ -77,7 +77,7 @@ namespace Model
             }
             set
             {
-                _maxValue = value;
+                _maxValue = Math.Round(value, 0);
             }
         }
 

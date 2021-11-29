@@ -38,11 +38,7 @@ namespace Model
         {
             try //если нет лицензии, то файл не сохранится
             {
-                //TODO: проверить
-                var fileInfo = new FileInfo(fileName);
-                var currentTime = DateTime.Now;
-                _rastr.Save($"{fileInfo.Name}_{currentTime.ToShortDateString()}.{fileInfo.Extension}", 
-                    shablon); 
+                _rastr.Save(fileName, shablon); 
             }
             catch(Exception exeption)
             {
@@ -147,6 +143,7 @@ namespace Model
             int iteration, int ResearchingSectionNumber, string rg2FileName)
         {
             string shablonRg2 = @"../../Resources/режим.rg2";
+            int stepCounter = 0;
             protocolListBox.Items.Add($"Величина перетока в исследуемом" +
                         $" {ResearchingSectionNumber} сечении до утяжеления - " +
                         $" {Math.Round(GetValue("sechen", "ns", ResearchingSectionNumber, "psech"), 0)} МВт.");
@@ -182,7 +179,7 @@ namespace Model
                         //проверка, не разошёлся ли режим
                         if (!IsRegimeOK())
                         {
-                            protocolListBox.Items.Add("Аварийное завершение расчёта!");
+                            protocolListBox.Items.Add("Внимание! Режим разошёлся до начала расчёта. Проверьте исходный режим.");
                             dataGridView.Refresh();
                             return;
                         }
@@ -193,6 +190,8 @@ namespace Model
                             || _rastr.ut_Param[ParamUt.UT_TIP] == 1)
                         {
                             _rastr.AddControl(-1, ""); //Добавить строку в таблицу значений контролируемых величин
+                            stepCounter++;
+
                         }
                         // шаг утяжеления
 
@@ -200,52 +199,99 @@ namespace Model
                         {
                             switch (factor)
                             {
+                                case SectionFactor _:
+                                    {
+                                        factor.CurrentValue = GetValue("sechen", "ns", factor.NumberFromRastr, "psech");
+
+                                        if (InfluentFactorBase.IsInDiapasone(factor) == false)
+                                        {
+                                            StepBack(); //шаг назад по траектории
+                                            FileInfo fileInfo = new FileInfo(rg2FileName);
+                                            rg2FileName = $@"{fileInfo.DirectoryName}\{DateTime.Now.ToString().Replace(":", "-")}{fileInfo.Extension}";
+                                            SaveFile(rg2FileName, shablonRg2);
+
+                                            SectionFactor.CorrectTrajectory(factorList, researchingPlantGenerators, rg2FileName, _rastr, factor);
+
+                                            factor.CurrentValue = GetValue("sechen", "ns", factor.NumberFromRastr, "psech");
+
+                                            iteration = iteration + 1;
+
+                                            if (iteration > maxIteration)
+                                            {
+                                                protocolListBox.Items.Add("Расчёт остановлен. Коррекция траектории утяжеления " +
+                                                    "по заданным исходным данным невозможна. Попробуйте ещё раз.");
+                                                dataGridView.Refresh();
+                                                return;
+                                            }
+                                            continue;
+                                        }
+                                        else continue;
+
+                                    }
                                 case VoltageFactor _:
                                 {
                                     factor.CurrentValue = GetValue("node", "ny", factor.NumberFromRastr, "vras");
 
                                     if(InfluentFactorBase.IsInDiapasone(factor) == false)
                                     {
-                                        VoltageFactor.CorrectVoltage(researchingPlantGenerators, factor);
-                                        Regime();
-                                        factor.CurrentValue = GetValue("node", "ny", factor.NumberFromRastr, "vras");
-                                        continue;
-                                    }
-                                    else continue;
-                                }
-                                case SectionFactor _:
-                                {
-                                    factor.CurrentValue = GetValue("sechen", "ns", factor.NumberFromRastr, "psech");
+                                            do
+                                            {
+                                                VoltageFactor.CorrectVoltage(researchingPlantGenerators, factor);
+                                                Regime();
+                                                factor.CurrentValue = GetValue("node", "ny", factor.NumberFromRastr, "vras");
+                                                iteration = iteration + 1;
 
-                                    if (InfluentFactorBase.IsInDiapasone(factor) == false)
-                                    {
-                                            StepBack(); //шаг назад по траектории
-                                            SaveFile(rg2FileName, shablonRg2); //сохранение последнего правильного режима после шага назад 
-                                            SectionFactor.CorrectTrajectory(factorList, researchingPlantGenerators, rg2FileName, _rastr, factor);
-                                        factor.CurrentValue = GetValue("sechen", "ns", factor.NumberFromRastr, "psech");
-                                        continue;
+                                                if (iteration > maxIteration)
+                                                {
+                                                    protocolListBox.Items.Add("Расчёт остановлен. Коррекция траектории утяжеления " +
+                                                        "по заданным исходным данным невозможна. Попробуйте ещё раз.");
+                                                    return;
+                                                }
+                                            }
+                                            while (InfluentFactorBase.IsInDiapasone(factor) == false);
+                                            continue;
                                     }
                                     else continue;
                                 }
+                                
                             }
                         }
-                        
-                        iteration = iteration + 1;
 
-                        if(iteration > maxIteration)
-                        {
-                            protocolListBox.Items.Add("Расчёт остановлен. Коррекция траектории утяжеления " +
-                                "по заданным исходным данным невозможна. Попробуйте ещё раз.");
-                            return;
-                        }
                         //если все факторы попали в диапазон, всё хорошо, шагаем дальше
+
+                        //если генераторы дошли до максимума, останавливается расчёт
+                        for (int j = 0; j < researchingPlantGenerators.Count; j++)
+                        {
+                            double powerOfGen = GetValue("Generator", "Node",
+                                researchingPlantGenerators[j], "P");
+                            double powerOfGenMax = GetValue("Generator", "Node",
+                                researchingPlantGenerators[j], "Pmax");
+
+                            if (powerOfGen >= powerOfGenMax)
+                            {
+                                protocolListBox.Items.Add("Расчёт окончен. " +
+                                    "Генераторы достигли предельной загрузки, режим не разошёлся.");
+                                dataGridView.Refresh();
+                                return;
+                            }
+                        }
                     }
                     while (kd == 0);
                 }
             }
 
-            protocolListBox.Items.Add($"Превышено предельное число итераций!");
-            protocolListBox.Items.Add($"Расчёт успешно завершён на {iteration} шаге утяжеления.");
+            foreach (var factor in factorList)
+            {
+                if(InfluentFactorBase.IsInDiapasone(factor) == false)
+                {
+                    protocolListBox.Items.Add($"Поддержание в заданном диапазоне влияющего фактора {factor.FactorType} с номером {factor.NumberFromRastr}" +
+                        $" невозможно при заданных исходных данных. Проверьте режим, траекторию и корректность заданных границ диапазона.");
+                    return;
+                }
+            }
+
+                protocolListBox.Items.Add($"Превышено предельное число итераций!");
+            protocolListBox.Items.Add($"Расчёт успешно завершён на {stepCounter} шаге утяжеления.");
             protocolListBox.Items.Add($"Величина перетока в исследуемом" +
                 $" {ResearchingSectionNumber} сечении составляет" +
                 $" {Math.Round(GetValue("sechen", "ns", ResearchingSectionNumber, "psech"), 0)} МВт.");
