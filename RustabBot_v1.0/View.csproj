@@ -120,9 +120,11 @@
     </Compile>
     <EmbeddedResource Include="DBConnectionForm.resx">
       <DependentUpon>DBConnectionForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -131,6 +133,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="TrajectorySettingsForm.resx">
       <DependentUpon>TrajectorySettingsForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

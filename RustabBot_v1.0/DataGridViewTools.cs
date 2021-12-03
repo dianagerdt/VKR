@@ -30,7 +30,6 @@ namespace RustabBot_v1._0
             dataGridView.Columns[2].HeaderText = "Минимум";
             dataGridView.Columns[3].HeaderText = "Максимум";
             dataGridView.Columns[4].HeaderText = "Текущее значение";
-            //dataGridView.Columns[5].Visible = false;
 
             dataGridView.AllowUserToAddRows = false;
             dataGridView.RowHeadersVisible = false;

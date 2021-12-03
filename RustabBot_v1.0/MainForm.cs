@@ -74,7 +74,7 @@ namespace RustabBot_v1._0
         /// <summary>
         /// Путь к файлу исходного режима
         /// </summary>
-        private string _rg2FileName;
+        private string _rstFileName;
 
         /// <summary>
         /// Главная форма
@@ -83,12 +83,12 @@ namespace RustabBot_v1._0
         {
             InitializeComponent();
             StartPosition = FormStartPosition.CenterScreen;
-            FromFileRadioButton.Checked = false;
-            ByHandRadioButton.Checked = true;
-            LoadTrajectoryTextBox.Visible = false;
-            LoadTrajectoryButton.Visible = false;
-            InfoAboutTrajectoryLabel.Visible = true;
-            InfoAboutTrajectoryLabel2.Visible = true;
+            FromFileRadioButton.Checked = true;
+            ByHandRadioButton.Checked = false;
+            LoadTrajectoryTextBox.Visible = true;
+            LoadTrajectoryButton.Visible = true;
+            InfoAboutTrajectoryLabel.Visible = false;
+            InfoAboutTrajectoryLabel2.Visible = false;
 
 
             //Вторая вкладка "Расчёт"
@@ -184,7 +184,7 @@ namespace RustabBot_v1._0
                 researchingPlantGenerators);
 
             using (TrajectorySettingsForm trajectorySettings = new TrajectorySettingsForm(tmpRastrData, GetFromRadioButtons(), 
-                dataTable, _factorList, ResearchingSectionNumber, _rg2FileName))
+                dataTable, _factorList, ResearchingSectionNumber, _rstFileName))
             {
                 trajectorySettings.ShowDialog();
                 ResearchingSectionNumber = trajectorySettings.ResearchingSectionNumberCopy;
@@ -240,18 +240,17 @@ namespace RustabBot_v1._0
         /// </summary>
         private void LoadRstButton_Click(object sender, EventArgs e)
         {
-            string RstFilter = "Файл динамики (*.rg2)|*.rg2";
-            string shablon = @"../../Resources/режим.rg2";
+            string RstFilter = "Файл динамики (*.rst)|*.rst";
+            string shablon = @"../../Resources/динамика.rst";
             if(File.Exists(shablon))
             {
                 LoadInitialFile(RstFilter, RstOpenFileDialog, LoadRstTextBox, shablon);
-                _rg2FileName = LoadRstTextBox.Text;
-                //TODO: поменять +
+                _rstFileName = LoadRstTextBox.Text;
                 numbersOfNodesFromRastr = RastrSupplier.FillListOfNumbersFromRastr("node", "ny");
             }
             else
             {
-                MessageBox.Show("Вам необходимо добавить шаблон 'режим.rg2' в папку Resources!");
+                MessageBox.Show("Вам необходимо добавить шаблон 'динамика.rst' в папку Resources!");
             }
         }
         
@@ -324,6 +323,7 @@ namespace RustabBot_v1._0
         private void MainForm_Load(object sender, EventArgs e)
         {
             DataGridViewTools.CreateTableForFactors(_factorList, InfluentFactorsDataGridView);
+            RastrSupplier.Message += MessageHandler;
         }
 
         /// <summary>
@@ -479,6 +479,8 @@ namespace RustabBot_v1._0
                     }
                 }
                 _factorList.Add(_factor);
+                InfluentFactorMinTextBox.Clear();
+                InfluentFactorMaxTextbox.Clear();
             }
             catch
             {
@@ -526,9 +528,20 @@ namespace RustabBot_v1._0
         /// <summary>
         /// Инициирование расчёта (пока что только траектории)
         /// </summary>
-        private void StartCalcButton_Click(object sender, EventArgs e)
+        private async void StartCalcButton_Click(object sender, EventArgs e)
         {
-            ProtocolListBox.Items.Add($"ТАЗ = {RastrSupplier.GetValue("sechen", "ns", 60015, "psech")}");
+            string shablon = @"../../Resources/динамика.rst";
+
+            RastrSupplier.LoadFile(_rstFileName, shablon);
+
+            InfluentFactorsDataGridView.Refresh();
+
+            var startCalc = DateTime.Now;
+
+            this.Invoke((Action)delegate
+            {
+                ProtocolListBox.Items.Add($"Время начала расчёта: " + startCalc.ToLongTimeString());
+            });
 
             if (_factorList.Count == 0)
             {
@@ -536,18 +549,28 @@ namespace RustabBot_v1._0
                     +"\n Расчёт остановлен.");
                 return;
             }
-
-            RastrSupplier.Regime(); //первичный расчёт режима
+            else
+            {
+                await Task.Run(() =>
+                {
+                    RastrSupplier.PrimaryCheckForReactionOfSection(_factorList, researchingPlantGenerators, _rstFileName);
+                });
+            }
 
             ProtocolListBox.Items.Add("Расчёт установившегося режима...");
+            RastrSupplier.Regime(); //первичный расчёт режима
 
             foreach(var factor in _factorList)
             {
                 if(!InfluentFactorBase.IsInDiapasone(factor))
                 {
-                    ProtocolListBox.Items.Add("Расчёт остановлен. Проверьте исходные данные!");
-                    ProtocolListBox.Items.Add("В исходном режиме влияющие факторы должны " +
-                        "находиться в заданном диапазоне значений."); 
+                    this.Invoke((Action)delegate
+                    {
+                        ProtocolListBox.Items.Add("Расчёт остановлен. Проверьте исходные данные!");
+                        ProtocolListBox.Items.Add("В исходном режиме влияющие факторы должны " +
+                            "находиться в заданном диапазоне значений.");
+                        InfluentFactorsDataGridView.Refresh();
+                    });
                     return;
                 }
             }
@@ -557,36 +580,57 @@ namespace RustabBot_v1._0
 
             try
             {
-                RastrSupplier.Worsening(_factorList, maxIteration,
-                    researchingPlantGenerators,
-                    ProtocolListBox, InfluentFactorsDataGridView, 
-                    iteration, ResearchingSectionNumber, _rg2FileName);
+                await Task.Run(() =>
+                {
+                    RastrSupplier.Worsening(_factorList, maxIteration,
+                    researchingPlantGenerators, iteration, ResearchingSectionNumber, _rstFileName);
+                });
+                
             }
             catch(Exception exeption)
             {
                 MessageBox.Show($"{exeption.Message}");
-                ProtocolListBox.Items.Add("Расчёт остановлен " +
+                this.Invoke((Action)delegate
+                {
+                    ProtocolListBox.Items.Add("Расчёт остановлен " +
                     "в результате ошибки. Проверьте исходные данные!");
+                });
                 return;
             }
 
-            InfluentFactorsDataGridView.Refresh();
-
-            ProtocolListBox.Items.Add($"Vzad = {RastrSupplier.GetValue("node", "ny", 60533008, "vzd")}" +
-                $" Vfactor = {RastrSupplier.GetValue("node", "ny", 60533027, "vras")}, " +
-                $"Psech={RastrSupplier.GetValue("sechen", "ns", 60014, "psech")}");
-
-            ProtocolListBox.Items.Add($"Рген = {RastrSupplier.GetValue("Generator", "Node", 60533008, "P")}");
-
-            ProtocolListBox.Items.Add($"ТАЗ = {RastrSupplier.GetValue("sechen", "ns", 60015, "psech")}");
-
-            foreach(var factor in _factorList)
+            this.Invoke((Action)delegate
             {
-                if(factor is SectionFactor)
-                {
-                    ProtocolListBox.Items.Add($"{((SectionFactor)factor).Reaction}");
-                }
-            }
+                InfluentFactorsDataGridView.Refresh();
+
+                ProtocolListBox.Items.Add($"Vzad = {RastrSupplier.GetValue("node", "ny", 60533008, "vzd")}" +
+                    $" Vfactor = {RastrSupplier.GetValue("node", "ny", 60533027, "vras")}, " +
+                    $"Psech={RastrSupplier.GetValue("sechen", "ns", 60014, "psech")}");
+
+                ProtocolListBox.Items.Add($"Рген = {RastrSupplier.GetValue("Generator", "Node", 60533008, "P")}");
+
+                ProtocolListBox.Items.Add($"ТАЗ = {RastrSupplier.GetValue("sechen", "ns", 60015, "psech")}");
+            });
+
+            var endCalc = DateTime.Now;
+
+            TimeSpan calcTime = endCalc - startCalc;
+
+            this.Invoke((Action)delegate
+            {
+                //TODO: а точно ли нужны секунды?
+                ProtocolListBox.Items.Add($"Время окончания расчёта: " + endCalc.ToLongTimeString());
+                ProtocolListBox.Items.Add($"Суммарное время расчёта: " + Math.Round(calcTime.TotalSeconds, 2) + " секунд.");
+            });
+
+            RastrSupplier.LoadFile(_rstFileName, shablon);
+        }
+
+        private void MessageHandler(object sender, EventProvider e)
+        {
+            this.Invoke((Action)delegate
+            {
+                ProtocolListBox.Items.Add(e.Message);
+            });
         }
 
         /// <summary>

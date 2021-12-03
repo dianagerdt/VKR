@@ -23,6 +23,8 @@ namespace Model
         /// </summary>
         private static Rastr _rastr = new Rastr();
 
+        public static event EventHandler<EventProvider> Message;
+
         /// <summary>
         /// Загрузка файла в рабочую область 
         /// </summary>
@@ -139,14 +141,20 @@ namespace Model
         /// Алгоритм утяжеления
         /// </summary>
         public static void Worsening(BindingList<InfluentFactorBase> factorList, int maxIteration,
-            List<int> researchingPlantGenerators, ListBox protocolListBox, DataGridView dataGridView, 
-            int iteration, int ResearchingSectionNumber, string rg2FileName)
+            List<int> researchingPlantGenerators, 
+            int iteration, int ResearchingSectionNumber, string rstFileName)
         {
-            string shablonRg2 = @"../../Resources/режим.rg2";
+            string shablonRst = @"../../Resources/динамика.rst";
             int stepCounter = 0;
-            protocolListBox.Items.Add($"Величина перетока в исследуемом" +
+
+            //подпишемся на это событие в MainForm
+            Message?.Invoke(new object(), new EventProvider($"Величина перетока в исследуемом" +
                         $" {ResearchingSectionNumber} сечении до утяжеления - " +
-                        $" {Math.Round(GetValue("sechen", "ns", ResearchingSectionNumber, "psech"), 0)} МВт.");
+                        $" {Math.Round(GetValue("sechen", "ns", ResearchingSectionNumber, "psech"), 0)} МВт."));
+
+            /*protocolListBox.Items.Add($"Величина перетока в исследуемом" +
+                        $" {ResearchingSectionNumber} сечении до утяжеления - " +
+                        $" {Math.Round(GetValue("sechen", "ns", ResearchingSectionNumber, "psech"), 0)} МВт.");*/
 
             RastrRetCode kod, kd;
             if (_rastr.ut_Param[ParamUt.UT_FORM_P] == 0) //формировать описание КВ
@@ -169,9 +177,8 @@ namespace Model
 
                             if (powerOfGen >= powerOfGenMax)
                             {
-                                protocolListBox.Items.Add("Расчёт окончен. " +
-                                    "Генераторы достигли предельной загрузки, режим не разошёлся.");
-                                dataGridView.Refresh();
+                                Message?.Invoke(new object(), new EventProvider("Расчёт окончен. " +
+                                    "Генераторы достигли предельной загрузки, режим не разошёлся."));
                                 return;
                             }
                         }
@@ -179,8 +186,7 @@ namespace Model
                         //проверка, не разошёлся ли режим
                         if (!IsRegimeOK())
                         {
-                            protocolListBox.Items.Add("Внимание! Режим разошёлся до начала расчёта. Проверьте исходный режим.");
-                            dataGridView.Refresh();
+                            Message?.Invoke(new object(), new EventProvider("Внимание! Режим разошёлся до начала расчёта. Проверьте исходный режим."));
                             return;
                         }
 
@@ -202,31 +208,50 @@ namespace Model
                                 case SectionFactor _:
                                     {
                                         factor.CurrentValue = GetValue("sechen", "ns", factor.NumberFromRastr, "psech");
-
                                         if (InfluentFactorBase.IsInDiapasone(factor) == false)
                                         {
-                                            StepBack(); //шаг назад по траектории
-                                            FileInfo fileInfo = new FileInfo(rg2FileName);
-                                            rg2FileName = $@"{fileInfo.DirectoryName}\{DateTime.Now.ToString().Replace(":", "-")}{fileInfo.Extension}";
-                                            SaveFile(rg2FileName, shablonRg2);
 
-                                            SectionFactor.CorrectTrajectory(factorList, researchingPlantGenerators, rg2FileName, _rastr, factor);
-
-                                            factor.CurrentValue = GetValue("sechen", "ns", factor.NumberFromRastr, "psech");
-
-                                            iteration = iteration + 1;
-
-                                            if (iteration > maxIteration)
+                                            do
                                             {
-                                                protocolListBox.Items.Add("Расчёт остановлен. Коррекция траектории утяжеления " +
-                                                    "по заданным исходным данным невозможна. Попробуйте ещё раз.");
-                                                dataGridView.Refresh();
-                                                return;
+                                                factor.CurrentValue = GetValue("sechen", "ns", factor.NumberFromRastr, "psech");
+
+                                                StepBack();
+
+                                                FileInfo fileInfo = new FileInfo(rstFileName);
+                                                rstFileName = $@"{fileInfo.DirectoryName}\{DateTime.Now.ToString().Replace(":", "-")}{fileInfo.Extension}";
+                                                SaveFile(rstFileName, shablonRst);
+
+                                                LoadFile(rstFileName, shablonRst);
+
+                                                SectionFactor.CorrectTrajectory(factor);
+
+                                                iteration = iteration + 1;
+
+                                                if (iteration > maxIteration)
+                                                {
+                                                    Message?.Invoke(new object(), new EventProvider("Расчёт остановлен. Коррекция траектории утяжеления " +
+                                                        "по заданным исходным данным невозможна. Попробуйте ещё раз."));
+                                                    return;
+                                                }
+
+                                                LoadFile(rstFileName, shablonRst);
+
+                                                RastrRetCode kd2;
+                                                // шаг утяжеления
+                                                kd2 = _rastr.step_ut("z");
+                                                if (((kd2 == 0) && (_rastr.ut_Param[ParamUt.UT_ADD_P] == 0))
+                                                    || _rastr.ut_Param[ParamUt.UT_TIP] == 1)
+                                                {
+                                                    _rastr.AddControl(-1, ""); //Добавить строку в таблицу значений контролируемых величин
+                                                }
+
+                                                factor.CurrentValue = GetValue("sechen", "ns", factor.NumberFromRastr, "psech");
                                             }
+                                            while (InfluentFactorBase.IsInDiapasone(factor) == false);
+                                            StepBack();
                                             continue;
                                         }
                                         else continue;
-
                                     }
                                 case VoltageFactor _:
                                 {
@@ -234,21 +259,17 @@ namespace Model
 
                                     if(InfluentFactorBase.IsInDiapasone(factor) == false)
                                     {
-                                            do
-                                            {
-                                                VoltageFactor.CorrectVoltage(researchingPlantGenerators, factor);
-                                                Regime();
-                                                factor.CurrentValue = GetValue("node", "ny", factor.NumberFromRastr, "vras");
-                                                iteration = iteration + 1;
+                                            VoltageFactor.CorrectVoltage(researchingPlantGenerators, factor);
+                                            Regime();
+                                            factor.CurrentValue = GetValue("node", "ny", factor.NumberFromRastr, "vras");
+                                            iteration = iteration + 1;
 
-                                                if (iteration > maxIteration)
-                                                {
-                                                    protocolListBox.Items.Add("Расчёт остановлен. Коррекция траектории утяжеления " +
-                                                        "по заданным исходным данным невозможна. Попробуйте ещё раз.");
-                                                    return;
-                                                }
+                                            if (iteration > maxIteration)
+                                            {
+                                                Message?.Invoke(new object(), new EventProvider("Расчёт остановлен. Коррекция траектории утяжеления " +
+                                                    "по заданным исходным данным невозможна. Попробуйте ещё раз."));
+                                                return;
                                             }
-                                            while (InfluentFactorBase.IsInDiapasone(factor) == false);
                                             continue;
                                     }
                                     else continue;
@@ -269,9 +290,9 @@ namespace Model
 
                             if (powerOfGen >= powerOfGenMax)
                             {
-                                protocolListBox.Items.Add("Расчёт окончен. " +
-                                    "Генераторы достигли предельной загрузки, режим не разошёлся.");
-                                dataGridView.Refresh();
+                                Message?.Invoke(new object(), new EventProvider("Расчёт окончен. " +
+                                    "Генераторы достигли предельной загрузки, режим не разошёлся."));
+
                                 return;
                             }
                         }
@@ -284,17 +305,17 @@ namespace Model
             {
                 if(InfluentFactorBase.IsInDiapasone(factor) == false)
                 {
-                    protocolListBox.Items.Add($"Поддержание в заданном диапазоне влияющего фактора {factor.FactorType} с номером {factor.NumberFromRastr}" +
-                        $" невозможно при заданных исходных данных. Проверьте режим, траекторию и корректность заданных границ диапазона.");
+                    Message?.Invoke(new object(), new EventProvider($"Поддержание в заданном диапазоне влияющего фактора {factor.FactorType} с номером {factor.NumberFromRastr}" +
+                        $" невозможно при заданных исходных данных. Проверьте режим, траекторию и корректность заданных границ диапазона."));
                     return;
                 }
             }
 
-                protocolListBox.Items.Add($"Превышено предельное число итераций!");
-            protocolListBox.Items.Add($"Расчёт успешно завершён на {stepCounter} шаге утяжеления.");
-            protocolListBox.Items.Add($"Величина перетока в исследуемом" +
+            Message?.Invoke(new object(), new EventProvider($"Превышено предельное число итераций!"));
+            Message?.Invoke(new object(), new EventProvider($"Расчёт успешно завершён на {stepCounter} шаге утяжеления."));
+            Message?.Invoke(new object(), new EventProvider($"Величина перетока в исследуемом" +
                 $" {ResearchingSectionNumber} сечении составляет" +
-                $" {Math.Round(GetValue("sechen", "ns", ResearchingSectionNumber, "psech"), 0)} МВт.");
+                $" {Math.Round(GetValue("sechen", "ns", ResearchingSectionNumber, "psech"), 0)} МВт."));
         }
 
         /// <summary>
@@ -384,6 +405,17 @@ namespace Model
             double step = columnItem.get_ZN(index);
 
             columnItem.set_Z(index, -step);
+
+            RastrRetCode kd;
+            // шаг утяжеления
+            kd = _rastr.step_ut("z");
+            if (((kd == 0) && (_rastr.ut_Param[ParamUt.UT_ADD_P] == 0))
+                || _rastr.ut_Param[ParamUt.UT_TIP] == 1)
+            {
+                _rastr.AddControl(-1, ""); //Добавить строку в таблицу значений контролируемых величин
+            }
+
+            columnItem.set_Z(index, step);
         }
 
         /// <summary>
@@ -404,9 +436,9 @@ namespace Model
         /// Если реакции нет, тогда фактору присваивается Реакция = 0
         /// Если реакция есть, она рассчитывается для этого сечения-ВФ
         /// </summary>
-        public static void PrimaryCheckForReactionOfSection(BindingList<InfluentFactorBase> factorList, List<int> researchingPlantGenerators, string rg2FileName)
+        public static void PrimaryCheckForReactionOfSection(BindingList<InfluentFactorBase> factorList, List<int> researchingPlantGenerators, string rstFileName)
         {
-            string shablonRg2 = @"../../Resources/режим.rg2";
+            string shablonRst = @"../../Resources/динамика.rst";
 
             ITable tableForIncrement = _rastr.Tables.Item("ut_node");
             ICol columnForStatement = tableForIncrement.Cols.Item("sta");
@@ -502,7 +534,7 @@ namespace Model
 
                     //Загружаем исходный режим
 
-                    LoadFile(rg2FileName, shablonRg2);
+                    LoadFile(rstFileName, shablonRst);
                    
                     if (_rastr.ut_Param[ParamUt.UT_FORM_P] == 0)
                     {
@@ -550,7 +582,7 @@ namespace Model
 
             //Опять исходный режим
 
-            LoadFile(rg2FileName, shablonRg2);
+            LoadFile(rstFileName, shablonRst);
         }
     }
 }

@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EventProvider.cs" />
     <Compile Include="InfluentFactorBase.cs" />
     <Compile Include="InfluentFactors\SectionFactor.cs" />
     <Compile Include="InfluentFactors\VoltageFactor.cs" />

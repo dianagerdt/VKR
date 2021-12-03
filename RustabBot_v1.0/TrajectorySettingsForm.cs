@@ -53,7 +53,7 @@ namespace RustabBot_v1._0
         /// </summary>
         private TrajectoryWeightnessLoadingType _trajectoryWeightnessLoadingType;
 
-        string rg2FileNameCopy;
+        string rstFileNameCopy;
         
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace RustabBot_v1._0
         public TrajectorySettingsForm(RastrData rastrData, 
             TrajectoryWeightnessLoadingType trajectoryWeightnessLoadingType,
             DataTable dataTable, BindingList<InfluentFactorBase> _factorList, 
-            int ResearchingSectionNumber, string rg2FileName)
+            int ResearchingSectionNumber, string rstFileName)
         {
             InitializeComponent();
             StartPosition = FormStartPosition.CenterScreen;
@@ -84,7 +84,7 @@ namespace RustabBot_v1._0
             dataTableCopy = dataTable;
             _factorListCopy = _factorList;
             ResearchingSectionNumberCopy = ResearchingSectionNumber;
-            rg2FileNameCopy = rg2FileName;
+            rstFileNameCopy = rstFileName;
         }
 
         /// <summary>
@@ -201,7 +201,7 @@ namespace RustabBot_v1._0
             {
                 RastrSupplier.SaveToUt2FromDataGrid(dataTableCopy); //взяли траекторию из таблицы
 
-                RastrSupplier.PrimaryCheckForReactionOfSection(_factorListCopy, researchingPlantGeneratorsCopy, rg2FileNameCopy);
+                //RastrSupplier.PrimaryCheckForReactionOfSection(_factorListCopy, researchingPlantGeneratorsCopy, rstFileNameCopy);
 
                 string shablon = @"../../Resources/траектория утяжеления.ut2";
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -228,7 +228,7 @@ namespace RustabBot_v1._0
             }
             else if(_trajectoryWeightnessLoadingType == TrajectoryWeightnessLoadingType.LoadedFromFile) 
             {
-                RastrSupplier.PrimaryCheckForReactionOfSection(_factorListCopy, researchingPlantGeneratorsCopy, rg2FileNameCopy);
+                //RastrSupplier.PrimaryCheckForReactionOfSection(_factorListCopy, researchingPlantGeneratorsCopy, rstFileNameCopy);
                 Close();
             }
         }
