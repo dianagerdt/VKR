@@ -8,10 +8,13 @@ namespace Model
 {
     public class EventProvider : EventArgs
     {
+        public MessageType MessageType { get; set; }
+
         public string Message { get; set; }
 
-        public EventProvider(string message)
+        public EventProvider(MessageType type, string message)
         {
+            MessageType = type;
             Message = message;
         }
     }

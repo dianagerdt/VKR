@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using Model;
 using System.ComponentModel;
 using System.Data;
+using System.Drawing;
 
 namespace RustabBot_v1._0
 {
@@ -43,6 +44,26 @@ namespace RustabBot_v1._0
             dataGridView.SelectionMode =
                 DataGridViewSelectionMode.FullRowSelect;
             dataGridView.ReadOnly = true;
+        }
+
+        public static void CreateTableForProtocol(DataGridView dataGridView)
+        {
+            DataGridViewImageColumn imgColumn = new DataGridViewImageColumn();
+            imgColumn.Name = "type";
+            dataGridView.Columns.Add(imgColumn);
+            dataGridView.Columns.Add("message", "Сообщение");
+            dataGridView.Columns["type"].Width = 25;
+            dataGridView.Columns["message"].Width = 800;
+            //dataGridView.Columns["message"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataGridView.Columns["type"].CellTemplate.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridView.Columns["type"].Frozen = false;
+            dataGridView.Columns["message"].Frozen = false;
+
+            dataGridView.ReadOnly = true;
+            dataGridView.AllowUserToAddRows = false;
+            dataGridView.RowHeadersVisible = false;
+            dataGridView.ColumnHeadersVisible = false;
+            dataGridView.ScrollBars = ScrollBars.Both;
         }
 
         /// <summary>

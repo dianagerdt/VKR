@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Model;
 using Model.InfluentFactors;
+using static Model.MessageType;
 
 
 namespace RustabBot_v1._0
@@ -75,6 +76,11 @@ namespace RustabBot_v1._0
         /// Путь к файлу исходного режима
         /// </summary>
         private string _rstFileName;
+
+        /// <summary>
+        /// Путь к файлам сценариев
+        /// </summary>
+        private List<string> _scnFileNames = new List<string>();
 
         /// <summary>
         /// Главная форма
@@ -184,7 +190,7 @@ namespace RustabBot_v1._0
                 researchingPlantGenerators);
 
             using (TrajectorySettingsForm trajectorySettings = new TrajectorySettingsForm(tmpRastrData, GetFromRadioButtons(), 
-                dataTable, _factorList, ResearchingSectionNumber, _rstFileName))
+                dataTable, _factorList, ResearchingSectionNumber))
             {
                 trajectorySettings.ShowDialog();
                 ResearchingSectionNumber = trajectorySettings.ResearchingSectionNumberCopy;
@@ -224,6 +230,7 @@ namespace RustabBot_v1._0
                 {
                     textbox.Text = openFileDialog.FileName;
                     RastrSupplier.LoadFile(openFileDialog.FileName, shablon);
+                    AddMessageToDataGrid(Info, $"Загружен файл '{openFileDialog.FileName}'.");
                 }
                 catch (Exception exeption)
                 {
@@ -242,7 +249,8 @@ namespace RustabBot_v1._0
         {
             string RstFilter = "Файл динамики (*.rst)|*.rst";
             string shablon = @"../../Resources/динамика.rst";
-            if(File.Exists(shablon))
+
+            if (File.Exists(shablon))
             {
                 LoadInitialFile(RstFilter, RstOpenFileDialog, LoadRstTextBox, shablon);
                 _rstFileName = LoadRstTextBox.Text;
@@ -295,17 +303,19 @@ namespace RustabBot_v1._0
             LoadScnListBox.Items.Clear();
             ScnOpenFileDialog.Multiselect = true;
             ScnOpenFileDialog.Filter = "Файл сценария (*.scn)|*.scn";
-            string shablon = @"../../Resources/сценарий.scn";
             
             if (ScnOpenFileDialog.ShowDialog() == DialogResult.OK)
             {
                 try
                 {
                     LoadScnListBox.Items.AddRange(ScnOpenFileDialog.FileNames);
+
                     foreach (string fileName in ScnOpenFileDialog.FileNames)
                     {
-                        RastrSupplier.LoadFile(fileName, shablon);
+                        _scnFileNames.Add(fileName);
                     }
+
+                    AddMessageToDataGrid(Info, $"Загружено {_scnFileNames.Count} сценариев (scn).");
                 }
                 catch (Exception exeption)
                 {
@@ -323,6 +333,7 @@ namespace RustabBot_v1._0
         private void MainForm_Load(object sender, EventArgs e)
         {
             DataGridViewTools.CreateTableForFactors(_factorList, InfluentFactorsDataGridView);
+            DataGridViewTools.CreateTableForProtocol(ProtocolDataGrid);
             RastrSupplier.Message += MessageHandler;
         }
 
@@ -536,13 +547,6 @@ namespace RustabBot_v1._0
 
             InfluentFactorsDataGridView.Refresh();
 
-            var startCalc = DateTime.Now;
-
-            this.Invoke((Action)delegate
-            {
-                ProtocolListBox.Items.Add($"Время начала расчёта: " + startCalc.ToLongTimeString());
-            });
-
             if (_factorList.Count == 0)
             {
                 MessageBox.Show("Вы не добавили в таблицу ни одного влияющего фактора!"
@@ -557,17 +561,26 @@ namespace RustabBot_v1._0
                 });
             }
 
-            ProtocolListBox.Items.Add("Расчёт установившегося режима...");
             RastrSupplier.Regime(); //первичный расчёт режима
+            //проверка, не разошёлся ли режим
+            if (!RastrSupplier.IsRegimeOK())
+            {
+                this.Invoke((Action)delegate
+                {
+                    AddMessageToDataGrid(Error, "Внимание! Режим разошёлся до начала выполнения утяжеления. Проверьте исходные данные.");
+                    InfluentFactorsDataGridView.Refresh();
+                });
+                return;
+            }
 
-            foreach(var factor in _factorList)
+            foreach (var factor in _factorList)
             {
                 if(!InfluentFactorBase.IsInDiapasone(factor))
                 {
                     this.Invoke((Action)delegate
                     {
-                        ProtocolListBox.Items.Add("Расчёт остановлен. Проверьте исходные данные!");
-                        ProtocolListBox.Items.Add("В исходном режиме влияющие факторы должны " +
+                        AddMessageToDataGrid(Error, "Расчёт остановлен. Проверьте исходные данные!");
+                        AddMessageToDataGrid(Error, "В исходном режиме влияющие факторы должны " +
                             "находиться в заданном диапазоне значений.");
                         InfluentFactorsDataGridView.Refresh();
                     });
@@ -575,24 +588,31 @@ namespace RustabBot_v1._0
                 }
             }
 
+            var startCalc = DateTime.Now;
+            this.Invoke((Action)delegate
+            {
+                AddMessageToDataGrid(Info, $"Время начала расчёта: " + startCalc.ToLongTimeString());
+            });
+
+
             int maxIteration = 100;
             int iteration = 0;
 
+            //главный метод расчёта
             try
             {
                 await Task.Run(() =>
                 {
                     RastrSupplier.Worsening(_factorList, maxIteration,
-                    researchingPlantGenerators, iteration, ResearchingSectionNumber, _rstFileName);
+                    researchingPlantGenerators, iteration, ResearchingSectionNumber, _rstFileName, _scnFileNames);
                 });
-                
             }
             catch(Exception exeption)
             {
                 MessageBox.Show($"{exeption.Message}");
                 this.Invoke((Action)delegate
                 {
-                    ProtocolListBox.Items.Add("Расчёт остановлен " +
+                    AddMessageToDataGrid(Error, "Расчёт остановлен " +
                     "в результате ошибки. Проверьте исходные данные!");
                 });
                 return;
@@ -601,36 +621,60 @@ namespace RustabBot_v1._0
             this.Invoke((Action)delegate
             {
                 InfluentFactorsDataGridView.Refresh();
-
-                ProtocolListBox.Items.Add($"Vzad = {RastrSupplier.GetValue("node", "ny", 60533008, "vzd")}" +
-                    $" Vfactor = {RastrSupplier.GetValue("node", "ny", 60533027, "vras")}, " +
-                    $"Psech={RastrSupplier.GetValue("sechen", "ns", 60014, "psech")}");
-
-                ProtocolListBox.Items.Add($"Рген = {RastrSupplier.GetValue("Generator", "Node", 60533008, "P")}");
-
-                ProtocolListBox.Items.Add($"ТАЗ = {RastrSupplier.GetValue("sechen", "ns", 60015, "psech")}");
             });
 
             var endCalc = DateTime.Now;
-
             TimeSpan calcTime = endCalc - startCalc;
 
             this.Invoke((Action)delegate
             {
                 //TODO: а точно ли нужны секунды?
-                ProtocolListBox.Items.Add($"Время окончания расчёта: " + endCalc.ToLongTimeString());
-                ProtocolListBox.Items.Add($"Суммарное время расчёта: " + Math.Round(calcTime.TotalSeconds, 2) + " секунд.");
+                AddMessageToDataGrid(Info, $"Время окончания расчёта: " + endCalc.ToLongTimeString());
+                AddMessageToDataGrid(Info, $"Суммарное время расчёта: " + Math.Round(calcTime.TotalSeconds, 2) + " секунд.");
             });
 
             RastrSupplier.LoadFile(_rstFileName, shablon);
         }
 
+        /// <summary>
+        /// Обработчик сообщений
+        /// </summary>
         private void MessageHandler(object sender, EventProvider e)
         {
             this.Invoke((Action)delegate
             {
-                ProtocolListBox.Items.Add(e.Message);
+                AddMessageToDataGrid(e.MessageType, e.Message);
             });
+        }
+
+        /// <summary>
+        /// Добавить сообщение в протокол
+        /// </summary>
+        public void AddMessageToDataGrid(MessageType type, string message)
+        {
+            switch (type)
+            {
+                case Error:
+                    {
+                        Bitmap img = new Bitmap(@"../../Resources/new_close.png");
+                        ProtocolDataGrid.Rows.Add(img, message);
+                        break;
+                    }
+                case Warning:
+                    {
+                        Bitmap img = new Bitmap(@"../../Resources/warning.png");
+                        ProtocolDataGrid.Rows.Add(img, message);
+                        break;
+                    }
+                case Info:
+                    {
+                        Bitmap img = new Bitmap(@"../../Resources/info.png");
+                        ProtocolDataGrid.Rows.Add(img, message);
+                        break;
+                    }
+            }
+
+            ProtocolDataGrid.CurrentCell = null;
         }
 
         /// <summary>
@@ -638,7 +682,15 @@ namespace RustabBot_v1._0
         /// </summary>
         private void ClearProtocol_Click(object sender, EventArgs e)
         {
-            ProtocolListBox.Items.Clear();
+            ProtocolDataGrid.Rows.Clear();
+        }
+
+        /// <summary>
+        /// Событие, благодаря которому в протоколе нельзя выделить ни одну строку
+        /// </summary>
+        private void ProtocolDataGrid_SelectionChanged(object sender, EventArgs e)
+        {
+            ProtocolDataGrid.ClearSelection();
         }
     }
 }

@@ -32,12 +32,12 @@ namespace RustabBot_v1._0
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.TabPageCalc = new System.Windows.Forms.TabPage();
             this.TransientStabilityAnalysisGroupBox = new System.Windows.Forms.GroupBox();
+            this.ProtocolDataGrid = new System.Windows.Forms.DataGridView();
             this.ClearProtocol = new System.Windows.Forms.Button();
             this.SaveResultsButton = new System.Windows.Forms.Button();
             this.ProgressBar = new System.Windows.Forms.ProgressBar();
             this.StopCalcButton = new System.Windows.Forms.Button();
             this.StartCalcButton = new System.Windows.Forms.Button();
-            this.ProtocolListBox = new System.Windows.Forms.ListBox();
             this.InfluentFactorsGroupBox = new System.Windows.Forms.GroupBox();
             this.InfluentFactorNumCombobox = new System.Windows.Forms.ComboBox();
             this.InfluentFactorsDataGridView = new System.Windows.Forms.DataGridView();
@@ -85,6 +85,7 @@ namespace RustabBot_v1._0
             this.ScnOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.TabPageCalc.SuspendLayout();
             this.TransientStabilityAnalysisGroupBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ProtocolDataGrid)).BeginInit();
             this.InfluentFactorsGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.InfluentFactorsDataGridView)).BeginInit();
             this.TabPageFiles.SuspendLayout();
@@ -100,25 +101,35 @@ namespace RustabBot_v1._0
             this.TabPageCalc.Location = new System.Drawing.Point(4, 25);
             this.TabPageCalc.Name = "TabPageCalc";
             this.TabPageCalc.Padding = new System.Windows.Forms.Padding(3);
-            this.TabPageCalc.Size = new System.Drawing.Size(595, 618);
+            this.TabPageCalc.Size = new System.Drawing.Size(595, 688);
             this.TabPageCalc.TabIndex = 1;
             this.TabPageCalc.Text = "Расчёты";
             this.TabPageCalc.UseVisualStyleBackColor = true;
             // 
             // TransientStabilityAnalysisGroupBox
             // 
+            this.TransientStabilityAnalysisGroupBox.Controls.Add(this.ProtocolDataGrid);
             this.TransientStabilityAnalysisGroupBox.Controls.Add(this.ClearProtocol);
             this.TransientStabilityAnalysisGroupBox.Controls.Add(this.SaveResultsButton);
             this.TransientStabilityAnalysisGroupBox.Controls.Add(this.ProgressBar);
             this.TransientStabilityAnalysisGroupBox.Controls.Add(this.StopCalcButton);
             this.TransientStabilityAnalysisGroupBox.Controls.Add(this.StartCalcButton);
-            this.TransientStabilityAnalysisGroupBox.Controls.Add(this.ProtocolListBox);
             this.TransientStabilityAnalysisGroupBox.Location = new System.Drawing.Point(6, 306);
             this.TransientStabilityAnalysisGroupBox.Name = "TransientStabilityAnalysisGroupBox";
-            this.TransientStabilityAnalysisGroupBox.Size = new System.Drawing.Size(578, 306);
+            this.TransientStabilityAnalysisGroupBox.Size = new System.Drawing.Size(578, 376);
             this.TransientStabilityAnalysisGroupBox.TabIndex = 1;
             this.TransientStabilityAnalysisGroupBox.TabStop = false;
             this.TransientStabilityAnalysisGroupBox.Text = "Расчёты";
+            // 
+            // ProtocolDataGrid
+            // 
+            this.ProtocolDataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.ProtocolDataGrid.Location = new System.Drawing.Point(6, 66);
+            this.ProtocolDataGrid.Name = "ProtocolDataGrid";
+            this.ProtocolDataGrid.RowTemplate.Height = 24;
+            this.ProtocolDataGrid.Size = new System.Drawing.Size(566, 235);
+            this.ProtocolDataGrid.TabIndex = 16;
+            this.ProtocolDataGrid.SelectionChanged += new System.EventHandler(this.ProtocolDataGrid_SelectionChanged);
             // 
             // ClearProtocol
             // 
@@ -132,7 +143,7 @@ namespace RustabBot_v1._0
             // 
             // SaveResultsButton
             // 
-            this.SaveResultsButton.Location = new System.Drawing.Point(453, 265);
+            this.SaveResultsButton.Location = new System.Drawing.Point(453, 339);
             this.SaveResultsButton.Name = "SaveResultsButton";
             this.SaveResultsButton.Size = new System.Drawing.Size(119, 30);
             this.SaveResultsButton.TabIndex = 12;
@@ -141,7 +152,7 @@ namespace RustabBot_v1._0
             // 
             // ProgressBar
             // 
-            this.ProgressBar.Location = new System.Drawing.Point(6, 229);
+            this.ProgressBar.Location = new System.Drawing.Point(6, 307);
             this.ProgressBar.Name = "ProgressBar";
             this.ProgressBar.Size = new System.Drawing.Size(566, 27);
             this.ProgressBar.TabIndex = 14;
@@ -164,16 +175,6 @@ namespace RustabBot_v1._0
             this.StartCalcButton.Text = "Начать расчёт";
             this.StartCalcButton.UseVisualStyleBackColor = true;
             this.StartCalcButton.Click += new System.EventHandler(this.StartCalcButton_Click);
-            // 
-            // ProtocolListBox
-            // 
-            this.ProtocolListBox.FormattingEnabled = true;
-            this.ProtocolListBox.HorizontalScrollbar = true;
-            this.ProtocolListBox.ItemHeight = 16;
-            this.ProtocolListBox.Location = new System.Drawing.Point(6, 75);
-            this.ProtocolListBox.Name = "ProtocolListBox";
-            this.ProtocolListBox.Size = new System.Drawing.Size(566, 148);
-            this.ProtocolListBox.TabIndex = 0;
             // 
             // InfluentFactorsGroupBox
             // 
@@ -329,14 +330,14 @@ namespace RustabBot_v1._0
             this.TabPageFiles.Location = new System.Drawing.Point(4, 25);
             this.TabPageFiles.Name = "TabPageFiles";
             this.TabPageFiles.Padding = new System.Windows.Forms.Padding(3);
-            this.TabPageFiles.Size = new System.Drawing.Size(595, 618);
+            this.TabPageFiles.Size = new System.Drawing.Size(595, 688);
             this.TabPageFiles.TabIndex = 0;
             this.TabPageFiles.Text = "Файлы";
             this.TabPageFiles.UseVisualStyleBackColor = true;
             // 
             // TrajectorySettingsButton
             // 
-            this.TrajectorySettingsButton.Location = new System.Drawing.Point(255, 577);
+            this.TrajectorySettingsButton.Location = new System.Drawing.Point(255, 642);
             this.TrajectorySettingsButton.Name = "TrajectorySettingsButton";
             this.TrajectorySettingsButton.Size = new System.Drawing.Size(200, 30);
             this.TrajectorySettingsButton.TabIndex = 14;
@@ -351,12 +352,12 @@ namespace RustabBot_v1._0
             this.LoadScnListBox.ItemHeight = 16;
             this.LoadScnListBox.Location = new System.Drawing.Point(18, 389);
             this.LoadScnListBox.Name = "LoadScnListBox";
-            this.LoadScnListBox.Size = new System.Drawing.Size(437, 180);
+            this.LoadScnListBox.Size = new System.Drawing.Size(437, 244);
             this.LoadScnListBox.TabIndex = 14;
             // 
             // DBConnectionButton
             // 
-            this.DBConnectionButton.Location = new System.Drawing.Point(18, 577);
+            this.DBConnectionButton.Location = new System.Drawing.Point(18, 642);
             this.DBConnectionButton.Name = "DBConnectionButton";
             this.DBConnectionButton.Size = new System.Drawing.Size(200, 30);
             this.DBConnectionButton.TabIndex = 13;
@@ -561,7 +562,7 @@ namespace RustabBot_v1._0
             this.TabControl.Location = new System.Drawing.Point(12, 12);
             this.TabControl.Name = "TabControl";
             this.TabControl.SelectedIndex = 0;
-            this.TabControl.Size = new System.Drawing.Size(603, 647);
+            this.TabControl.Size = new System.Drawing.Size(603, 717);
             this.TabControl.TabIndex = 0;
             // 
             // TabPageInfo
@@ -570,7 +571,7 @@ namespace RustabBot_v1._0
             this.TabPageInfo.Location = new System.Drawing.Point(4, 25);
             this.TabPageInfo.Name = "TabPageInfo";
             this.TabPageInfo.Padding = new System.Windows.Forms.Padding(3);
-            this.TabPageInfo.Size = new System.Drawing.Size(595, 618);
+            this.TabPageInfo.Size = new System.Drawing.Size(595, 688);
             this.TabPageInfo.TabIndex = 2;
             this.TabPageInfo.Text = "О программе";
             this.TabPageInfo.UseVisualStyleBackColor = true;
@@ -609,7 +610,7 @@ namespace RustabBot_v1._0
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.MenuBar;
-            this.ClientSize = new System.Drawing.Size(627, 671);
+            this.ClientSize = new System.Drawing.Size(627, 741);
             this.Controls.Add(this.TabControl);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
@@ -617,6 +618,7 @@ namespace RustabBot_v1._0
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.TabPageCalc.ResumeLayout(false);
             this.TransientStabilityAnalysisGroupBox.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.ProtocolDataGrid)).EndInit();
             this.InfluentFactorsGroupBox.ResumeLayout(false);
             this.InfluentFactorsGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.InfluentFactorsDataGridView)).EndInit();
@@ -671,7 +673,6 @@ namespace RustabBot_v1._0
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.GroupBox TransientStabilityAnalysisGroupBox;
         private System.Windows.Forms.Button StartCalcButton;
-        private System.Windows.Forms.ListBox ProtocolListBox;
         private System.Windows.Forms.Button StopCalcButton;
         private System.Windows.Forms.Button SaveResultsButton;
         private System.Windows.Forms.ProgressBar ProgressBar;
@@ -686,6 +687,7 @@ namespace RustabBot_v1._0
         private System.Windows.Forms.Label InfoAboutTrajectoryLabel;
         private System.Windows.Forms.Label InfoAboutTrajectoryLabel2;
         private System.Windows.Forms.Button ClearProtocol;
+        private System.Windows.Forms.DataGridView ProtocolDataGrid;
     }
 }
 

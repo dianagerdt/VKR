@@ -51,10 +51,7 @@ namespace RustabBot_v1._0
         /// Состояние Radio Buttons на главной форме: вручную
         /// или из файла задаётся траектория утяжеления
         /// </summary>
-        private TrajectoryWeightnessLoadingType _trajectoryWeightnessLoadingType;
-
-        string rstFileNameCopy;
-        
+        private TrajectoryWeightnessLoadingType _trajectoryWeightnessLoadingType;        
 
         /// <summary>
         /// Форма с настройками траектории утяжеления
@@ -62,7 +59,7 @@ namespace RustabBot_v1._0
         public TrajectorySettingsForm(RastrData rastrData, 
             TrajectoryWeightnessLoadingType trajectoryWeightnessLoadingType,
             DataTable dataTable, BindingList<InfluentFactorBase> _factorList, 
-            int ResearchingSectionNumber, string rstFileName)
+            int ResearchingSectionNumber)
         {
             InitializeComponent();
             StartPosition = FormStartPosition.CenterScreen;
@@ -84,7 +81,6 @@ namespace RustabBot_v1._0
             dataTableCopy = dataTable;
             _factorListCopy = _factorList;
             ResearchingSectionNumberCopy = ResearchingSectionNumber;
-            rstFileNameCopy = rstFileName;
         }
 
         /// <summary>
@@ -127,6 +123,8 @@ namespace RustabBot_v1._0
         /// </summary>
         private void TrajectorySettingsForm_Load(object sender, EventArgs e)
         {
+            GeneratorTypeComboBox.SelectedIndex = 0;
+
             DataGridViewTools.CreateTableForTrajectory(ChosenGeneratorsForTrajectoryData);
             dataTableCopy = (DataTable)ChosenGeneratorsForTrajectoryData.DataSource;
 
@@ -201,8 +199,6 @@ namespace RustabBot_v1._0
             {
                 RastrSupplier.SaveToUt2FromDataGrid(dataTableCopy); //взяли траекторию из таблицы
 
-                //RastrSupplier.PrimaryCheckForReactionOfSection(_factorListCopy, researchingPlantGeneratorsCopy, rstFileNameCopy);
-
                 string shablon = @"../../Resources/траектория утяжеления.ut2";
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
                 saveFileDialog.DefaultExt = "ut2";
@@ -228,7 +224,6 @@ namespace RustabBot_v1._0
             }
             else if(_trajectoryWeightnessLoadingType == TrajectoryWeightnessLoadingType.LoadedFromFile) 
             {
-                //RastrSupplier.PrimaryCheckForReactionOfSection(_factorListCopy, researchingPlantGeneratorsCopy, rstFileNameCopy);
                 Close();
             }
         }
