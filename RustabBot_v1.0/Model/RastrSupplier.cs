@@ -10,21 +10,22 @@ using System.Threading.Tasks;
 using System.Windows.Forms.VisualStyles;
 using ASTRALib;
 using Model.InfluentFactors;
+using System.Threading;
 
 namespace Model
 {
     /// <summary>
     /// Класс, осуществляющий взаимодействие с RastrWin3
     /// </summary>
-    public class RastrSupplier
+    public static class RastrSupplier
     {
         /// <summary>
         /// Экземпляр класса Rastr
         /// </summary>
-        private static Rastr _rastr = new Rastr();
+        public static Rastr _rastr = new Rastr();
 
         /// <summary>
-        /// Экземпляр сообытия - сообщение
+        /// Обработчик сообытия - сообщение в протокол
         /// </summary>
         public static event EventHandler<EventProvider> Message;
 
@@ -43,7 +44,7 @@ namespace Model
         {
             try //если нет лицензии, то файл не сохранится
             {
-                _rastr.Save(fileName, shablon); 
+                _rastr.Save(fileName, shablon);
             }
             catch(Exception exeption)
             {
@@ -153,19 +154,21 @@ namespace Model
         /// <summary>
         /// Алгоритм расчёта траектории и переходных процессов по заранее подготовленным сценариям
         /// </summary>
-        public static void Worsening(BindingList<InfluentFactorBase> factorList, int maxIteration,
+        public async static void Worsening(BindingList<InfluentFactorBase> factorList, int maxIteration,
             List<int> researchingPlantGenerators, int iteration, int ResearchingSectionNumber, string rstFileName,
-            List<string> scnFileNames)
+            List<string> scnFileNames, CancellationToken cancellationToken)
         {
 
             string shablonRst = @"../../Resources/динамика.rst";
             string shablonScn = @"../../Resources/сценарий.scn";
+            List<string> scnFileNamesCopy = new List<string>();
+            scnFileNamesCopy.AddRange(scnFileNames);
             int stepCounter = 0;
             double powerInSectionWhenStabilityIsOK = 0;
             //подпишемся на это событие в MainForm
             Message?.Invoke(new object(), new EventProvider(MessageType.Info, $"Исследуемое сечение -" +
                         $" '{GetStringValue("sechen", "ns", ResearchingSectionNumber, "name")}'."));
-            Message?.Invoke(new object(), new EventProvider(MessageType.Info, $"Переток в исследуемом" +
+            Message?.Invoke(new object(), new EventProvider(MessageType.Warning, $"Переток в исследуемом" +
                 $" {ResearchingSectionNumber} сечении до утяжеления -" +
                 $" {Math.Round(GetValue("sechen", "ns", ResearchingSectionNumber, "psech"), 0)} МВт."));
 
@@ -183,22 +186,27 @@ namespace Model
                         // Переток до следующего шага по траектории 
                         double powerInSection = Math.Round(GetValue("sechen", "ns", ResearchingSectionNumber, "psech"), 0);
 
-                        if(scnFileNames.Count == 0) //если закончились сценарии для расчёта, то завершаем работу алгоритма
+                        if(scnFileNamesCopy.Count == 0) //если закончились сценарии для расчёта, то завершаем работу алгоритма
                         {
                             Message?.Invoke(new object(), new EventProvider(MessageType.Info,
-                                $"Расчёт переходных процессов по всем сценариям успешно завершён на {stepCounter} шаге утяжеления. "));
+                                $"Расчёт переходных процессов по всем сценариям успешно завершён на {stepCounter+1} шаге утяжеления. "));
                             return;
                         }
 
-                        foreach(string scn in scnFileNames)
+                        foreach (string scn in scnFileNamesCopy.ToArray())
                         {
                             try
                             {
+                                cancellationToken.ThrowIfCancellationRequested();
                                 LoadFile(scn, shablonScn);
                                 Message?.Invoke(new object(), new EventProvider(MessageType.Info, $"Запущен расчёт переходного процесса по сценарию '{scn}'."));
+
                                 FWDynamic FWDynamic = _rastr.FWDynamic();
 
-                                FWDynamic.RunEMSmode();
+                                await Task.Run(() =>
+                                {
+                                    FWDynamic.RunEMSmode();
+                                });
 
                                 switch (FWDynamic.SyncLossCause)
                                 {
@@ -207,13 +215,12 @@ namespace Model
                                             Message?.Invoke(new object(), new EventProvider(MessageType.Info, "Потери синхронизма не выявлено."));
                                             break;
                                         }
-                                        
                                     case DFWSyncLossCause.SYNC_LOSS_COA:
                                         {
-                                            Message?.Invoke(new object(), new EventProvider(MessageType.Info,
+                                            Message?.Invoke(new object(), new EventProvider(MessageType.Warning,
                                             $"Выявлено превышение угла по сопротивлению генератора значения 180° в {FWDynamic.TimeReached} c."));
-                                            Message?.Invoke(new object(), new EventProvider(MessageType.Info, FWDynamic.ResultMessage));
-                                            Message?.Invoke(new object(), new EventProvider(MessageType.Info, $"Динамическая устойчивость" +
+                                            Message?.Invoke(new object(), new EventProvider(MessageType.Warning, FWDynamic.ResultMessage));
+                                            Message?.Invoke(new object(), new EventProvider(MessageType.Warning, $"Динамическая устойчивость" +
                                                 $" нарушается при перетоке в сечении, равном {powerInSection} МВт."));
 
                                             if (stepCounter != 0) //если мы уже сделали сколько-то шагов, можем вычислить Рпред
@@ -235,16 +242,15 @@ namespace Model
                                                 Message?.Invoke(new object(), new EventProvider(MessageType.Warning,
                                                     "Динамическая устойчивость нарушается даже при минимальной загрузке генераторов."));
                                             }
-                                            scnFileNames.Remove(scn); //удаляем этот сценарий, потому что он больше не нужен - предел по ДУ найден.
+                                            scnFileNamesCopy.Remove(scn); //удаляем этот сценарий, потому что он больше не нужен - предел по ДУ найден.
                                             break;
                                         }
-                                        
                                     case DFWSyncLossCause.SYNC_LOSS_BRANCHANGLE:
                                         {
-                                            Message?.Invoke(new object(), new EventProvider(MessageType.Info,
+                                            Message?.Invoke(new object(), new EventProvider(MessageType.Warning,
                                             $"Выявлено превышение угла по ветви значения 180° в {FWDynamic.TimeReached} c."));
-                                            Message?.Invoke(new object(), new EventProvider(MessageType.Info, FWDynamic.ResultMessage));
-                                            Message?.Invoke(new object(), new EventProvider(MessageType.Info, $"Динамическая устойчивость" +
+                                            Message?.Invoke(new object(), new EventProvider(MessageType.Warning, FWDynamic.ResultMessage));
+                                            Message?.Invoke(new object(), new EventProvider(MessageType.Warning, $"Динамическая устойчивость" +
                                                 $" нарушается при перетоке в сечении, равном {powerInSection} МВт."));
 
                                             if (stepCounter != 0)
@@ -266,16 +272,15 @@ namespace Model
                                                 Message?.Invoke(new object(), new EventProvider(MessageType.Warning,
                                                     "Динамическая устойчивость нарушается даже при минимальной загрузке генераторов."));
                                             }
-                                            scnFileNames.Remove(scn); //удаляем этот сценарий, потому что он больше не нужен - предел по ДУ найден.
+                                            scnFileNamesCopy.Remove(scn); //удаляем этот сценарий, потому что он больше не нужен - предел по ДУ найден.
                                             break;
                                         }
-                                        
                                     case DFWSyncLossCause.SYNC_LOSS_OVERSPEED:
                                         {
-                                            Message?.Invoke(new object(), new EventProvider(MessageType.Info,
+                                            Message?.Invoke(new object(), new EventProvider(MessageType.Warning,
                                             $"Выявлено превышение допустимой скорости вращения генератора в {FWDynamic.TimeReached} c."));
-                                            Message?.Invoke(new object(), new EventProvider(MessageType.Info, FWDynamic.ResultMessage));
-                                            Message?.Invoke(new object(), new EventProvider(MessageType.Info, $"Динамическая устойчивость" +
+                                            Message?.Invoke(new object(), new EventProvider(MessageType.Warning, FWDynamic.ResultMessage));
+                                            Message?.Invoke(new object(), new EventProvider(MessageType.Warning, $"Динамическая устойчивость" +
                                                 $" нарушается при перетоке в сечении, равном {powerInSection} МВт."));
 
                                             if (stepCounter != 0)
@@ -297,11 +302,11 @@ namespace Model
                                                 Message?.Invoke(new object(), new EventProvider(MessageType.Warning,
                                                     "Динамическая устойчивость нарушается даже при минимальной загрузке генераторов."));
                                             }
-                                            scnFileNames.Remove(scn); //удаляем этот сценарий, потому что он больше не нужен - предел по ДУ найден.
+                                            scnFileNamesCopy.Remove(scn); //удаляем этот сценарий, потому что он больше не нужен - предел по ДУ найден.
                                             break;
                                         }
                                 }
-                           }
+                            }
                             catch (Exception ex)
                             {
                                 Message?.Invoke(new object(), new EventProvider(MessageType.Info, $"Ошибка! {ex.Message}"));
@@ -309,7 +314,9 @@ namespace Model
                             }
                         }
 
+
                         Message?.Invoke(new object(), new EventProvider(MessageType.Info, $"Расчёт переходных процессов на шаге {stepCounter+1} окончен."));
+                        cancellationToken.ThrowIfCancellationRequested();
 
                         //проверка, не дошли ли генераторы до максимума своих регулировочных способностей
                         for (int j = 0; j < researchingPlantGenerators.Count; j++)
@@ -322,10 +329,24 @@ namespace Model
                             if (powerOfGen >= powerOfGenMax)
                             {
                                 Message?.Invoke(new object(), new EventProvider(MessageType.Info, "Расчёт окончен. " +
-                                    "Генераторы достигли предельной загрузки. Расчёт окончен."));
+                                    "Генераторы достигли предельной загрузки."));
+                                Message?.Invoke(new object(), new EventProvider(MessageType.Info, $"Переток в исследуемом" +
+                                    $" {ResearchingSectionNumber} сечении -" +
+                                    $" {Math.Round(GetValue("sechen", "ns", ResearchingSectionNumber, "psech"), 0)} МВт."));
                                 return;
                             }
                         }
+
+                        //еще одна проверка, перед тем, как шагнуть
+                        if (scnFileNamesCopy.Count == 0) //если закончились сценарии для расчёта, то завершаем работу алгоритма
+                        {
+                            Message?.Invoke(new object(), new EventProvider(MessageType.Info,
+                                $"Расчёт переходных процессов по всем сценариям успешно завершён на {stepCounter+1} шаге утяжеления. "));
+                            return;
+                        }
+
+
+                        cancellationToken.ThrowIfCancellationRequested();
 
                         // шаг утяжеления
                         kd = _rastr.step_ut("z");
@@ -359,9 +380,10 @@ namespace Model
                                                 SaveFile(rstFileName, shablonRst);
                                                 LoadFile(rstFileName, shablonRst);
 
+                                                cancellationToken.ThrowIfCancellationRequested();
                                                 SectionFactor.CorrectTrajectory(factor);
 
-                                                iteration++;
+                                                iteration = iteration + 1;
 
                                                 if (iteration > maxIteration)
                                                 {
@@ -397,17 +419,26 @@ namespace Model
 
                                     if(InfluentFactorBase.IsInDiapasone(factor) == false)
                                     {
-                                            VoltageFactor.CorrectVoltage(researchingPlantGenerators, factor);
-                                            Regime();
-                                            factor.CurrentValue = GetValue("node", "ny", factor.NumberFromRastr, "vras");
-                                            iteration++;
-
-                                            if (iteration > maxIteration)
+                                            Message?.Invoke(new object(), new EventProvider(MessageType.Warning, $"Влияющий фактор {factor.FactorType} " +
+                                                $"c номером {factor.NumberFromRastr} вышел за границу диапазона."));
+                                            do
                                             {
-                                                Message?.Invoke(new object(), new EventProvider(MessageType.Error, "Расчёт остановлен. Коррекция траектории утяжеления " +
-                                                    "по заданным исходным данным невозможна. Попробуйте ещё раз."));
-                                                return;
+                                                cancellationToken.ThrowIfCancellationRequested();
+                                                VoltageFactor.CorrectVoltage(researchingPlantGenerators, factor);
+                                                Regime();
+                                                factor.CurrentValue = GetValue("node", "ny", factor.NumberFromRastr, "vras");
+                                                iteration = iteration + 1;
+
+                                                if (iteration > maxIteration)
+                                                {
+                                                    Message?.Invoke(new object(), new EventProvider(MessageType.Error, "Расчёт остановлен. Коррекция траектории утяжеления " +
+                                                        "по заданным исходным данным невозможна. Попробуйте ещё раз."));
+                                                    return;
+                                                }
                                             }
+                                            while (InfluentFactorBase.IsInDiapasone(factor) == false);
+                                            Message?.Invoke(new object(), new EventProvider(MessageType.Info, $"Влияющий фактор {factor.FactorType} " +
+                                                $"c номером {factor.NumberFromRastr} находится в заданном диапазоне."));
                                             break;
                                     }
                                     else break;
@@ -438,19 +469,8 @@ namespace Model
                 }
             }
 
-            foreach (var factor in factorList)
-            {
-                if(InfluentFactorBase.IsInDiapasone(factor) == false)
-                {
-                    Message?.Invoke(new object(), new EventProvider(MessageType.Error, $"Поддержание в заданном диапазоне влияющего " +
-                        $"фактора {factor.FactorType} с номером {factor.NumberFromRastr}" +
-                        $" невозможно при заданных исходных данных. Проверьте режим, траекторию и корректность заданных границ диапазона."));
-                    return;
-                }
-            }
-
             Message?.Invoke(new object(), new EventProvider(MessageType.Info, $"***Превышено предельное число итераций!***"));
-            Message?.Invoke(new object(), new EventProvider(MessageType.Info, $"Расчёт успешно завершён на {stepCounter} шаге утяжеления."));
+            Message?.Invoke(new object(), new EventProvider(MessageType.Info, $"Расчёт успешно завершён на {stepCounter+1} шаге утяжеления."));
             Message?.Invoke(new object(), new EventProvider(MessageType.Info, $"Величина перетока в исследуемом" +
                 $" сечении {ResearchingSectionNumber} составляет" +
                 $" {Math.Round(GetValue("sechen", "ns", ResearchingSectionNumber, "psech"), 0)} МВт."));

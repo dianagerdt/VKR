@@ -54,7 +54,6 @@ namespace RustabBot_v1._0
             this.TabPageFiles = new System.Windows.Forms.TabPage();
             this.TrajectorySettingsButton = new System.Windows.Forms.Button();
             this.LoadScnListBox = new System.Windows.Forms.ListBox();
-            this.DBConnectionButton = new System.Windows.Forms.Button();
             this.TrajectoryGroupBox = new System.Windows.Forms.GroupBox();
             this.InfoAboutTrajectoryLabel2 = new System.Windows.Forms.Label();
             this.InfoAboutTrajectoryLabel = new System.Windows.Forms.Label();
@@ -83,6 +82,7 @@ namespace RustabBot_v1._0
             this.DfwOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.Ut2OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.ScnOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.RememberFilesPaths = new System.Windows.Forms.CheckBox();
             this.TabPageCalc.SuspendLayout();
             this.TransientStabilityAnalysisGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ProtocolDataGrid)).BeginInit();
@@ -165,6 +165,7 @@ namespace RustabBot_v1._0
             this.StopCalcButton.TabIndex = 13;
             this.StopCalcButton.Text = "Остановить расчёт";
             this.StopCalcButton.UseVisualStyleBackColor = true;
+            this.StopCalcButton.Click += new System.EventHandler(this.StopCalcButton_Click);
             // 
             // StartCalcButton
             // 
@@ -311,9 +312,9 @@ namespace RustabBot_v1._0
             // 
             // TabPageFiles
             // 
+            this.TabPageFiles.Controls.Add(this.RememberFilesPaths);
             this.TabPageFiles.Controls.Add(this.TrajectorySettingsButton);
             this.TabPageFiles.Controls.Add(this.LoadScnListBox);
-            this.TabPageFiles.Controls.Add(this.DBConnectionButton);
             this.TabPageFiles.Controls.Add(this.TrajectoryGroupBox);
             this.TabPageFiles.Controls.Add(this.LoadDfwTextBox);
             this.TabPageFiles.Controls.Add(this.LabelDfwPath);
@@ -337,7 +338,7 @@ namespace RustabBot_v1._0
             // 
             // TrajectorySettingsButton
             // 
-            this.TrajectorySettingsButton.Location = new System.Drawing.Point(255, 642);
+            this.TrajectorySettingsButton.Location = new System.Drawing.Point(18, 356);
             this.TrajectorySettingsButton.Name = "TrajectorySettingsButton";
             this.TrajectorySettingsButton.Size = new System.Drawing.Size(200, 30);
             this.TrajectorySettingsButton.TabIndex = 14;
@@ -350,20 +351,10 @@ namespace RustabBot_v1._0
             this.LoadScnListBox.FormattingEnabled = true;
             this.LoadScnListBox.HorizontalScrollbar = true;
             this.LoadScnListBox.ItemHeight = 16;
-            this.LoadScnListBox.Location = new System.Drawing.Point(18, 389);
+            this.LoadScnListBox.Location = new System.Drawing.Point(18, 429);
             this.LoadScnListBox.Name = "LoadScnListBox";
-            this.LoadScnListBox.Size = new System.Drawing.Size(437, 244);
+            this.LoadScnListBox.Size = new System.Drawing.Size(437, 212);
             this.LoadScnListBox.TabIndex = 14;
-            // 
-            // DBConnectionButton
-            // 
-            this.DBConnectionButton.Location = new System.Drawing.Point(18, 642);
-            this.DBConnectionButton.Name = "DBConnectionButton";
-            this.DBConnectionButton.Size = new System.Drawing.Size(200, 30);
-            this.DBConnectionButton.TabIndex = 13;
-            this.DBConnectionButton.Text = "Подключение к БД";
-            this.DBConnectionButton.UseVisualStyleBackColor = true;
-            this.DBConnectionButton.Click += new System.EventHandler(this.DBConnectionButton_Click);
             // 
             // TrajectoryGroupBox
             // 
@@ -538,7 +529,7 @@ namespace RustabBot_v1._0
             // LabelScnPath
             // 
             this.LabelScnPath.AutoSize = true;
-            this.LabelScnPath.Location = new System.Drawing.Point(15, 359);
+            this.LabelScnPath.Location = new System.Drawing.Point(15, 399);
             this.LabelScnPath.Name = "LabelScnPath";
             this.LabelScnPath.Size = new System.Drawing.Size(285, 17);
             this.LabelScnPath.TabIndex = 1;
@@ -546,7 +537,7 @@ namespace RustabBot_v1._0
             // 
             // LoadScnButton
             // 
-            this.LoadScnButton.Location = new System.Drawing.Point(471, 389);
+            this.LoadScnButton.Location = new System.Drawing.Point(471, 429);
             this.LoadScnButton.Name = "LoadScnButton";
             this.LoadScnButton.Size = new System.Drawing.Size(91, 30);
             this.LoadScnButton.TabIndex = 0;
@@ -605,6 +596,16 @@ namespace RustabBot_v1._0
             // 
             this.ScnOpenFileDialog.FileName = "ScnOpenFileDialog";
             // 
+            // RememberFilesPaths
+            // 
+            this.RememberFilesPaths.AutoSize = true;
+            this.RememberFilesPaths.Location = new System.Drawing.Point(18, 653);
+            this.RememberFilesPaths.Name = "RememberFilesPaths";
+            this.RememberFilesPaths.Size = new System.Drawing.Size(278, 21);
+            this.RememberFilesPaths.TabIndex = 16;
+            this.RememberFilesPaths.Text = "Запомнить пути загруженных файлов";
+            this.RememberFilesPaths.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -656,7 +657,6 @@ namespace RustabBot_v1._0
         private System.Windows.Forms.Button LoadTrajectoryButton;
         private System.Windows.Forms.RadioButton ByHandRadioButton;
         private System.Windows.Forms.Label TrajectorySettingsLabel;
-        private System.Windows.Forms.Button DBConnectionButton;
         private System.Windows.Forms.Button TrajectorySettingsButton;
         private System.Windows.Forms.GroupBox InfluentFactorsGroupBox;
         private System.Windows.Forms.ComboBox FactorTypeComboBox;
@@ -688,6 +688,7 @@ namespace RustabBot_v1._0
         private System.Windows.Forms.Label InfoAboutTrajectoryLabel2;
         private System.Windows.Forms.Button ClearProtocol;
         private System.Windows.Forms.DataGridView ProtocolDataGrid;
+        private System.Windows.Forms.CheckBox RememberFilesPaths;
     }
 }
 

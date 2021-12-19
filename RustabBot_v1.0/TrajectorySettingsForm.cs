@@ -47,6 +47,8 @@ namespace RustabBot_v1._0
         /// </summary>
         public int ResearchingSectionNumberCopy { get; set; }
 
+        public string ut2NewFileName;
+
         /// <summary>
         /// Состояние Radio Buttons на главной форме: вручную
         /// или из файла задаётся траектория утяжеления
@@ -206,11 +208,11 @@ namespace RustabBot_v1._0
 
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    string filename = saveFileDialog.FileName;
-                    RastrSupplier.SaveFile(filename, shablon);
-                    MessageBox.Show($"Файл с траекторией утяжеления сохранен в {saveFileDialog.FileName}.");
+                    ut2NewFileName = saveFileDialog.FileName;
+                    RastrSupplier.SaveFile(ut2NewFileName, shablon);
+                    MessageBox.Show($"Файл с траекторией утяжеления сохранен в {ut2NewFileName}.");
                     DialogResult = DialogResult.OK;
-                    RastrSupplier.LoadFile(saveFileDialog.FileName, shablon);
+                    RastrSupplier.LoadFile(ut2NewFileName, shablon);
                     Close();
                 }
             }

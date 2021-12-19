@@ -14,7 +14,7 @@ namespace RustabBot_v1._0
     /// <summary>
     /// Класс для манипуляций с таблицами 
     /// </summary>
-    public class DataGridViewTools
+    public static class DataGridViewTools
     {
         /// <summary>
         /// Метод создания таблицы желаемого формата
