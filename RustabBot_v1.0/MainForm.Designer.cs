@@ -52,6 +52,7 @@ namespace RustabBot_v1._0
             this.FactorTypeComboBox = new System.Windows.Forms.ComboBox();
             this.FactorTypeLabel = new System.Windows.Forms.Label();
             this.TabPageFiles = new System.Windows.Forms.TabPage();
+            this.RememberFilesPaths = new System.Windows.Forms.CheckBox();
             this.TrajectorySettingsButton = new System.Windows.Forms.Button();
             this.LoadScnListBox = new System.Windows.Forms.ListBox();
             this.TrajectoryGroupBox = new System.Windows.Forms.GroupBox();
@@ -82,7 +83,6 @@ namespace RustabBot_v1._0
             this.DfwOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.Ut2OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.ScnOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.RememberFilesPaths = new System.Windows.Forms.CheckBox();
             this.TabPageCalc.SuspendLayout();
             this.TransientStabilityAnalysisGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ProtocolDataGrid)).BeginInit();
@@ -335,6 +335,16 @@ namespace RustabBot_v1._0
             this.TabPageFiles.TabIndex = 0;
             this.TabPageFiles.Text = "Файлы";
             this.TabPageFiles.UseVisualStyleBackColor = true;
+            // 
+            // RememberFilesPaths
+            // 
+            this.RememberFilesPaths.AutoSize = true;
+            this.RememberFilesPaths.Location = new System.Drawing.Point(18, 653);
+            this.RememberFilesPaths.Name = "RememberFilesPaths";
+            this.RememberFilesPaths.Size = new System.Drawing.Size(278, 21);
+            this.RememberFilesPaths.TabIndex = 16;
+            this.RememberFilesPaths.Text = "Запомнить пути загруженных файлов";
+            this.RememberFilesPaths.UseVisualStyleBackColor = true;
             // 
             // TrajectorySettingsButton
             // 
@@ -595,16 +605,6 @@ namespace RustabBot_v1._0
             // ScnOpenFileDialog
             // 
             this.ScnOpenFileDialog.FileName = "ScnOpenFileDialog";
-            // 
-            // RememberFilesPaths
-            // 
-            this.RememberFilesPaths.AutoSize = true;
-            this.RememberFilesPaths.Location = new System.Drawing.Point(18, 653);
-            this.RememberFilesPaths.Name = "RememberFilesPaths";
-            this.RememberFilesPaths.Size = new System.Drawing.Size(278, 21);
-            this.RememberFilesPaths.TabIndex = 16;
-            this.RememberFilesPaths.Text = "Запомнить пути загруженных файлов";
-            this.RememberFilesPaths.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 

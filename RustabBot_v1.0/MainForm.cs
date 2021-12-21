@@ -381,6 +381,7 @@ namespace RustabBot_v1._0
         private void LoadScnButton_Click(object sender, EventArgs e)
         {
             LoadScnListBox.Items.Clear();
+            _scnFileNames.Clear();
             ScnOpenFileDialog.Multiselect = true;
             ScnOpenFileDialog.Filter = "Файл сценария (*.scn)|*.scn";
             
@@ -415,6 +416,7 @@ namespace RustabBot_v1._0
             DataGridViewTools.CreateTableForFactors(_factorList, InfluentFactorsDataGridView);
             DataGridViewTools.CreateTableForProtocol(ProtocolDataGrid);
             RastrSupplier.Message += MessageHandler;
+            RastrSupplier.Step += ProgressHandler;
 
             LoadFilesFromXML();
         }
@@ -617,43 +619,49 @@ namespace RustabBot_v1._0
             InfluentFactorNumCombobox.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             InfluentFactorNumCombobox.AutoCompleteSource = AutoCompleteSource.ListItems;
         }
-
+        
         /// <summary>
-        /// Инициирование расчёта (пока что только траектории)
+        /// Инициирование расчёта 
         /// </summary>
         private async void StartCalcButton_Click(object sender, EventArgs e)
         {
-            if(RememberFilesPaths.Checked == true)
+            await Task.Run(() =>
             {
-                XMLManager.SaveXMLFile(_rstFileName, _schFileName, _dfwFileName, _ut2FileName, _scnFileNames);
-            }
+
+                this.Invoke((Action)delegate
+                {
+                    ProgressBar.Maximum = _scnFileNames.Count();
+                    ProgressBar.Value = 0;
+                });
+
 
             string shablon = @"../../Resources/динамика.rst";
 
-            RastrSupplier.LoadFile(_rstFileName, shablon);
+            RastrSupplier.LoadFile(LoadRstTextBox.Text, shablon);
 
-            InfluentFactorsDataGridView.Refresh();
+            this.Invoke((Action)delegate
+            {
+                InfluentFactorsDataGridView.Refresh();
+            });
 
             if (_factorList.Count == 0)
             {
                 MessageBox.Show("Вы не добавили в таблицу ни одного влияющего фактора!"
-                    +"\n Расчёт остановлен.");
+                    + "\n Расчёт остановлен.");
                 return;
             }
             else
             {
-                await Task.Run(() =>
-                {
-                    RastrSupplier.PrimaryCheckForReactionOfSection(_factorList, researchingPlantGenerators, _rstFileName);
-                });
+                RastrSupplier.PrimaryCheckForReactionOfSection(_factorList, researchingPlantGenerators, _rstFileName);
             }
-            
-            if(_scnFileNames.Count == 0)
+
+            if (_scnFileNames.Count == 0)
             {
                 AddMessageToDataGrid(Error, "Отсутствуют файлы сценариев!"
                     + " Расчёт остановлен.");
                 return;
             }
+
 
             RastrSupplier.Regime(); //первичный расчёт режима
             //проверка, не разошёлся ли режим
@@ -667,9 +675,14 @@ namespace RustabBot_v1._0
                 return;
             }
 
+            if (RememberFilesPaths.Checked == true)
+            {
+                XMLManager.SaveXMLFile(_rstFileName, _schFileName, _dfwFileName, _ut2FileName, _scnFileNames);
+            }
+
             foreach (var factor in _factorList)
             {
-                if(!InfluentFactorBase.IsInDiapasone(factor))
+                if (!InfluentFactorBase.IsInDiapasone(factor))
                 {
                     this.Invoke((Action)delegate
                     {
@@ -695,14 +708,11 @@ namespace RustabBot_v1._0
             //главный метод расчёта
             try
             {
-                await Task.Run(() =>
-                {
-                    _tokenSource = new CancellationTokenSource();
-                    RastrSupplier.Worsening(_factorList, maxIteration,
-                    researchingPlantGenerators, iteration, ResearchingSectionNumber, _rstFileName, _scnFileNames, _tokenSource.Token);
-                });
+                _tokenSource = new CancellationTokenSource();
+                RastrSupplier.Worsening(_factorList, maxIteration,
+                researchingPlantGenerators, iteration, ResearchingSectionNumber, _rstFileName, _scnFileNames, _tokenSource.Token);
             }
-            catch(OperationCanceledException exeption)
+            catch (OperationCanceledException exeption)
             {
                 this.Invoke((Action)delegate
                 {
@@ -736,17 +746,38 @@ namespace RustabBot_v1._0
             });
 
             RastrSupplier.LoadFile(_rstFileName, shablon);
+            });
         }
+            
         
         /// <summary>
         /// Обработчик сообщений
         /// </summary>
-        private void MessageHandler(object sender, EventProvider e)
+        private void MessageHandler(object sender, EventProtocolMessage e)
         {
             this.Invoke((Action)delegate
             {
                 AddMessageToDataGrid(e.MessageType, e.Message);
             });
+        }
+
+        /// <summary>
+        /// Обработчик шагов
+        /// </summary>
+        private void ProgressHandler(object sender, EventForProgress e)
+        {
+            this.Invoke((Action)delegate
+            {
+                StepUp(e.Step);
+            });
+        }
+
+        /// <summary>
+        /// Добавить сообщение в протокол
+        /// </summary>
+        public void StepUp(int step)
+        {
+            ProgressBar.Value += step;
         }
 
         /// <summary>
@@ -797,7 +828,14 @@ namespace RustabBot_v1._0
 
         private void StopCalcButton_Click(object sender, EventArgs e)
         {
-            _tokenSource.Cancel();
+            try
+            {
+                _tokenSource.Cancel();
+            }
+            catch
+            {
+
+            }
         }
 
         private void LoadFilesFromXML()
@@ -806,29 +844,40 @@ namespace RustabBot_v1._0
             {
                 if(XMLManager.IsFileExists())
                 {
+                    _scnFileNames.Clear();
                     XMLManager getxml = new XMLManager(_rstFileName, _schFileName, _dfwFileName, _ut2FileName, _scnFileNames);
                     getxml.LoadFromXMLFile();
                     LoadRstTextBox.Text = getxml.RstFileName;
+                    //TODO: разобраться (потом)
+                    _rstFileName = getxml.RstFileName; 
+
                     LoadSchTextBox.Text = getxml.SchFileName;
+                    _schFileName = getxml.SchFileName;
+
                     LoadDfwTextBox.Text = getxml.DfwFileName;
+                    _dfwFileName = getxml.DfwFileName;
+
                     LoadTrajectoryTextBox.Text = getxml.Ut2FileName;
+                    _ut2FileName = getxml.Ut2FileName;
+
                     foreach (string scn in getxml.ScnFiles)
                     {
                         LoadScnListBox.Items.Add(scn);
                     }
-                    RastrSupplier.LoadFile(LoadRstTextBox.Text, @"../../Resources/динамика.rst");
+
+                    RastrSupplier.LoadFile(getxml.RstFileName, @"../../Resources/динамика.rst");
                     numbersOfNodesFromRastr = RastrSupplier.FillListOfNumbersFromRastr("node", "ny");
                     AddMessageToDataGrid(Info, $"Загружен файл '{LoadRstTextBox.Text}'.");
 
-                    RastrSupplier.LoadFile(LoadSchTextBox.Text, @"../../Resources/сечения.sch");
+                    RastrSupplier.LoadFile(getxml.SchFileName, @"../../Resources/сечения.sch");
                     numbersOfSectionsFromRastr = RastrSupplier.FillListOfNumbersFromRastr("sechen", "ns");
                     AddMessageToDataGrid(Info, $"Загружен файл '{LoadSchTextBox.Text}'.");
 
-                    RastrSupplier.LoadFile(LoadDfwTextBox.Text, @"../../Resources/автоматика.dfw");
+                    RastrSupplier.LoadFile(getxml.DfwFileName, @"../../Resources/автоматика.dfw");
                     AddMessageToDataGrid(Info, $"Загружен файл '{LoadDfwTextBox.Text}'.");
-                    RastrSupplier.LoadFile(LoadTrajectoryTextBox.Text, @"../../Resources/траектория утяжеления.ut2");
+                    RastrSupplier.LoadFile(getxml.Ut2FileName, @"../../Resources/траектория утяжеления.ut2");
                     AddMessageToDataGrid(Info, $"Загружен файл '{LoadTrajectoryTextBox.Text}'.");
-                    AddMessageToDataGrid(Info, $"Загружено {LoadScnListBox.Items.Count} сценариев (scn).");
+                    AddMessageToDataGrid(Info, $"Загружено {getxml.ScnFiles.Count} сценариев (scn).");
                 }
             }
             catch

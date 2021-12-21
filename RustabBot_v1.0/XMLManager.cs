@@ -31,6 +31,11 @@ namespace RustabBot_v1._0
         public static void SaveXMLFile(string rstFileName, string schFileName, string dfwFileName, string ut2FileName, List<string> scnFileNames)
         {
             XDocument xdoc = new XDocument();
+
+            if(File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
             // создаем корневой элемент
             XElement files = new XElement("files");
 
@@ -65,6 +70,7 @@ namespace RustabBot_v1._0
 
         public void LoadFromXMLFile()
         {
+            ScnFiles.Clear();
             XDocument xdoc = XDocument.Load(filePath);
 
             foreach (XElement fileElement in xdoc.Element("files").Elements("file"))
