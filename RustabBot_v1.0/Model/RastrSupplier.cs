@@ -161,8 +161,8 @@ namespace Model
             List<string> scnFileNames, CancellationToken cancellationToken)
         {
 
-            string shablonRst = @"../../Resources/динамика.rst";
-            string shablonScn = @"../../Resources/сценарий.scn";
+            string shablonRst = @"../../../Resources/динамика.rst";
+            string shablonScn = @"../../../Resources/сценарий.scn";
             List<string> scnFileNamesCopy = new List<string>();
             scnFileNamesCopy.AddRange(scnFileNames);
             int stepCounter = 0;
@@ -194,6 +194,8 @@ namespace Model
                                 $"Расчёт переходных процессов по всем сценариям успешно завершён на {stepCounter+1} шаге утяжеления. "));
                             return;
                         }
+
+                        Step?.Invoke(new object(), new EventForProgress(0)); //типа шаг
 
                         foreach (string scn in scnFileNamesCopy.ToArray())
                         {
@@ -507,7 +509,7 @@ namespace Model
         /// </summary>
         public static void SaveToUt2FromDataGrid(DataTable dataTable)
         {
-            string shablon = @"../../Resources/траектория утяжеления.ut2";
+            string shablon = @"../../../Resources/траектория утяжеления.ut2";
 
             CreateFile(shablon);
 
@@ -596,7 +598,7 @@ namespace Model
         /// </summary>
         public static void PrimaryCheckForReactionOfSection(BindingList<InfluentFactorBase> factorList, List<int> researchingPlantGenerators, string rstFileName)
         {
-            string shablonRst = @"../../Resources/динамика.rst";
+            string shablonRst = @"../../../Resources/динамика.rst";
 
             ITable tableForIncrement = _rastr.Tables.Item("ut_node");
             ICol columnForStatement = tableForIncrement.Cols.Item("sta");

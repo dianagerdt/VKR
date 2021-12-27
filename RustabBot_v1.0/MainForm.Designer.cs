@@ -29,10 +29,13 @@ namespace RustabBot_v1._0
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.TabPageCalc = new System.Windows.Forms.TabPage();
             this.TransientStabilityAnalysisGroupBox = new System.Windows.Forms.GroupBox();
             this.ProtocolDataGrid = new System.Windows.Forms.DataGridView();
+            this.ClearProtocolStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.ClearProtocolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ClearProtocol = new System.Windows.Forms.Button();
             this.SaveResultsButton = new System.Windows.Forms.Button();
             this.ProgressBar = new System.Windows.Forms.ProgressBar();
@@ -86,6 +89,7 @@ namespace RustabBot_v1._0
             this.TabPageCalc.SuspendLayout();
             this.TransientStabilityAnalysisGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ProtocolDataGrid)).BeginInit();
+            this.ClearProtocolStrip.SuspendLayout();
             this.InfluentFactorsGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.InfluentFactorsDataGridView)).BeginInit();
             this.TabPageFiles.SuspendLayout();
@@ -124,12 +128,29 @@ namespace RustabBot_v1._0
             // ProtocolDataGrid
             // 
             this.ProtocolDataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.ProtocolDataGrid.ContextMenuStrip = this.ClearProtocolStrip;
             this.ProtocolDataGrid.Location = new System.Drawing.Point(6, 66);
             this.ProtocolDataGrid.Name = "ProtocolDataGrid";
+            this.ProtocolDataGrid.RowHeadersWidth = 51;
             this.ProtocolDataGrid.RowTemplate.Height = 24;
             this.ProtocolDataGrid.Size = new System.Drawing.Size(566, 235);
             this.ProtocolDataGrid.TabIndex = 16;
             this.ProtocolDataGrid.SelectionChanged += new System.EventHandler(this.ProtocolDataGrid_SelectionChanged);
+            // 
+            // ClearProtocolStrip
+            // 
+            this.ClearProtocolStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.ClearProtocolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ClearProtocolMenuItem});
+            this.ClearProtocolStrip.Name = "ClearProtocolStrip";
+            this.ClearProtocolStrip.Size = new System.Drawing.Size(213, 56);
+            // 
+            // ClearProtocolMenuItem
+            // 
+            this.ClearProtocolMenuItem.Name = "ClearProtocolMenuItem";
+            this.ClearProtocolMenuItem.Size = new System.Drawing.Size(212, 24);
+            this.ClearProtocolMenuItem.Text = "Очистить протокол";
+            this.ClearProtocolMenuItem.Click += new System.EventHandler(this.ClearProtocolMenuItem_Click);
             // 
             // ClearProtocol
             // 
@@ -143,9 +164,9 @@ namespace RustabBot_v1._0
             // 
             // SaveResultsButton
             // 
-            this.SaveResultsButton.Location = new System.Drawing.Point(453, 339);
+            this.SaveResultsButton.Location = new System.Drawing.Point(469, 339);
             this.SaveResultsButton.Name = "SaveResultsButton";
-            this.SaveResultsButton.Size = new System.Drawing.Size(119, 30);
+            this.SaveResultsButton.Size = new System.Drawing.Size(103, 30);
             this.SaveResultsButton.TabIndex = 12;
             this.SaveResultsButton.Text = "Сохранить";
             this.SaveResultsButton.UseVisualStyleBackColor = true;
@@ -259,7 +280,7 @@ namespace RustabBot_v1._0
             this.InfluentFactorMax.AutoSize = true;
             this.InfluentFactorMax.Location = new System.Drawing.Point(458, 28);
             this.InfluentFactorMax.Name = "InfluentFactorMax";
-            this.InfluentFactorMax.Size = new System.Drawing.Size(74, 17);
+            this.InfluentFactorMax.Size = new System.Drawing.Size(74, 16);
             this.InfluentFactorMax.TabIndex = 6;
             this.InfluentFactorMax.Text = "Максимум";
             // 
@@ -275,7 +296,7 @@ namespace RustabBot_v1._0
             this.InfluentFactorMinLabel.AutoSize = true;
             this.InfluentFactorMinLabel.Location = new System.Drawing.Point(339, 28);
             this.InfluentFactorMinLabel.Name = "InfluentFactorMinLabel";
-            this.InfluentFactorMinLabel.Size = new System.Drawing.Size(68, 17);
+            this.InfluentFactorMinLabel.Size = new System.Drawing.Size(68, 16);
             this.InfluentFactorMinLabel.TabIndex = 4;
             this.InfluentFactorMinLabel.Text = "Минимум";
             // 
@@ -284,7 +305,7 @@ namespace RustabBot_v1._0
             this.InfluentFactorNumLabel.AutoSize = true;
             this.InfluentFactorNumLabel.Location = new System.Drawing.Point(192, 28);
             this.InfluentFactorNumLabel.Name = "InfluentFactorNumLabel";
-            this.InfluentFactorNumLabel.Size = new System.Drawing.Size(51, 17);
+            this.InfluentFactorNumLabel.Size = new System.Drawing.Size(50, 16);
             this.InfluentFactorNumLabel.TabIndex = 2;
             this.InfluentFactorNumLabel.Text = "Номер";
             // 
@@ -306,7 +327,7 @@ namespace RustabBot_v1._0
             this.FactorTypeLabel.AutoSize = true;
             this.FactorTypeLabel.Location = new System.Drawing.Point(6, 30);
             this.FactorTypeLabel.Name = "FactorTypeLabel";
-            this.FactorTypeLabel.Size = new System.Drawing.Size(94, 17);
+            this.FactorTypeLabel.Size = new System.Drawing.Size(92, 16);
             this.FactorTypeLabel.TabIndex = 0;
             this.FactorTypeLabel.Text = "Тип фактора";
             // 
@@ -341,7 +362,7 @@ namespace RustabBot_v1._0
             this.RememberFilesPaths.AutoSize = true;
             this.RememberFilesPaths.Location = new System.Drawing.Point(18, 653);
             this.RememberFilesPaths.Name = "RememberFilesPaths";
-            this.RememberFilesPaths.Size = new System.Drawing.Size(278, 21);
+            this.RememberFilesPaths.Size = new System.Drawing.Size(278, 20);
             this.RememberFilesPaths.TabIndex = 16;
             this.RememberFilesPaths.Text = "Запомнить пути загруженных файлов";
             this.RememberFilesPaths.UseVisualStyleBackColor = true;
@@ -387,7 +408,7 @@ namespace RustabBot_v1._0
             this.InfoAboutTrajectoryLabel2.AutoSize = true;
             this.InfoAboutTrajectoryLabel2.Location = new System.Drawing.Point(15, 79);
             this.InfoAboutTrajectoryLabel2.Name = "InfoAboutTrajectoryLabel2";
-            this.InfoAboutTrajectoryLabel2.Size = new System.Drawing.Size(255, 17);
+            this.InfoAboutTrajectoryLabel2.Size = new System.Drawing.Size(255, 16);
             this.InfoAboutTrajectoryLabel2.TabIndex = 17;
             this.InfoAboutTrajectoryLabel2.Text = "выберите опцию загрузки \"из файла\"";
             // 
@@ -396,7 +417,7 @@ namespace RustabBot_v1._0
             this.InfoAboutTrajectoryLabel.AutoSize = true;
             this.InfoAboutTrajectoryLabel.Location = new System.Drawing.Point(15, 60);
             this.InfoAboutTrajectoryLabel.Name = "InfoAboutTrajectoryLabel";
-            this.InfoAboutTrajectoryLabel.Size = new System.Drawing.Size(482, 17);
+            this.InfoAboutTrajectoryLabel.Size = new System.Drawing.Size(475, 16);
             this.InfoAboutTrajectoryLabel.TabIndex = 16;
             this.InfoAboutTrajectoryLabel.Text = "Выполните настройку вручную (нажмите \"Настройка траектории\") или ";
             // 
@@ -412,7 +433,7 @@ namespace RustabBot_v1._0
             this.FromFileRadioButton.AutoSize = true;
             this.FromFileRadioButton.Location = new System.Drawing.Point(166, 33);
             this.FromFileRadioButton.Name = "FromFileRadioButton";
-            this.FromFileRadioButton.Size = new System.Drawing.Size(91, 21);
+            this.FromFileRadioButton.Size = new System.Drawing.Size(90, 20);
             this.FromFileRadioButton.TabIndex = 15;
             this.FromFileRadioButton.TabStop = true;
             this.FromFileRadioButton.Text = "из файла";
@@ -434,7 +455,7 @@ namespace RustabBot_v1._0
             this.ByHandRadioButton.AutoSize = true;
             this.ByHandRadioButton.Location = new System.Drawing.Point(275, 33);
             this.ByHandRadioButton.Name = "ByHandRadioButton";
-            this.ByHandRadioButton.Size = new System.Drawing.Size(84, 21);
+            this.ByHandRadioButton.Size = new System.Drawing.Size(86, 20);
             this.ByHandRadioButton.TabIndex = 14;
             this.ByHandRadioButton.TabStop = true;
             this.ByHandRadioButton.Text = "вручную";
@@ -446,7 +467,7 @@ namespace RustabBot_v1._0
             this.TrajectorySettingsLabel.AutoSize = true;
             this.TrajectorySettingsLabel.Location = new System.Drawing.Point(15, 33);
             this.TrajectorySettingsLabel.Name = "TrajectorySettingsLabel";
-            this.TrajectorySettingsLabel.Size = new System.Drawing.Size(138, 17);
+            this.TrajectorySettingsLabel.Size = new System.Drawing.Size(136, 16);
             this.TrajectorySettingsLabel.TabIndex = 13;
             this.TrajectorySettingsLabel.Text = "Задать траекторию";
             // 
@@ -462,7 +483,7 @@ namespace RustabBot_v1._0
             this.LabelDfwPath.AutoSize = true;
             this.LabelDfwPath.Location = new System.Drawing.Point(15, 160);
             this.LabelDfwPath.Name = "LabelDfwPath";
-            this.LabelDfwPath.Size = new System.Drawing.Size(161, 17);
+            this.LabelDfwPath.Size = new System.Drawing.Size(154, 16);
             this.LabelDfwPath.TabIndex = 10;
             this.LabelDfwPath.Text = "Файл автоматики (dfw)";
             // 
@@ -488,7 +509,7 @@ namespace RustabBot_v1._0
             this.LabelSchPath.AutoSize = true;
             this.LabelSchPath.Location = new System.Drawing.Point(15, 88);
             this.LabelSchPath.Name = "LabelSchPath";
-            this.LabelSchPath.Size = new System.Drawing.Size(140, 17);
+            this.LabelSchPath.Size = new System.Drawing.Size(131, 16);
             this.LabelSchPath.TabIndex = 7;
             this.LabelSchPath.Text = "Файл сечения (sch)";
             // 
@@ -514,7 +535,7 @@ namespace RustabBot_v1._0
             this.LabelRstPath.AutoSize = true;
             this.LabelRstPath.Location = new System.Drawing.Point(15, 16);
             this.LabelRstPath.Name = "LabelRstPath";
-            this.LabelRstPath.Size = new System.Drawing.Size(143, 17);
+            this.LabelRstPath.Size = new System.Drawing.Size(134, 16);
             this.LabelRstPath.TabIndex = 4;
             this.LabelRstPath.Text = "Файл динамики (rst)";
             // 
@@ -541,7 +562,7 @@ namespace RustabBot_v1._0
             this.LabelScnPath.AutoSize = true;
             this.LabelScnPath.Location = new System.Drawing.Point(15, 399);
             this.LabelScnPath.Name = "LabelScnPath";
-            this.LabelScnPath.Size = new System.Drawing.Size(285, 17);
+            this.LabelScnPath.Size = new System.Drawing.Size(279, 16);
             this.LabelScnPath.TabIndex = 1;
             this.LabelScnPath.Text = "Cценарии нормативных возмущений (scn)";
             // 
@@ -582,7 +603,7 @@ namespace RustabBot_v1._0
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(391, 51);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(99, 17);
+            this.label1.Size = new System.Drawing.Size(98, 16);
             this.label1.TabIndex = 7;
             this.label1.Text = "продам гараж";
             // 
@@ -620,6 +641,7 @@ namespace RustabBot_v1._0
             this.TabPageCalc.ResumeLayout(false);
             this.TransientStabilityAnalysisGroupBox.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.ProtocolDataGrid)).EndInit();
+            this.ClearProtocolStrip.ResumeLayout(false);
             this.InfluentFactorsGroupBox.ResumeLayout(false);
             this.InfluentFactorsGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.InfluentFactorsDataGridView)).EndInit();
@@ -689,6 +711,8 @@ namespace RustabBot_v1._0
         private System.Windows.Forms.Button ClearProtocol;
         private System.Windows.Forms.DataGridView ProtocolDataGrid;
         private System.Windows.Forms.CheckBox RememberFilesPaths;
+        private System.Windows.Forms.ContextMenuStrip ClearProtocolStrip;
+        private System.Windows.Forms.ToolStripMenuItem ClearProtocolMenuItem;
     }
 }
 

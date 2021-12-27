@@ -133,9 +133,6 @@
   <data name="динамика" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\динамика.rst;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="контр_е_величины" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\контр-е величины.kpr;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="сечения" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\сечения.sch;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>

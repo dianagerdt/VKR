@@ -201,7 +201,7 @@ namespace RustabBot_v1._0
             {
                 RastrSupplier.SaveToUt2FromDataGrid(dataTableCopy); //взяли траекторию из таблицы
 
-                string shablon = @"../../Resources/траектория утяжеления.ut2";
+                string shablon = @"../../../Resources/траектория утяжеления.ut2";
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
                 saveFileDialog.DefaultExt = "ut2";
                 saveFileDialog.Filter = "Файл траектории (*.ut2)|*.ut2";

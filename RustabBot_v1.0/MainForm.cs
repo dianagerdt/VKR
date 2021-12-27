@@ -269,7 +269,7 @@ namespace RustabBot_v1._0
         private void LoadRstButton_Click(object sender, EventArgs e)
         {
             string RstFilter = "Файл динамики (*.rst)|*.rst";
-            string shablon = @"../../Resources/динамика.rst";
+            string shablon = @"../../../Resources/динамика.rst";
 
             try
             {
@@ -298,7 +298,7 @@ namespace RustabBot_v1._0
         private void LoadSchButton_Click(object sender, EventArgs e)
         {
             string SchFilter = "Файл сечения (*.sch)|*.sch";
-            string shablon = @"../../Resources/сечения.sch";
+            string shablon = @"../../../Resources/сечения.sch";
 
             try
             {
@@ -327,7 +327,7 @@ namespace RustabBot_v1._0
         private void LoadDfwButton_Click(object sender, EventArgs e)
         {
             string DfwFilter = "Файл автоматики (*.dfw)|*.dfw";
-            string shablon = @"../../Resources/автоматика.dfw";
+            string shablon = @"../../../Resources/автоматика.dfw";
 
             try
             {
@@ -354,7 +354,7 @@ namespace RustabBot_v1._0
         private void LoadTrajectoryButton_Click(object sender, EventArgs e)
         {
             string Ut2Filter = "Файл траектории (*.ut2)|*.ut2";
-            string shablon = @"../../Resources/траектория утяжеления.ut2";
+            string shablon = @"../../../Resources/траектория утяжеления.ut2";
 
             try
             {
@@ -630,12 +630,14 @@ namespace RustabBot_v1._0
 
                 this.Invoke((Action)delegate
                 {
+                    //ProgressBar.Enabled = true;
+                    //ProgressBar.Style = ProgressBarStyle.Marquee;
                     ProgressBar.Maximum = _scnFileNames.Count();
                     ProgressBar.Value = 0;
+                    SaveResultsButton.Enabled = false;
                 });
 
-
-            string shablon = @"../../Resources/динамика.rst";
+            string shablon = @"../../../Resources/динамика.rst";
 
             RastrSupplier.LoadFile(LoadRstTextBox.Text, shablon);
 
@@ -646,9 +648,13 @@ namespace RustabBot_v1._0
 
             if (_factorList.Count == 0)
             {
-                MessageBox.Show("Вы не добавили в таблицу ни одного влияющего фактора!"
+                    this.Invoke((Action)delegate
+                    {
+                        //ProgressBar.Style = ProgressBarStyle.Blocks;
+                        MessageBox.Show("Вы не добавили в таблицу ни одного влияющего фактора!"
                     + "\n Расчёт остановлен.");
-                return;
+                    });
+                    return;
             }
             else
             {
@@ -657,8 +663,13 @@ namespace RustabBot_v1._0
 
             if (_scnFileNames.Count == 0)
             {
-                AddMessageToDataGrid(Error, "Отсутствуют файлы сценариев!"
+                    this.Invoke((Action)delegate
+                    {
+                        AddMessageToDataGrid(Error, "Отсутствуют файлы сценариев!"
                     + " Расчёт остановлен.");
+                        //ProgressBar.Style = ProgressBarStyle.Blocks;
+                    });
+
                 return;
             }
 
@@ -671,6 +682,7 @@ namespace RustabBot_v1._0
                 {
                     AddMessageToDataGrid(Error, "Внимание! Режим разошёлся до начала выполнения утяжеления. Проверьте исходные данные.");
                     InfluentFactorsDataGridView.Refresh();
+                    //ProgressBar.Style = ProgressBarStyle.Blocks;
                 });
                 return;
             }
@@ -690,6 +702,7 @@ namespace RustabBot_v1._0
                         AddMessageToDataGrid(Error, "В исходном режиме влияющие факторы должны " +
                             "находиться в заданном диапазоне значений.");
                         InfluentFactorsDataGridView.Refresh();
+                        //ProgressBar.Style = ProgressBarStyle.Blocks;
                     });
                     return;
                 }
@@ -717,6 +730,7 @@ namespace RustabBot_v1._0
                 this.Invoke((Action)delegate
                 {
                     AddMessageToDataGrid(Warning, "Расчёт остановлен пользователем. ");
+                    //ProgressBar.Style = ProgressBarStyle.Blocks;
                 });
             }
             catch (Exception exeption)
@@ -726,6 +740,7 @@ namespace RustabBot_v1._0
                 {
                     AddMessageToDataGrid(Error, "Расчёт остановлен " +
                     "в результате ошибки. Проверьте исходные данные!");
+                    //ProgressBar.Style = ProgressBarStyle.Blocks;
                 });
                 return;
             }
@@ -745,7 +760,15 @@ namespace RustabBot_v1._0
                 AddMessageToDataGrid(Info, $"Суммарное время расчёта: " + Math.Round(calcTime.TotalSeconds, 2) + " секунд.");
             });
 
-            RastrSupplier.LoadFile(_rstFileName, shablon);
+                this.Invoke((Action)delegate
+                {
+                    //ProgressBar.Enabled = false;
+                    //ProgressBar.Style = ProgressBarStyle.Blocks;
+                    //ProgressBar.Value = ProgressBar.Maximum;
+                    SaveResultsButton.Enabled = true;
+                });
+
+                RastrSupplier.LoadFile(_rstFileName, shablon);
             });
         }
             
@@ -761,6 +784,7 @@ namespace RustabBot_v1._0
             });
         }
 
+        
         /// <summary>
         /// Обработчик шагов
         /// </summary>
@@ -777,8 +801,16 @@ namespace RustabBot_v1._0
         /// </summary>
         public void StepUp(int step)
         {
-            ProgressBar.Value += step;
+            if(step == 0)
+            {
+                ProgressBar.Value = 0;
+            }
+            else
+            {
+                ProgressBar.Value += step;
+            }
         }
+        
 
         /// <summary>
         /// Добавить сообщение в протокол
@@ -789,19 +821,19 @@ namespace RustabBot_v1._0
             {
                 case Error:
                     {
-                        Bitmap img = new Bitmap(@"../../Resources/new_close.png");
+                        Bitmap img = new Bitmap(@"../../../Resources/new_close.png");
                         ProtocolDataGrid.Rows.Add(img, message);
                         break;
                     }
                 case Warning:
                     {
-                        Bitmap img = new Bitmap(@"../../Resources/warning.png");
+                        Bitmap img = new Bitmap(@"../../../Resources/warning.png");
                         ProtocolDataGrid.Rows.Add(img, message);
                         break;
                     }
                 case Info:
                     {
-                        Bitmap img = new Bitmap(@"../../Resources/info.png");
+                        Bitmap img = new Bitmap(@"../../../Resources/info.png");
                         ProtocolDataGrid.Rows.Add(img, message);
                         break;
                     }
@@ -865,17 +897,17 @@ namespace RustabBot_v1._0
                         LoadScnListBox.Items.Add(scn);
                     }
 
-                    RastrSupplier.LoadFile(getxml.RstFileName, @"../../Resources/динамика.rst");
+                    RastrSupplier.LoadFile(getxml.RstFileName, @"../../../Resources/динамика.rst");
                     numbersOfNodesFromRastr = RastrSupplier.FillListOfNumbersFromRastr("node", "ny");
                     AddMessageToDataGrid(Info, $"Загружен файл '{LoadRstTextBox.Text}'.");
 
-                    RastrSupplier.LoadFile(getxml.SchFileName, @"../../Resources/сечения.sch");
+                    RastrSupplier.LoadFile(getxml.SchFileName, @"../../../Resources/сечения.sch");
                     numbersOfSectionsFromRastr = RastrSupplier.FillListOfNumbersFromRastr("sechen", "ns");
                     AddMessageToDataGrid(Info, $"Загружен файл '{LoadSchTextBox.Text}'.");
 
-                    RastrSupplier.LoadFile(getxml.DfwFileName, @"../../Resources/автоматика.dfw");
+                    RastrSupplier.LoadFile(getxml.DfwFileName, @"../../../Resources/автоматика.dfw");
                     AddMessageToDataGrid(Info, $"Загружен файл '{LoadDfwTextBox.Text}'.");
-                    RastrSupplier.LoadFile(getxml.Ut2FileName, @"../../Resources/траектория утяжеления.ut2");
+                    RastrSupplier.LoadFile(getxml.Ut2FileName, @"../../../Resources/траектория утяжеления.ut2");
                     AddMessageToDataGrid(Info, $"Загружен файл '{LoadTrajectoryTextBox.Text}'.");
                     AddMessageToDataGrid(Info, $"Загружено {getxml.ScnFiles.Count} сценариев (scn).");
                 }
@@ -885,5 +917,14 @@ namespace RustabBot_v1._0
 
             }
         }
+
+        private void ClearProtocolMenuItem_Click(object sender, EventArgs e)
+        {
+            ProtocolDataGrid.Rows.Clear();
+        }
+
+
+        //контекстное меню Очистить протокол
+
     }
 }

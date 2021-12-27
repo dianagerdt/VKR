@@ -101,10 +101,6 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ASTRALib">
-      <HintPath>C:\Program Files (x86)\RastrWin3\ASTRALib.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
     <Reference Include="CustomMarshalers" />
     <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.4.0, Culture=neutral, PublicKeyToken=8985beaab7ea3f04, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft-WindowsAPICodePack-Core.1.1.4\lib\net472\Microsoft.WindowsAPICodePack.dll</HintPath>
@@ -188,7 +184,6 @@
     </Compile>
     <None Include="Resources\автоматика.dfw" />
     <None Include="Resources\динамика.rst" />
-    <None Include="Resources\контр-е величины.kpr" />
     <None Include="Resources\сечения.sch" />
     <None Include="Resources\сценарий.scn" />
     <None Include="Resources\траектория утяжеления.ut2" />
