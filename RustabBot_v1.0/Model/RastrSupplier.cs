@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.IO;
 using System.Windows.Forms;
+using System.Runtime.Serialization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -158,18 +159,24 @@ namespace Model
         /// </summary>
         public static void Worsening(BindingList<InfluentFactorBase> factorList, int maxIteration,
             List<int> researchingPlantGenerators, int iteration, int ResearchingSectionNumber, string rstFileName,
-            List<string> scnFileNames, CancellationToken cancellationToken)
+            List<string> scnFileNames, CancellationToken cancellationToken, DataTable resultsTable)
         {
-
+            string nameOfSection = GetStringValue("sechen", "ns", ResearchingSectionNumber, "name");
             string shablonRst = @"../../../Resources/динамика.rst";
             string shablonScn = @"../../../Resources/сценарий.scn";
             List<string> scnFileNamesCopy = new List<string>();
+
+            
+            CalculationResults(resultsTable, GetStringValue("sechen", "ns", ResearchingSectionNumber, "name"));
+
             scnFileNamesCopy.AddRange(scnFileNames);
+
             int stepCounter = 0;
             double powerInSectionWhenStabilityIsOK = 0;
+
             //подпишемся на это событие в MainForm
             Message?.Invoke(new object(), new EventProtocolMessage(MessageType.Info, $"Исследуемое сечение -" +
-                        $" '{GetStringValue("sechen", "ns", ResearchingSectionNumber, "name")}'."));
+                        $" '{nameOfSection}'."));
             Message?.Invoke(new object(), new EventProtocolMessage(MessageType.Warning, $"Переток в исследуемом" +
                 $" {ResearchingSectionNumber} сечении до утяжеления -" +
                 $" {Math.Round(GetValue("sechen", "ns", ResearchingSectionNumber, "psech"), 0)} МВт."));
@@ -195,7 +202,7 @@ namespace Model
                             return;
                         }
 
-                        Step?.Invoke(new object(), new EventForProgress(0)); //типа шаг
+                        Step?.Invoke(new object(), new EventForProgress(0)); //нулевой шаг
 
                         foreach (string scn in scnFileNamesCopy.ToArray())
                         {
@@ -203,6 +210,12 @@ namespace Model
                             {
                                 cancellationToken.ThrowIfCancellationRequested();
                                 LoadFile(scn, shablonScn);
+
+                                DataRow newRow = resultsTable.NewRow(); //формируем строку протокола для этого сценария
+                                FileInfo info = new FileInfo(scn);
+                                string name = info.Name;
+                                newRow["Сценарий"] = name;
+
                                 Message?.Invoke(new object(), new EventProtocolMessage(MessageType.Info, $"Запущен расчёт переходного процесса по сценарию '{scn}'."));
 
                                 FWDynamic FWDynamic = _rastr.FWDynamic();
@@ -236,13 +249,24 @@ namespace Model
 
                                                 Message?.Invoke(new object(), new EventProtocolMessage(MessageType.Info, $"Предельный по " +
                                                     $"динамической устойчивости переток составил {powerInSectionWhenStabilityIsOK} МВт."));
+
+                                                newRow["Шаг (Р_пред)"] = stepCounter;
+                                                newRow["Р_пред"] = powerInSectionWhenStabilityIsOK;
+                                                newRow["Шаг (Р_неустойч)"] = stepCounter+1;
+                                                newRow["Р_неустойч"] = powerInSection;
                                             }
                                             else
                                             {
                                                 Message?.Invoke(new object(), new EventProtocolMessage(MessageType.Warning,
                                                     "Динамическая устойчивость нарушается даже при минимальной загрузке генераторов."));
+
+                                                newRow["Шаг (Р_пред)"] = DBNull.Value;
+                                                newRow["Р_пред"] = DBNull.Value;
+                                                newRow["Шаг (Р_неустойч)"] = stepCounter + 1;
+                                                newRow["Р_неустойч"] = powerInSection;
                                             }
                                             scnFileNamesCopy.Remove(scn); //удаляем этот сценарий, потому что он больше не нужен - предел по ДУ найден.
+                                            resultsTable.Rows.Add(newRow);
                                             break;
                                         }
                                     case DFWSyncLossCause.SYNC_LOSS_BRANCHANGLE:
@@ -253,7 +277,7 @@ namespace Model
                                             Message?.Invoke(new object(), new EventProtocolMessage(MessageType.Warning, $"Динамическая устойчивость" +
                                                 $" нарушается при перетоке в сечении, равном {powerInSection} МВт."));
 
-                                            if (stepCounter != 0)
+                                            if (stepCounter != 0) //если мы уже сделали сколько-то шагов, можем вычислить Рпред
                                             {
                                                 //мощный говнокод, который считает предельный по ДУ переток
                                                 double incrementSum = 0; //сумма приращений генераторов.
@@ -266,13 +290,24 @@ namespace Model
 
                                                 Message?.Invoke(new object(), new EventProtocolMessage(MessageType.Info, $"Предельный по " +
                                                     $"динамической устойчивости переток составил {powerInSectionWhenStabilityIsOK} МВт."));
+
+                                                newRow["Шаг (Р_пред)"] = stepCounter;
+                                                newRow["Р_пред"] = powerInSectionWhenStabilityIsOK;
+                                                newRow["Шаг (Р_неустойч)"] = stepCounter + 1;
+                                                newRow["Р_неустойч"] = powerInSection;
                                             }
                                             else
                                             {
                                                 Message?.Invoke(new object(), new EventProtocolMessage(MessageType.Warning,
                                                     "Динамическая устойчивость нарушается даже при минимальной загрузке генераторов."));
+
+                                                newRow["Шаг (Р_пред)"] = DBNull.Value;
+                                                newRow["Р_пред"] = DBNull.Value;
+                                                newRow["Шаг (Р_неустойч)"] = stepCounter + 1;
+                                                newRow["Р_неустойч"] = powerInSection;
                                             }
                                             scnFileNamesCopy.Remove(scn); //удаляем этот сценарий, потому что он больше не нужен - предел по ДУ найден.
+                                            resultsTable.Rows.Add(newRow);
                                             break;
                                         }
                                     case DFWSyncLossCause.SYNC_LOSS_OVERSPEED:
@@ -283,7 +318,7 @@ namespace Model
                                             Message?.Invoke(new object(), new EventProtocolMessage(MessageType.Warning, $"Динамическая устойчивость" +
                                                 $" нарушается при перетоке в сечении, равном {powerInSection} МВт."));
 
-                                            if (stepCounter != 0)
+                                            if (stepCounter != 0) //если мы уже сделали сколько-то шагов, можем вычислить Рпред
                                             {
                                                 //мощный говнокод, который считает предельный по ДУ переток
                                                 double incrementSum = 0; //сумма приращений генераторов.
@@ -296,13 +331,24 @@ namespace Model
 
                                                 Message?.Invoke(new object(), new EventProtocolMessage(MessageType.Info, $"Предельный по " +
                                                     $"динамической устойчивости переток составил {powerInSectionWhenStabilityIsOK} МВт."));
+
+                                                newRow["Шаг (Р_пред)"] = stepCounter;
+                                                newRow["Р_пред"] = powerInSectionWhenStabilityIsOK;
+                                                newRow["Шаг (Р_неустойч)"] = stepCounter + 1;
+                                                newRow["Р_неустойч"] = powerInSection;
                                             }
                                             else
                                             {
                                                 Message?.Invoke(new object(), new EventProtocolMessage(MessageType.Warning,
                                                     "Динамическая устойчивость нарушается даже при минимальной загрузке генераторов."));
+
+                                                newRow["Шаг (Р_пред)"] = DBNull.Value;
+                                                newRow["Р_пред"] = DBNull.Value;
+                                                newRow["Шаг (Р_неустойч)"] = stepCounter + 1;
+                                                newRow["Р_неустойч"] = powerInSection;
                                             }
                                             scnFileNamesCopy.Remove(scn); //удаляем этот сценарий, потому что он больше не нужен - предел по ДУ найден.
+                                            resultsTable.Rows.Add(newRow);
                                             break;
                                         }
                                 }
@@ -476,6 +522,15 @@ namespace Model
             Message?.Invoke(new object(), new EventProtocolMessage(MessageType.Info, $"Величина перетока в исследуемом" +
                 $" сечении {ResearchingSectionNumber} составляет" +
                 $" {Math.Round(GetValue("sechen", "ns", ResearchingSectionNumber, "psech"), 0)} МВт."));
+        }
+
+        public static void CalculationResults(DataTable dt, string nameOfSection)
+        {
+            dt.Columns.Add("Сценарий", typeof(string));
+            dt.Columns.Add("Шаг (Р_пред)", typeof(int));
+            dt.Columns.Add("Р_пред", typeof(double));
+            dt.Columns.Add("Шаг (Р_неустойч)", typeof(int));
+            dt.Columns.Add("Р_неустойч", typeof(double));
         }
 
         /// <summary>

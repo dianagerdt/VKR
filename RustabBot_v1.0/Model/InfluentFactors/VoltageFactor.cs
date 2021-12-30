@@ -12,6 +12,7 @@ namespace Model.InfluentFactors
     /// исследумой станции
     /// Регулируется генераторами исследуемой станции (изм. Vзад.)
     /// </summary>
+    [Serializable]
     public class VoltageFactor : InfluentFactorBase
     {
         /// <summary>

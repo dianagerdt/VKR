@@ -44,6 +44,9 @@ namespace RustabBot_v1._0
             this.InfluentFactorsGroupBox = new System.Windows.Forms.GroupBox();
             this.InfluentFactorNumCombobox = new System.Windows.Forms.ComboBox();
             this.InfluentFactorsDataGridView = new System.Windows.Forms.DataGridView();
+            this.FactorsMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.LoadFactorsStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.SaveFactorsStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ClearAllFactorsFromGridButton = new System.Windows.Forms.Button();
             this.RemoveFactorFromGridButton = new System.Windows.Forms.Button();
             this.AddFactorToGridButton = new System.Windows.Forms.Button();
@@ -92,6 +95,7 @@ namespace RustabBot_v1._0
             this.ClearProtocolStrip.SuspendLayout();
             this.InfluentFactorsGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.InfluentFactorsDataGridView)).BeginInit();
+            this.FactorsMenuStrip.SuspendLayout();
             this.TabPageFiles.SuspendLayout();
             this.TrajectoryGroupBox.SuspendLayout();
             this.TabControl.SuspendLayout();
@@ -143,7 +147,7 @@ namespace RustabBot_v1._0
             this.ClearProtocolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ClearProtocolMenuItem});
             this.ClearProtocolStrip.Name = "ClearProtocolStrip";
-            this.ClearProtocolStrip.Size = new System.Drawing.Size(213, 56);
+            this.ClearProtocolStrip.Size = new System.Drawing.Size(213, 28);
             // 
             // ClearProtocolMenuItem
             // 
@@ -170,6 +174,7 @@ namespace RustabBot_v1._0
             this.SaveResultsButton.TabIndex = 12;
             this.SaveResultsButton.Text = "Сохранить";
             this.SaveResultsButton.UseVisualStyleBackColor = true;
+            this.SaveResultsButton.Click += new System.EventHandler(this.SaveResultsButton_Click);
             // 
             // ProgressBar
             // 
@@ -231,12 +236,36 @@ namespace RustabBot_v1._0
             // InfluentFactorsDataGridView
             // 
             this.InfluentFactorsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.InfluentFactorsDataGridView.ContextMenuStrip = this.FactorsMenuStrip;
             this.InfluentFactorsDataGridView.Location = new System.Drawing.Point(6, 124);
             this.InfluentFactorsDataGridView.Name = "InfluentFactorsDataGridView";
             this.InfluentFactorsDataGridView.RowHeadersWidth = 51;
             this.InfluentFactorsDataGridView.RowTemplate.Height = 24;
             this.InfluentFactorsDataGridView.Size = new System.Drawing.Size(566, 164);
             this.InfluentFactorsDataGridView.TabIndex = 11;
+            // 
+            // FactorsMenuStrip
+            // 
+            this.FactorsMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.FactorsMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.LoadFactorsStripMenuItem,
+            this.SaveFactorsStripMenuItem});
+            this.FactorsMenuStrip.Name = "FactorsMenuStrip";
+            this.FactorsMenuStrip.Size = new System.Drawing.Size(153, 52);
+            // 
+            // LoadFactorsStripMenuItem
+            // 
+            this.LoadFactorsStripMenuItem.Name = "LoadFactorsStripMenuItem";
+            this.LoadFactorsStripMenuItem.Size = new System.Drawing.Size(152, 24);
+            this.LoadFactorsStripMenuItem.Text = "Загрузить";
+            this.LoadFactorsStripMenuItem.Click += new System.EventHandler(this.LoadFactorsStripMenuItem_Click);
+            // 
+            // SaveFactorsStripMenuItem
+            // 
+            this.SaveFactorsStripMenuItem.Name = "SaveFactorsStripMenuItem";
+            this.SaveFactorsStripMenuItem.Size = new System.Drawing.Size(152, 24);
+            this.SaveFactorsStripMenuItem.Text = "Сохранить";
+            this.SaveFactorsStripMenuItem.Click += new System.EventHandler(this.SaveFactorsStripMenuItem_Click);
             // 
             // ClearAllFactorsFromGridButton
             // 
@@ -645,6 +674,7 @@ namespace RustabBot_v1._0
             this.InfluentFactorsGroupBox.ResumeLayout(false);
             this.InfluentFactorsGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.InfluentFactorsDataGridView)).EndInit();
+            this.FactorsMenuStrip.ResumeLayout(false);
             this.TabPageFiles.ResumeLayout(false);
             this.TabPageFiles.PerformLayout();
             this.TrajectoryGroupBox.ResumeLayout(false);
@@ -713,6 +743,9 @@ namespace RustabBot_v1._0
         private System.Windows.Forms.CheckBox RememberFilesPaths;
         private System.Windows.Forms.ContextMenuStrip ClearProtocolStrip;
         private System.Windows.Forms.ToolStripMenuItem ClearProtocolMenuItem;
+        private System.Windows.Forms.ContextMenuStrip FactorsMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem LoadFactorsStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem SaveFactorsStripMenuItem;
     }
 }
 

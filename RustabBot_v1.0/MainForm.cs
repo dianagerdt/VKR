@@ -12,6 +12,7 @@ using Model;
 using Model.InfluentFactors;
 using static Model.MessageType;
 using System.Threading;
+using System.Xml.Serialization;
 
 
 namespace RustabBot_v1._0
@@ -99,6 +100,14 @@ namespace RustabBot_v1._0
         private List<string> _scnFileNames = new List<string>();
 
         private CancellationTokenSource _tokenSource;
+
+        /// <summary>
+        /// Для файлов
+        /// </summary>
+        private readonly XmlSerializer _serializer =
+            new XmlSerializer(typeof(BindingList<InfluentFactorBase>));
+
+        DataTable resultsTable = new DataTable("Results");
 
         /// <summary>
         /// Главная форма
@@ -637,17 +646,17 @@ namespace RustabBot_v1._0
                     SaveResultsButton.Enabled = false;
                 });
 
-            string shablon = @"../../../Resources/динамика.rst";
+                string shablon = @"../../../Resources/динамика.rst";
+            
+                RastrSupplier.LoadFile(LoadRstTextBox.Text, shablon);
 
-            RastrSupplier.LoadFile(LoadRstTextBox.Text, shablon);
+                this.Invoke((Action)delegate
+                {
+                    InfluentFactorsDataGridView.Refresh();
+                });
 
-            this.Invoke((Action)delegate
-            {
-                InfluentFactorsDataGridView.Refresh();
-            });
-
-            if (_factorList.Count == 0)
-            {
+                if (_factorList.Count == 0)
+                {
                     this.Invoke((Action)delegate
                     {
                         //ProgressBar.Style = ProgressBarStyle.Blocks;
@@ -655,110 +664,123 @@ namespace RustabBot_v1._0
                     + "\n Расчёт остановлен.");
                     });
                     return;
-            }
-            else
-            {
-                RastrSupplier.PrimaryCheckForReactionOfSection(_factorList, researchingPlantGenerators, _rstFileName);
-            }
+                }
+                else
+                {
+                    RastrSupplier.PrimaryCheckForReactionOfSection(_factorList, researchingPlantGenerators, _rstFileName);
+                }
 
-            if (_scnFileNames.Count == 0)
-            {
+                if (_scnFileNames.Count == 0)
+                {
                     this.Invoke((Action)delegate
                     {
                         AddMessageToDataGrid(Error, "Отсутствуют файлы сценариев!"
-                    + " Расчёт остановлен.");
+                        + " Расчёт остановлен.");
                         //ProgressBar.Style = ProgressBarStyle.Blocks;
                     });
 
-                return;
-            }
+                    return;
+                }
 
-
-            RastrSupplier.Regime(); //первичный расчёт режима
-            //проверка, не разошёлся ли режим
-            if (!RastrSupplier.IsRegimeOK())
-            {
-                this.Invoke((Action)delegate
-                {
-                    AddMessageToDataGrid(Error, "Внимание! Режим разошёлся до начала выполнения утяжеления. Проверьте исходные данные.");
-                    InfluentFactorsDataGridView.Refresh();
-                    //ProgressBar.Style = ProgressBarStyle.Blocks;
-                });
-                return;
-            }
-
-            if (RememberFilesPaths.Checked == true)
-            {
-                XMLManager.SaveXMLFile(_rstFileName, _schFileName, _dfwFileName, _ut2FileName, _scnFileNames);
-            }
-
-            foreach (var factor in _factorList)
-            {
-                if (!InfluentFactorBase.IsInDiapasone(factor))
+                RastrSupplier.Regime(); //первичный расчёт режима
+                //проверка, не разошёлся ли режим
+                if (!RastrSupplier.IsRegimeOK())
                 {
                     this.Invoke((Action)delegate
                     {
-                        AddMessageToDataGrid(Error, "Расчёт остановлен. Проверьте исходные данные!");
-                        AddMessageToDataGrid(Error, "В исходном режиме влияющие факторы должны " +
-                            "находиться в заданном диапазоне значений.");
+                        AddMessageToDataGrid(Error, "Внимание! Режим разошёлся до начала выполнения утяжеления. Проверьте исходные данные.");
                         InfluentFactorsDataGridView.Refresh();
                         //ProgressBar.Style = ProgressBarStyle.Blocks;
                     });
                     return;
                 }
-            }
 
-            var startCalc = DateTime.Now;
-            this.Invoke((Action)delegate
-            {
-                AddMessageToDataGrid(Info, $"Время начала расчёта: " + startCalc.ToLongTimeString());
-            });
+                if (RememberFilesPaths.Checked == true)
+                {
+                    XMLManager.SaveXMLFile(_rstFileName, _schFileName, _dfwFileName, _ut2FileName, _scnFileNames);
+                }
 
+                foreach (var factor in _factorList)
+                {
+                    if (!InfluentFactorBase.IsInDiapasone(factor))
+                    {
+                        this.Invoke((Action)delegate
+                        {
+                            AddMessageToDataGrid(Error, "Расчёт остановлен. Проверьте исходные данные!");
+                            AddMessageToDataGrid(Error, "В исходном режиме влияющие факторы должны " +
+                                "находиться в заданном диапазоне значений.");
+                            InfluentFactorsDataGridView.Refresh();
+                            //ProgressBar.Style = ProgressBarStyle.Blocks;
+                        });
+                        return;
+                    }
+                }
 
-            int maxIteration = 100;
-            int iteration = 0;
+                var startCalc = DateTime.Now;
 
-            //главный метод расчёта
-            try
-            {
-                _tokenSource = new CancellationTokenSource();
-                RastrSupplier.Worsening(_factorList, maxIteration,
-                researchingPlantGenerators, iteration, ResearchingSectionNumber, _rstFileName, _scnFileNames, _tokenSource.Token);
-            }
-            catch (OperationCanceledException exeption)
-            {
+                resultsTable.Clear();
+
                 this.Invoke((Action)delegate
                 {
-                    AddMessageToDataGrid(Warning, "Расчёт остановлен пользователем. ");
-                    //ProgressBar.Style = ProgressBarStyle.Blocks;
+                    AddMessageToDataGrid(Info, $"Время начала расчёта: " + startCalc.ToLongTimeString());
                 });
-            }
-            catch (Exception exeption)
-            {
-                MessageBox.Show($"{exeption.Message}");
+
+                int maxIteration = 100;
+                int iteration = 0;
+
+                //главный метод расчёта
+                try
+                {
+                    _tokenSource = new CancellationTokenSource();
+                    RastrSupplier.Worsening(_factorList, maxIteration,
+                    researchingPlantGenerators, iteration, ResearchingSectionNumber, _rstFileName, _scnFileNames, 
+                    _tokenSource.Token, resultsTable);
+                }
+                catch (OperationCanceledException exeption)
+                {
+                    this.Invoke((Action)delegate
+                    {
+                        AddMessageToDataGrid(Warning, "Расчёт остановлен пользователем. ");
+                        //ProgressBar.Style = ProgressBarStyle.Blocks;
+                    });
+                }
+                catch (Exception exeption)
+                {
+                    MessageBox.Show($"{exeption.Message}");
+                    this.Invoke((Action)delegate
+                    {
+                        AddMessageToDataGrid(Error, "Расчёт остановлен " +
+                        "в результате ошибки. Проверьте исходные данные!");
+                        //ProgressBar.Style = ProgressBarStyle.Blocks;
+                    });
+                    return;
+                }
+
                 this.Invoke((Action)delegate
                 {
-                    AddMessageToDataGrid(Error, "Расчёт остановлен " +
-                    "в результате ошибки. Проверьте исходные данные!");
-                    //ProgressBar.Style = ProgressBarStyle.Blocks;
+                    InfluentFactorsDataGridView.Refresh();
                 });
-                return;
-            }
 
-            this.Invoke((Action)delegate
-            {
-                InfluentFactorsDataGridView.Refresh();
-            });
+                var endCalc = DateTime.Now;
+                TimeSpan calcTime = endCalc - startCalc;
 
-            var endCalc = DateTime.Now;
-            TimeSpan calcTime = endCalc - startCalc;
+                this.Invoke((Action)delegate
+                {
+                    //TODO: а точно ли нужны секунды?
+                    AddMessageToDataGrid(Info, $"Время окончания расчёта: " + endCalc.ToLongTimeString());
+                    AddMessageToDataGrid(Info, $"Суммарное время расчёта: " + Math.Round(calcTime.TotalSeconds, 2) + " секунд.");
 
-            this.Invoke((Action)delegate
-            {
-                //TODO: а точно ли нужны секунды?
-                AddMessageToDataGrid(Info, $"Время окончания расчёта: " + endCalc.ToLongTimeString());
-                AddMessageToDataGrid(Info, $"Суммарное время расчёта: " + Math.Round(calcTime.TotalSeconds, 2) + " секунд.");
-            });
+                    if (resultsTable.Rows.Count == 0)
+                    {
+                        DataRow newRow = resultsTable.NewRow();
+                        newRow["Сценарий"] = "Потери синхронизма не выявлено для всех сценариев.";
+                        newRow["Шаг (Р_пред)"] = DBNull.Value;
+                        newRow["Р_пред"] = DBNull.Value;
+                        newRow["Шаг (Р_неустойч)"] = DBNull.Value;
+                        newRow["Р_неустойч"] = DBNull.Value;
+                        resultsTable.Rows.Add(newRow);
+                    }
+                });
 
                 this.Invoke((Action)delegate
                 {
@@ -772,7 +794,6 @@ namespace RustabBot_v1._0
             });
         }
             
-        
         /// <summary>
         /// Обработчик сообщений
         /// </summary>
@@ -811,7 +832,6 @@ namespace RustabBot_v1._0
             }
         }
         
-
         /// <summary>
         /// Добавить сообщение в протокол
         /// </summary>
@@ -923,8 +943,129 @@ namespace RustabBot_v1._0
             ProtocolDataGrid.Rows.Clear();
         }
 
+        private void SaveFactorsStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (_factorList.Count == 0)
+            {
+                MessageBox.Show("Отсутствуют данные для сохранения.",
+                    "Данные не сохранены",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
 
-        //контекстное меню Очистить протокол
+            var saveFileDialog = new SaveFileDialog
+            {
+                Filter = "Файлы (*.fact)|*.fact|Все файлы (*.*)|*.*",
+                AddExtension = true,
+                DefaultExt = ".fact"
+            };
 
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                var path = saveFileDialog.FileName.ToString();
+                using (FileStream fileStream = new FileStream(path,
+                    FileMode.OpenOrCreate))
+                {
+                    _serializer.Serialize(fileStream, _factorList);
+                }
+                AddMessageToDataGrid(Info, $"Файл с влияющими факторами сохранён в {path}");
+            }
+        }
+
+        private void LoadFactorsStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _factorList.Clear();
+            InfluentFactorsDataGridView.Rows.Clear();
+            if(_rstFileName == null)
+            {
+                AddMessageToDataGrid(Error, "Прежде чем загрузить список факторов, загрузите файл исходных данных *.rst!");
+                return;
+            }
+
+
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = "Файлы (*.fact)|*.fact|Все файлы (*.*)|*.*",
+            };
+
+            if (openFileDialog.ShowDialog() != DialogResult.OK) return;
+
+            var path = openFileDialog.FileName.ToString();
+            try
+            {
+                using (FileStream fileStream = new FileStream(path,
+                    FileMode.OpenOrCreate))
+                {
+                    _factorList = (BindingList<InfluentFactorBase>)_serializer.
+                        Deserialize(fileStream);
+                }
+                InfluentFactorsDataGridView.DataSource = _factorList;
+
+                foreach(var factor in _factorList)
+                {
+                    if(factor is VoltageFactor)
+                    {
+                        factor.CurrentValue = RastrSupplier.GetValue("node", "ny", factor.NumberFromRastr, "vras");
+                    }
+                    if(factor is SectionFactor)
+                    {
+                        factor.CurrentValue = RastrSupplier.GetValue("sechen", "ns", factor.NumberFromRastr, "psech");
+                    }
+                }
+
+                InfluentFactorsDataGridView.CurrentCell = null;
+                InfluentFactorsDataGridView.Refresh();
+                AddMessageToDataGrid(Info, $"Файл с влияющими факторами Загружен из {path}");
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Файл повреждён или не соответствует формату. Проверьте загруженный файл *.rst!",
+                    "Ошибка",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void SaveResultsButton_Click(object sender, EventArgs e)
+        {
+
+            try
+            {
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.DefaultExt = "csv";
+                saveFileDialog.Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*";
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    StringBuilder fileContent = new StringBuilder();
+
+                    foreach (var col in resultsTable.Columns)
+                    {
+                        fileContent.Append(col.ToString() + ",");
+                    }
+
+                    fileContent.Replace(",", Environment.NewLine, fileContent.Length - 1, 1);
+
+                    foreach (DataRow dr in resultsTable.Rows)
+                    {
+                        foreach (var column in dr.ItemArray)
+                        {
+                            fileContent.Append("\"" + column.ToString() + "\",");
+                        }
+
+                        fileContent.Replace(",", Environment.NewLine, fileContent.Length - 1, 1);
+                    }
+
+
+                    File.WriteAllText(saveFileDialog.FileName, fileContent.ToString(), Encoding.UTF8);
+                    DialogResult = DialogResult.OK;
+                    AddMessageToDataGrid(Info, $"Файл протокола сохранён в {saveFileDialog.FileName}");
+                }
+            
+            }
+            catch
+            {
+                AddMessageToDataGrid(Error, $"Закройте файл и повторите попытку!");
+            }
+        }
     }
 }

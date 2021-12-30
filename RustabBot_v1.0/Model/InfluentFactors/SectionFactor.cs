@@ -12,6 +12,7 @@ namespace Model.InfluentFactors
     /// <summary>
     /// Влияющий фактор - Переток в сечении
     /// </summary>
+    [Serializable]
     public class SectionFactor : InfluentFactorBase
     {
         /// <summary>

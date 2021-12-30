@@ -1,4 +1,6 @@
 ﻿using System;
+using Model.InfluentFactors;
+using System.Xml.Serialization;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +11,10 @@ namespace Model
     /// <summary>
     /// Базовый класс для влияющих факторов
     /// </summary>
+    [Serializable]
+    [XmlInclude(typeof(SectionFactor))]
+    [XmlInclude(typeof(VoltageFactor))]
+
     public abstract class InfluentFactorBase
     {
         /// <summary>

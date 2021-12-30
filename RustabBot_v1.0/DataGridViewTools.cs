@@ -14,7 +14,7 @@ namespace RustabBot_v1._0
     /// <summary>
     /// Класс для манипуляций с таблицами 
     /// </summary>
-    public static class DataGridViewTools
+    public class DataGridViewTools
     {
         /// <summary>
         /// Метод создания таблицы желаемого формата
@@ -112,6 +112,5 @@ namespace RustabBot_v1._0
             dataGridView.SelectionMode =
                 DataGridViewSelectionMode.FullRowSelect;
         }
-
     }
 }
